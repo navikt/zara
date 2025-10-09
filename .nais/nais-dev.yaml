@@ -30,9 +30,9 @@ spec:
         - id: loki
         - id: elastic
   liveness:
-    path: /api/internal/is_alive
+    path: /api/internal/is-alive
   readiness:
-    path: /api/internal/is_ready
+    path: /api/internal/is-ready
   accessPolicy:
     outbound:
       external:

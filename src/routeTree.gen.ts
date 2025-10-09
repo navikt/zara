@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
+import { Route as ApiInternalIsReadyRouteImport } from './routes/api/internal.is-ready'
+import { Route as ApiInternalIsAliveRouteImport } from './routes/api/internal.is-alive'
 import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
 import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
@@ -38,6 +40,16 @@ const DemoApiNamesRoute = DemoApiNamesRouteImport.update({
   path: '/demo/api/names',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiInternalIsReadyRoute = ApiInternalIsReadyRouteImport.update({
+  id: '/api/internal/is-ready',
+  path: '/api/internal/is-ready',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiInternalIsAliveRoute = ApiInternalIsAliveRouteImport.update({
+  id: '/api/internal/is-alive',
+  path: '/api/internal/is-alive',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({
   id: '/demo/start/ssr/',
   path: '/demo/start/ssr/',
@@ -61,6 +73,8 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/internal/is-alive': typeof ApiInternalIsAliveRoute
+  '/api/internal/is-ready': typeof ApiInternalIsReadyRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
@@ -71,6 +85,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/internal/is-alive': typeof ApiInternalIsAliveRoute
+  '/api/internal/is-ready': typeof ApiInternalIsReadyRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
@@ -82,6 +98,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/internal/is-alive': typeof ApiInternalIsAliveRoute
+  '/api/internal/is-ready': typeof ApiInternalIsReadyRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
@@ -94,6 +112,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/api/internal/is-alive'
+    | '/api/internal/is-ready'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
@@ -104,6 +124,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/api/internal/is-alive'
+    | '/api/internal/is-ready'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
@@ -114,6 +136,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/api/internal/is-alive'
+    | '/api/internal/is-ready'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
@@ -125,6 +149,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiInternalIsAliveRoute: typeof ApiInternalIsAliveRoute
+  ApiInternalIsReadyRoute: typeof ApiInternalIsReadyRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
   DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
@@ -164,6 +190,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoApiNamesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/internal/is-ready': {
+      id: '/api/internal/is-ready'
+      path: '/api/internal/is-ready'
+      fullPath: '/api/internal/is-ready'
+      preLoaderRoute: typeof ApiInternalIsReadyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/internal/is-alive': {
+      id: '/api/internal/is-alive'
+      path: '/api/internal/is-alive'
+      fullPath: '/api/internal/is-alive'
+      preLoaderRoute: typeof ApiInternalIsAliveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/start/ssr/': {
       id: '/demo/start/ssr/'
       path: '/demo/start/ssr'
@@ -197,6 +237,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiInternalIsAliveRoute: ApiInternalIsAliveRoute,
+  ApiInternalIsReadyRoute: ApiInternalIsReadyRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
   DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,

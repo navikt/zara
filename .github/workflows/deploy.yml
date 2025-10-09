@@ -2,7 +2,6 @@ name: Build & Deploy
 on:
   push:
 
-
 permissions:
   contents: read
   id-token: write
@@ -13,22 +12,38 @@ jobs:
     name: Build for dev
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v5
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - id: set-env
-        run: echo "NPM_AUTH_TOKEN=${{ inputs.READER_TOKEN }}" >> $GITHUB_ENV
-      - id: deno-install
-        run: deno install
-      - run: deno run build
+      - run: echo "NPM_AUTH_TOKEN=${{ secrets.READER_TOKEN }}" >> $GITHUB_ENV
+      - run: deno install --allow-scripts=npm:@parcel/watcher,npm:@tailwindcss/oxide
+      - run: deno task build
       - name: Push docker image to GAR
         uses: nais/docker-build-push@v0
         env:
-          ACTIONS_RUNTIME_TOKEN: ${{ inputs.GITHUB_TOKEN  }}
+          ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
           DOCKER_BUILD_SUMMARY: false
         id: docker-build-push
         with:
-          team: ${{ inputs.team }}
-          image_suffix: ${{ inputs.env }}
+          team: tsm
+          image_suffix: dev
     outputs:
       image: ${{ steps.docker-build-push.outputs.image }}
+
+  deploy-dev-main:
+    name: Deploy main to dev
+    if: github.ref_name == 'main' || github.ref_name == 'deploy'
+    environment:
+      name: dev
+      url: https://zara.intern.dev.nav.no
+    runs-on: ubuntu-latest
+    needs: [build-dev]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          CLUSTER: dev-gcp
+          RESOURCE: .nais/nais-dev.yaml
+          VAR: image=${{ needs.build-dev.outputs.image }}
+          NAIS_DEPLOY_SUMMARY: false

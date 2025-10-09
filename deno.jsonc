@@ -5,9 +5,11 @@
         'NITRO_*',
         '_NITRO*',
         "_APP*",
+        "NODE_ENV",
         "PORT",
         "HOST",
         "DEBUG",
+        "TSS_*",
       ],
       "read": [
         "/app/public",
