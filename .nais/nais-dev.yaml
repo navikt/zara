@@ -1,0 +1,47 @@
+apiVersion: 'nais.io/v1alpha1'
+kind: 'Application'
+metadata:
+  name: zara
+  namespace: tsm
+  labels:
+    team: tsm
+spec:
+  image: {{image}}
+  port: 3000
+  replicas:
+    min: 1
+    max: 2
+  ingresses:
+    - "https://zara.intern.dev.nav.no"
+  azure:
+    application:
+      enabled: true
+      allowAllUsers: true
+      tenant: nav.no
+      claims:
+        groups:
+          - id: "3a541678-8965-45c4-844b-486a8b9b94a3"
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: nodejs
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
+  liveness:
+    path: /api/internal/is_alive
+  readiness:
+    path: /api/internal/is_ready
+  accessPolicy:
+    outbound:
+      external:
+        - host: 'tsm-unleash-api.nav.cloud.nais.io'
+      rules:
+        - application: tsm-pdl-cache
+        - application: logging
+          namespace: nais-system
+  resources:
+    requests:
+      cpu: 50m
+      memory: 200Mi

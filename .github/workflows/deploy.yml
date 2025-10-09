@@ -1,0 +1,34 @@
+name: Build & Deploy
+on:
+  push:
+
+
+permissions:
+  contents: read
+  id-token: write
+  packages: write
+
+jobs:
+  build-dev:
+    name: Build for dev
+    runs-on: ubuntu-latest
+    steps:
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - id: set-env
+        run: echo "NPM_AUTH_TOKEN=${{ inputs.READER_TOKEN }}" >> $GITHUB_ENV
+      - id: deno-install
+        run: deno install
+      - run: deno run build
+      - name: Push docker image to GAR
+        uses: nais/docker-build-push@v0
+        env:
+          ACTIONS_RUNTIME_TOKEN: ${{ inputs.GITHUB_TOKEN  }}
+          DOCKER_BUILD_SUMMARY: false
+        id: docker-build-push
+        with:
+          team: ${{ inputs.team }}
+          image_suffix: ${{ inputs.env }}
+    outputs:
+      image: ${{ steps.docker-build-push.outputs.image }}
