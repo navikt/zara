@@ -1,6 +1,10 @@
 {
   "version": "5",
   "specifiers": {
+    "npm:@navikt/aksel-icons@^7.32.1": "7.32.1",
+    "npm:@navikt/ds-css@^7.32.1": "7.32.1",
+    "npm:@navikt/ds-react@^7.32.1": "7.32.1_@types+react@19.2.2_react@19.2.0_react-dom@19.2.0__react@19.2.0",
+    "npm:@navikt/ds-tailwind@^7.32.1": "7.32.1",
     "npm:@navikt/pino-logger@^4.3.3": "4.3.3_pino@10.0.0",
     "npm:@tailwindcss/vite@^4.0.6": "4.1.14_vite@7.1.9__@types+node@22.18.8__picomatch@4.0.3_@types+node@22.18.8",
     "npm:@tanstack/nitro-v2-vite-plugin@^1.132.31": "1.132.40_vite@7.1.9__@types+node@22.18.8__picomatch@4.0.3_@types+node@22.18.8",
@@ -331,6 +335,9 @@
     "@csstools/css-tokenizer@3.0.4": {
       "integrity": "sha512-Vd/9EVDiu6PPJt9yAh6roZP6El1xHrdvIVGjyBsHR0RYwNHgL7FJPyIIW4fANJNG6FtyZfvlRPpFI4ZM/lubvw=="
     },
+    "@date-fns/tz@1.2.0": {
+      "integrity": "sha512-LBrd7MiJZ9McsOgxqWX7AaxrDjcFVjWH/tIKJd7pnR7McaslGYOP1QmmiBXdJH/H/yLCT+rcQ7FaPBUxRGUtrg=="
+    },
     "@esbuild/aix-ppc64@0.25.10": {
       "integrity": "sha512-0NFWnA+7l41irNuaSVlLfgNT12caWJVLzp5eAVhZ0z1qpxbockccEt3s+149rE64VUI3Ml2zt8Nv5JVc4QXTsw==",
       "os": ["aix"],
@@ -461,6 +468,40 @@
       "os": ["win32"],
       "cpu": ["x64"]
     },
+    "@floating-ui/core@1.7.3": {
+      "integrity": "sha512-sGnvb5dmrJaKEZ+LDIpguvdX3bDlEllmv4/ClQ9awcmCZrlx5jQyyMWFM5kBI+EyNOCDDiKk8il0zeuX3Zlg/w==",
+      "dependencies": [
+        "@floating-ui/utils"
+      ]
+    },
+    "@floating-ui/dom@1.7.4": {
+      "integrity": "sha512-OOchDgh4F2CchOX94cRVqhvy7b3AFb+/rQXyswmzmGakRfkMgoWVjfnLWkRirfLEfuD4ysVW16eXzwt3jHIzKA==",
+      "dependencies": [
+        "@floating-ui/core",
+        "@floating-ui/utils"
+      ]
+    },
+    "@floating-ui/react-dom@2.1.6_react@19.2.0_react-dom@19.2.0__react@19.2.0": {
+      "integrity": "sha512-4JX6rEatQEvlmgU80wZyq9RT96HZJa88q8hp0pBd+LrczeDI4o6uA2M+uvxngVHo4Ihr8uibXxH6+70zhAFrVw==",
+      "dependencies": [
+        "@floating-ui/dom",
+        "react",
+        "react-dom"
+      ]
+    },
+    "@floating-ui/react@0.27.8_react@19.2.0_react-dom@19.2.0__react@19.2.0": {
+      "integrity": "sha512-EQJ4Th328y2wyHR3KzOUOoTW2UKjFk53fmyahfwExnFQ8vnsMYqKc+fFPOkeYtj5tcp1DUMiNJ7BFhed7e9ONw==",
+      "dependencies": [
+        "@floating-ui/react-dom",
+        "@floating-ui/utils",
+        "react",
+        "react-dom",
+        "tabbable"
+      ]
+    },
+    "@floating-ui/utils@0.2.10": {
+      "integrity": "sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ=="
+    },
     "@ioredis/commands@1.4.0": {
       "integrity": "sha512-aFT2yemJJo+TZCmieA7qnYGQooOS7QfNmYrzGtsYd3g9j5iDP8AimYYAesf79ohjbLG12XxC4nG5DyEnC88AsQ=="
     },
@@ -527,6 +568,37 @@
         "tar"
       ],
       "bin": true
+    },
+    "@navikt/aksel-icons@7.32.1": {
+      "integrity": "sha512-CSu9KU7J8lvlDriTxQK3VXwsZV+fv6zSMi71ausWFP5xmjJKRQkTOHdZpzeOef3bj460LZ+qhsKD8+Eds+tuEQ==",
+      "tarball": "https://npm.pkg.github.com/download/@navikt/aksel-icons/7.32.1/02c25e681fa3b7be8d79a00fee867e408baa22ac"
+    },
+    "@navikt/ds-css@7.32.1": {
+      "integrity": "sha512-lCNInSXvKlRhGFjoHEtNEcBKnOP9KjtXIwHJrqrHTaaQmr3a5hEbuOArC+iVAGcaXYmmZel0Bl5ZXP/tX3PPFA==",
+      "tarball": "https://npm.pkg.github.com/download/@navikt/ds-css/7.32.1/82653bee55d66f3c60d68a9e0c2b74f67f55cf92"
+    },
+    "@navikt/ds-react@7.32.1_@types+react@19.2.2_react@19.2.0_react-dom@19.2.0__react@19.2.0": {
+      "integrity": "sha512-IUztGTIstlisYDbzcMuemUCoQXtGVWvqL9TgafnXqwn/pZRwxDzUR32OpUNpaotW6AMQEIK2yhfzFsbHBHBUFw==",
+      "dependencies": [
+        "@floating-ui/react",
+        "@floating-ui/react-dom",
+        "@navikt/aksel-icons",
+        "@navikt/ds-tokens",
+        "@types/react",
+        "clsx",
+        "date-fns",
+        "react",
+        "react-day-picker"
+      ],
+      "tarball": "https://npm.pkg.github.com/download/@navikt/ds-react/7.32.1/8f3ed1f38de44c15a6006e2e01d049b0b9c21be4"
+    },
+    "@navikt/ds-tailwind@7.32.1": {
+      "integrity": "sha512-+v25KbtqOp/l45miBpXFpVigi6U58ZDfIdrpcHFVuMmh7d3u0ik0u2aiXg1WULRPUWr5PPiHmAPjQpsZ58IB1Q==",
+      "tarball": "https://npm.pkg.github.com/download/@navikt/ds-tailwind/7.32.1/a8523749a75a873876aa3ebdef529b0618872ee7"
+    },
+    "@navikt/ds-tokens@7.32.1": {
+      "integrity": "sha512-hDACF+rsNpPH2AcvD0xvTVfnHenMu2okosoQFwjt18WqbUa46DNSdy28ydgQpoPs4e3Fwk8L+ctrT/85w+zyXw==",
+      "tarball": "https://npm.pkg.github.com/download/@navikt/ds-tokens/7.32.1/50a447c61a00e24c7a44b5b5aa6fd2f1369a0eee"
     },
     "@navikt/pino-logger@4.3.3_pino@10.0.0": {
       "integrity": "sha512-JSPCbR9MBV+gyZXEdfYLoV38gtZEkDM/06ZDdAhfD/9WUeaXBGHvT5EScfaP6ADbfcgZTms/nj43QsM9a970sA==",
@@ -1969,6 +2041,9 @@
         "whatwg-url@15.1.0"
       ]
     },
+    "date-fns-jalali@4.1.0-0": {
+      "integrity": "sha512-hTIP/z+t+qKwBDcmmsnmjWTduxCg+5KfdqWQvb2X/8C9+knYY6epN/pfxdDuyVlSVeFz0sM5eEfwIUQ70U4ckg=="
+    },
     "date-fns@4.1.0": {
       "integrity": "sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg=="
     },
@@ -3207,6 +3282,15 @@
         "destr"
       ]
     },
+    "react-day-picker@9.7.0_react@19.2.0": {
+      "integrity": "sha512-urlK4C9XJZVpQ81tmVgd2O7lZ0VQldZeHzNejbwLWZSkzHH498KnArT0EHNfKBOWwKc935iMLGZdxXPRISzUxQ==",
+      "dependencies": [
+        "@date-fns/tz",
+        "date-fns",
+        "date-fns-jalali",
+        "react"
+      ]
+    },
     "react-dom@19.2.0_react@19.2.0": {
       "integrity": "sha512-UlbRu4cAiGaIewkPyiRGJk0imDN2T3JjieT6spoL2UeSf5od4n5LB/mQ4ejmxhCFT1tYe8IvaFulzynWovsEFQ==",
       "dependencies": [
@@ -3603,6 +3687,9 @@
     },
     "system-architecture@0.1.0": {
       "integrity": "sha512-ulAk51I9UVUyJgxlv9M6lFot2WP3e7t8Kz9+IS6D4rVba1tR9kON+Ey69f+1R4Q8cd45Lod6a4IcJIxnzGc/zA=="
+    },
+    "tabbable@6.2.0": {
+      "integrity": "sha512-Cat63mxsVJlzYvN51JmVXIgNoUokrIaT2zLclCXjRd8boZ0004U4KCs/sToJ75C6sdlByWxpYnb5Boif1VSFew=="
     },
     "tagged-tag@1.0.0": {
       "integrity": "sha512-yEFYrVhod+hdNyx7g5Bnkkb0G6si8HJurOoOEgC8B/O0uXLHlaey/65KRv6cuWBNhBgHKAROVpc7QyYqE5gFng=="
@@ -4136,6 +4223,10 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
+        "npm:@navikt/aksel-icons@^7.32.1",
+        "npm:@navikt/ds-css@^7.32.1",
+        "npm:@navikt/ds-react@^7.32.1",
+        "npm:@navikt/ds-tailwind@^7.32.1",
         "npm:@navikt/pino-logger@^4.3.3",
         "npm:@tailwindcss/vite@^4.0.6",
         "npm:@tanstack/nitro-v2-vite-plugin@^1.132.31",
