@@ -6,6 +6,13 @@ import { getRequestHeader } from "@tanstack/start-server-core";
 import { BodyShort, Detail, Skeleton, Tooltip } from "@navikt/ds-react";
 
 export const getLoggedInUser = createServerFn().handler(async () => {
+  if (import.meta.env.DEV) {
+    return {
+      name: "Test Bruker",
+      email: "test.bruker@nav.no",
+    };
+  }
+
   const token = getRequestHeader("authorization")?.replace("Bearer ", "");
   if (!token) return null;
 

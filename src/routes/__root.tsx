@@ -1,3 +1,4 @@
+import { PropsWithChildren } from "react";
 import {
   createRootRouteWithContext,
   HeadContent,
@@ -10,10 +11,10 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 
+import PageLayout from "../components/layout/PageLayout.tsx";
 import Header from "../components/Header.tsx";
 
 import appCss from "../styles.css?url";
-import { PropsWithChildren } from "react";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -49,7 +50,7 @@ function RootComponent() {
     <RootDocument>
       <Outlet />
     </RootDocument>
-  )
+  );
 }
 
 function RootDocument({ children }: PropsWithChildren) {
@@ -59,19 +60,18 @@ function RootDocument({ children }: PropsWithChildren) {
         <HeadContent />
       </head>
       <body>
-        <Header />
-        {children}
-        <TanStackDevtools
-          config={{
-            position: "bottom-right",
-          }}
-          plugins={[
-            {
-              name: "Tanstack Router",
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+        <PageLayout header={<Header />}>
+          {children}
+          <TanStackDevtools
+            config={{ position: "bottom-right" }}
+            plugins={[
+              {
+                name: "Tanstack Router",
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+            ]}
+          />
+        </PageLayout>
         <TanStackRouterDevtools position="bottom-right" />
         <ReactQueryDevtools buttonPosition="bottom-left" />
         <Scripts />
