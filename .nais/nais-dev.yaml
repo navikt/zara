@@ -21,6 +21,12 @@ spec:
       claims:
         groups:
           - id: "3a541678-8965-45c4-844b-486a8b9b94a3"
+    sidecar:
+      enabled: true
+      autoLogin: true
+      autoLoginIgnorePaths:
+        - /api/*
+        - /favicon.ico
   observability:
     autoInstrumentation:
       enabled: true

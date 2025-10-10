@@ -5,15 +5,19 @@
     "npm:@navikt/ds-css@^7.32.1": "7.32.1",
     "npm:@navikt/ds-react@^7.32.1": "7.32.1_@types+react@19.2.2_react@19.2.0_react-dom@19.2.0__react@19.2.0",
     "npm:@navikt/ds-tailwind@^7.32.1": "7.32.1",
+    "npm:@navikt/oasis@^3.8.0": "3.8.0",
     "npm:@navikt/pino-logger@^4.3.3": "4.3.3_pino@10.0.0",
     "npm:@tailwindcss/vite@^4.0.6": "4.1.14_vite@7.1.9__@types+node@22.18.8__picomatch@4.0.3_@types+node@22.18.8",
     "npm:@tanstack/nitro-v2-vite-plugin@^1.132.31": "1.132.40_vite@7.1.9__@types+node@22.18.8__picomatch@4.0.3_@types+node@22.18.8",
     "npm:@tanstack/react-devtools@0.7": "0.7.4_@types+react@19.2.2_@types+react-dom@19.2.1__@types+react@19.2.2_react@19.2.0_react-dom@19.2.0__react@19.2.0",
-    "npm:@tanstack/react-router-devtools@^1.132.0": "1.132.51_@tanstack+react-router@1.132.47__react@19.2.0__react-dom@19.2.0___react@19.2.0_react@19.2.0_react-dom@19.2.0__react@19.2.0_@types+node@22.18.8",
+    "npm:@tanstack/react-query-devtools@^5.90.2": "5.90.2_@tanstack+react-query@5.90.2__react@19.2.0_react@19.2.0",
+    "npm:@tanstack/react-query@^5.90.2": "5.90.2_react@19.2.0",
+    "npm:@tanstack/react-router-devtools@^1.132.51": "1.132.51_@tanstack+react-router@1.132.47__react@19.2.0__react-dom@19.2.0___react@19.2.0_react@19.2.0_react-dom@19.2.0__react@19.2.0_@types+node@22.18.8",
     "npm:@tanstack/react-router-ssr-query@^1.131.7": "1.132.47_@tanstack+query-core@5.90.2_@tanstack+react-query@5.90.2__react@19.2.0_@tanstack+react-router@1.132.47__react@19.2.0__react-dom@19.2.0___react@19.2.0_react@19.2.0_react-dom@19.2.0__react@19.2.0",
     "npm:@tanstack/react-router@^1.132.0": "1.132.47_react@19.2.0_react-dom@19.2.0__react@19.2.0",
     "npm:@tanstack/react-start@^1.132.0": "1.132.51_react@19.2.0_react-dom@19.2.0__react@19.2.0_vite@7.1.9__@types+node@22.18.8__picomatch@4.0.3_@types+node@22.18.8_@tanstack+react-router@1.132.47__react@19.2.0__react-dom@19.2.0___react@19.2.0",
     "npm:@tanstack/router-plugin@^1.132.0": "1.132.51_@tanstack+react-router@1.132.47__react@19.2.0__react-dom@19.2.0___react@19.2.0_vite@7.1.9__@types+node@22.18.8__picomatch@4.0.3_@babel+core@7.28.4_react@19.2.0_react-dom@19.2.0__react@19.2.0_@types+node@22.18.8",
+    "npm:@tanstack/start-server-core@^1.132.48": "1.132.48",
     "npm:@testing-library/dom@^10.4.0": "10.4.1",
     "npm:@testing-library/react@^16.2.0": "16.3.0_@testing-library+dom@10.4.1_@types+react@19.2.2_@types+react-dom@19.2.1__@types+react@19.2.2_react@19.2.0_react-dom@19.2.0__react@19.2.0",
     "npm:@types/node@^22.10.2": "22.18.8",
@@ -600,6 +604,15 @@
       "integrity": "sha512-hDACF+rsNpPH2AcvD0xvTVfnHenMu2okosoQFwjt18WqbUa46DNSdy28ydgQpoPs4e3Fwk8L+ctrT/85w+zyXw==",
       "tarball": "https://npm.pkg.github.com/download/@navikt/ds-tokens/7.32.1/50a447c61a00e24c7a44b5b5aa6fd2f1369a0eee"
     },
+    "@navikt/oasis@3.8.0": {
+      "integrity": "sha512-5CDsv3wop9eIw2YNBCJRr0w6PwwkoTiHzZQXn1+5YZnsksCkHJAFsfKSbRle6zgsD+XRBnc/TPOP0nvNly7NWg==",
+      "dependencies": [
+        "jose@5.10.0",
+        "openid-client",
+        "prom-client"
+      ],
+      "tarball": "https://npm.pkg.github.com/download/@navikt/oasis/3.8.0/fc6862d934adfbefa382220614af18160688cd1e"
+    },
     "@navikt/pino-logger@4.3.3_pino@10.0.0": {
       "integrity": "sha512-JSPCbR9MBV+gyZXEdfYLoV38gtZEkDM/06ZDdAhfD/9WUeaXBGHvT5EScfaP6ADbfcgZTms/nj43QsM9a970sA==",
       "dependencies": [
@@ -651,6 +664,9 @@
     },
     "@oozcitak/util@8.3.8": {
       "integrity": "sha512-T8TbSnGsxo6TDBJx/Sgv/BlVJL3tshxZP7Aq5R1mSnM5OcHY2dQaxLMu2+E8u3gN0MLOzdjurqN4ZRVuzQycOQ=="
+    },
+    "@opentelemetry/api@1.9.0": {
+      "integrity": "sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg=="
     },
     "@parcel/watcher-android-arm64@2.5.1": {
       "integrity": "sha512-KF8+j9nNbUN8vzOFDpRMsaKBHZ/mcjEjMToVMJOhTozkDonQFFrRcfdLWn6yWKCmJKmdVxSgHiYvTCef4/qcBA==",
@@ -1174,6 +1190,9 @@
     "@tanstack/query-core@5.90.2": {
       "integrity": "sha512-k/TcR3YalnzibscALLwxeiLUub6jN5EDLwKDiO7q5f4ICEoptJ+n9+7vcEFy5/x/i6Q+Lb/tXrsKCggf5uQJXQ=="
     },
+    "@tanstack/query-devtools@5.90.1": {
+      "integrity": "sha512-GtINOPjPUH0OegJExZ70UahT9ykmAhmtNVcmtdnOZbxLwT7R5OmRztR5Ahe3/Cu7LArEmR6/588tAycuaWb1xQ=="
+    },
     "@tanstack/react-devtools@0.7.4_@types+react@19.2.2_@types+react-dom@19.2.1__@types+react@19.2.2_react@19.2.0_react-dom@19.2.0__react@19.2.0": {
       "integrity": "sha512-bRuvMR5elO51Z7Jy+3wRUyPD0+a5u4pUD3x+YU9Vyh9AE5xG83D6YJvSqfscua5kV1hs462V16kABtM3WWlEhQ==",
       "dependencies": [
@@ -1182,6 +1201,14 @@
         "@types/react-dom",
         "react",
         "react-dom"
+      ]
+    },
+    "@tanstack/react-query-devtools@5.90.2_@tanstack+react-query@5.90.2__react@19.2.0_react@19.2.0": {
+      "integrity": "sha512-vAXJzZuBXtCQtrY3F/yUNJCV4obT/A/n81kb3+YqLbro5Z2+phdAbceO+deU3ywPw8B42oyJlp4FhO0SoivDFQ==",
+      "dependencies": [
+        "@tanstack/query-devtools",
+        "@tanstack/react-query",
+        "react"
       ]
     },
     "@tanstack/react-query@5.90.2_react@19.2.0": {
@@ -1764,6 +1791,9 @@
       "dependencies": [
         "file-uri-to-path"
       ]
+    },
+    "bintrees@1.0.2": {
+      "integrity": "sha512-VOMgTMwjAaUG580SXn3LacVgjurrbMme7ZZNYGSSV7mmtY6QQRh0Eg3pwIcntQ77DErK1L0NxkbetjcoXzVwKw=="
     },
     "boolbase@1.0.0": {
       "integrity": "sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww=="
@@ -2620,6 +2650,12 @@
       "integrity": "sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==",
       "bin": true
     },
+    "jose@4.15.9": {
+      "integrity": "sha512-1vUQX+IdDMVPj4k8kOxgUqlcK518yluMuGZwqlr44FS1ppZB/5GWh4rZG89erpOBOJjU/OBsnCVFfapsRz6nEA=="
+    },
+    "jose@5.10.0": {
+      "integrity": "sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg=="
+    },
     "js-tokens@4.0.0": {
       "integrity": "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="
     },
@@ -2804,6 +2840,12 @@
       "integrity": "sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==",
       "dependencies": [
         "yallist@3.1.1"
+      ]
+    },
+    "lru-cache@6.0.0": {
+      "integrity": "sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==",
+      "dependencies": [
+        "yallist@4.0.0"
       ]
     },
     "lucide-react@0.544.0_react@19.2.0": {
@@ -3044,6 +3086,9 @@
       ],
       "bin": true
     },
+    "object-hash@2.2.0": {
+      "integrity": "sha512-gScRMn0bS5fH+IuwyIFgnh9zBdo4DV+6GhygmWM9HyNJSgS0hScp1f5vjtm7oIIOiT9trXrShAkLFSc2IqKNgw=="
+    },
     "ofetch@1.4.1": {
       "integrity": "sha512-QZj2DfGplQAr2oj9KzceK9Hwz6Whxazmn85yYeVuS3u9XTMOGMRx0kO95MQ+vLsj/S/NwBDMMLU5hpxvI6Tklw==",
       "dependencies": [
@@ -3054,6 +3099,9 @@
     },
     "ohash@2.0.11": {
       "integrity": "sha512-RdR9FQrFwNBNXAr4GixM8YaRZRJ5PUWbKYbE5eOsrwAjJW0q2REGcf79oYPsLyskQCZG1PLN+S/K1V00joZAoQ=="
+    },
+    "oidc-token-hash@5.1.1": {
+      "integrity": "sha512-D7EmwxJV6DsEB6vOFLrBM2OzsVgQzgPWyHlV2OOAVj772n+WTXpudC9e9u5BVKQnYwaD30Ivhi9b+4UeBcGu9g=="
     },
     "on-exit-leak-free@2.1.2": {
       "integrity": "sha512-0eJJY6hXLGf1udHwfNftBqH+g73EU4B504nZeKpz1sYRKafAghwxEJunB2O7rDZkL4PGfsMVnTXZ2EjibbqcsA=="
@@ -3082,6 +3130,15 @@
         "define-lazy-prop",
         "is-docker@2.2.1",
         "is-wsl@2.2.0"
+      ]
+    },
+    "openid-client@5.7.1": {
+      "integrity": "sha512-jDBPgSVfTnkIh71Hg9pRvtJc6wTwqjRkN88+gCFtYWrlP4Yx2Dsrow8uPi3qLr/aeymPF3o2+dS+wOpglK04ew==",
+      "dependencies": [
+        "jose@4.15.9",
+        "lru-cache@6.0.0",
+        "object-hash",
+        "oidc-token-hash"
       ]
     },
     "package-json-from-dist@1.0.1": {
@@ -3243,6 +3300,13 @@
     },
     "process@0.11.10": {
       "integrity": "sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A=="
+    },
+    "prom-client@15.1.3": {
+      "integrity": "sha512-6ZiOBfCywsD4k1BN9IX0uZhF+tJkV8q8llP64G5Hajs4JOeVLPCwpPVcpXy3BwYiUGgyJzsJJQeOIv7+hDSq8g==",
+      "dependencies": [
+        "@opentelemetry/api",
+        "tdigest"
+      ]
     },
     "pump@3.0.3": {
       "integrity": "sha512-todwxLMY7/heScKmntwQG8CXVkWUOdYxIvY2s0VWAAMh/nd8SoYiRaKjlr7+iCs984f2P8zvrfWcDDYVb73NfA==",
@@ -3718,6 +3782,12 @@
         "yallist@5.0.0"
       ]
     },
+    "tdigest@0.1.2": {
+      "integrity": "sha512-+G0LLgjjo9BZX2MfdvPfH+MKLCrxlXSYec5DaPYP1fe6Iyhf0/fSmJ0bFiZ1F8BT6cGXl2LpltQptzjXKWEkKA==",
+      "dependencies": [
+        "bintrees"
+      ]
+    },
     "terser@5.44.0": {
       "integrity": "sha512-nIVck8DK+GM/0Frwd+nIhZ84pR/BX7rmXMfYwyg+Sri5oGVE99/E3KvXqpC2xHFxyqXyGHTKBSioxxplrO4I4w==",
       "dependencies": [
@@ -4173,6 +4243,9 @@
     "yallist@3.1.1": {
       "integrity": "sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g=="
     },
+    "yallist@4.0.0": {
+      "integrity": "sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A=="
+    },
     "yallist@5.0.0": {
       "integrity": "sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw=="
     },
@@ -4227,15 +4300,19 @@
         "npm:@navikt/ds-css@^7.32.1",
         "npm:@navikt/ds-react@^7.32.1",
         "npm:@navikt/ds-tailwind@^7.32.1",
+        "npm:@navikt/oasis@^3.8.0",
         "npm:@navikt/pino-logger@^4.3.3",
         "npm:@tailwindcss/vite@^4.0.6",
         "npm:@tanstack/nitro-v2-vite-plugin@^1.132.31",
         "npm:@tanstack/react-devtools@0.7",
-        "npm:@tanstack/react-router-devtools@^1.132.0",
+        "npm:@tanstack/react-query-devtools@^5.90.2",
+        "npm:@tanstack/react-query@^5.90.2",
+        "npm:@tanstack/react-router-devtools@^1.132.51",
         "npm:@tanstack/react-router-ssr-query@^1.131.7",
         "npm:@tanstack/react-router@^1.132.0",
         "npm:@tanstack/react-start@^1.132.0",
         "npm:@tanstack/router-plugin@^1.132.0",
+        "npm:@tanstack/start-server-core@^1.132.48",
         "npm:@testing-library/dom@^10.4.0",
         "npm:@testing-library/react@^16.2.0",
         "npm:@types/node@^22.10.2",

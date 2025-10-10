@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Heading } from "@navikt/ds-react";
 
 import logo from "./logo.webp";
+import { LoggedInUser } from "./logged-in-user/LoggedInUser.tsx";
 
 function Header(): ReactElement {
   return (
@@ -13,6 +14,9 @@ function Header(): ReactElement {
           Zara - Team SYMFONI
         </Heading>
       </Link>
+      <div>
+        <LoggedInUser />
+      </div>
     </div>
   );
 }

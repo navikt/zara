@@ -1,12 +1,23 @@
-import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import {
+  createRootRouteWithContext,
+  HeadContent,
+  Outlet,
+  Scripts,
+} from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import type { QueryClient } from "@tanstack/react-query";
 
-import Header from "../components/Header";
+import Header from "../components/Header.tsx";
 
 import appCss from "../styles.css?url";
+import { PropsWithChildren } from "react";
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -22,7 +33,7 @@ export const Route = createRootRoute({
         href: "https://cdn.nav.no/aksel/fonts/SourceSans3-normal.woff2",
         as: "font",
         type: "font/woff2",
-        crossorigin: true,
+        crossOrigin: "anonymous",
       },
       {
         rel: "stylesheet",
@@ -30,11 +41,18 @@ export const Route = createRootRoute({
       },
     ],
   }),
-
-  shellComponent: RootDocument,
+  component: RootComponent,
 });
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootComponent() {
+  return (
+    <RootDocument>
+      <Outlet />
+    </RootDocument>
+  )
+}
+
+function RootDocument({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <head>
@@ -54,6 +72,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             },
           ]}
         />
+        <TanStackRouterDevtools position="bottom-right" />
+        <ReactQueryDevtools buttonPosition="bottom-left" />
         <Scripts />
       </body>
     </html>
