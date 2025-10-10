@@ -9,5 +9,6 @@ EXPOSE 3000
 
 ENV NODE_ENV=production
 ENV DENO_TRACE_PERMISSIONS=1
+ENV DENO_UNSTABLE_DETECT_CJS=1
 
-CMD ["--no-prompt", "-P", "server/index.mjs"]
+CMD ["--no-prompt", "--allow-all", "server/index.mjs"]

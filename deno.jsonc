@@ -2,22 +2,21 @@
   "permissions": {
     "default": {
       "env": [
-        'NITRO_*',
-        '_NITRO*',
+        "NITRO_*",
+        "_NITRO*",
         "_APP*",
         "NODE_ENV",
         "PORT",
         "HOST",
         "DEBUG",
-        "TSS_*",
+        "TSS_*"
       ],
       "read": [
         "/app/public",
         "/app/server"
       ],
-      "sys": [
-      ],
-      "net": true,
-    },
-  },
+      "sys": [],
+      "net": true
+    }
+  }
 }

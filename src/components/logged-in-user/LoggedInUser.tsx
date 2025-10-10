@@ -1,23 +1,33 @@
 import { ReactElement } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
-import { getRequest } from "@tanstack/start-server-core";
+import { getRequestHeader } from "@tanstack/start-server-core";
 import { BodyShort, Detail, Skeleton, Tooltip } from "@navikt/ds-react";
-import { getToken, parseAzureUserToken } from "@navikt/oasis";
 
 export const getLoggedInUser = createServerFn().handler(async () => {
-  const token = getToken(getRequest());
+  const token = getRequestHeader("authorization")?.replace("Bearer ", "");
   if (!token) return null;
 
-  const parsed = parseAzureUserToken(token);
+  const texasIntrospect = await fetch("http://texas/api/v1/introspect", {
+    method: "POST",
+    body: JSON.stringify({
+      "identity_provider": "azuread",
+      "token": token,
+    }),
+  });
 
-  if (!parsed.ok) {
+  if (!texasIntrospect.ok) {
+    console.error("Failed to introspect token", await texasIntrospect.text());
     return null;
   }
 
+  const body = await texasIntrospect.json();
+
+  console.info(`Debug body: ${JSON.stringify(body)}`);
+
   return {
-    name: parsed.name,
-    email: parsed.NAVident,
+    name: body.name,
+    email: body.NAVident,
   };
 });
 
