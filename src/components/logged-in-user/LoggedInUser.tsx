@@ -1,3 +1,4 @@
+import process from "node:process";
 import { ReactElement } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
@@ -8,13 +9,17 @@ export const getLoggedInUser = createServerFn().handler(async () => {
   const token = getRequestHeader("authorization")?.replace("Bearer ", "");
   if (!token) return null;
 
-  const texasIntrospect = await fetch("http://texas/api/v1/introspect", {
-    method: "POST",
-    body: JSON.stringify({
-      "identity_provider": "azuread",
-      "token": token,
-    }),
-  });
+  const texasIntrospect = await fetch(
+    process.env.NAIS_TOKEN_INTROSPECTION_ENDPOINT!,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        "identity_provider": "azuread",
+        "token": token,
+      }),
+    },
+  );
 
   if (!texasIntrospect.ok) {
     console.error("Failed to introspect token", await texasIntrospect.text());

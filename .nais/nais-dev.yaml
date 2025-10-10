@@ -1,12 +1,12 @@
-apiVersion: 'nais.io/v1alpha1'
-kind: 'Application'
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
 metadata:
   name: zara
   namespace: tsm
   labels:
     team: tsm
 spec:
-  image: {{image}}
+  image: {{ image }}
   port: 3000
   replicas:
     min: 1
@@ -15,12 +15,9 @@ spec:
     - "https://zara.intern.dev.nav.no"
   azure:
     application:
-      enabled: true
       allowAllUsers: true
-      tenant: nav.no
-      claims:
-        groups:
-          - id: "3a541678-8965-45c4-844b-486a8b9b94a3"
+      enabled: true
+      tenant: trygdeetaten.no
     sidecar:
       enabled: true
       autoLogin: true
@@ -42,7 +39,7 @@ spec:
   accessPolicy:
     outbound:
       external:
-        - host: 'tsm-unleash-api.nav.cloud.nais.io'
+        - host: "tsm-unleash-api.nav.cloud.nais.io"
       rules:
         - application: tsm-pdl-cache
         - application: logging
