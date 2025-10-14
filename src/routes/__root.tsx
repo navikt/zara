@@ -4,9 +4,9 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtools, TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import type { PropsWithChildren } from "react";
+
 import Header from "../components/Header.tsx";
 import PageLayout from "../components/layout/PageLayout.tsx";
-
 import appCss from "../styles.css?url";
 
 export const Route = createRootRouteWithContext<{

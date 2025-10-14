@@ -1,6 +1,7 @@
 import { Heading } from "@navikt/ds-react";
 import { Link } from "@tanstack/react-router";
 import type { ReactElement } from "react";
+
 import { LoggedInUser } from "./logged-in-user/LoggedInUser.tsx";
 import logo from "./logo.webp";
 

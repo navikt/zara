@@ -1,37 +1,8 @@
 import { BodyShort, Detail, Skeleton, Tooltip } from "@navikt/ds-react";
-import { getToken, parseAzureUserToken } from "@navikt/oasis";
 import { useQuery } from "@tanstack/react-query";
-import { createServerFn } from "@tanstack/react-start";
-import { getRequest } from "@tanstack/start-server-core";
 import type { ReactElement } from "react";
 
-export const getLoggedInUser = createServerFn().handler(async () => {
-  if (import.meta.env.DEV) {
-    return {
-      name: "Test Bruker",
-      email: "test.bruker@nav.no",
-    };
-  }
-
-  const token = getToken(getRequest());
-  if (!token) return null;
-
-  try {
-    const parsedToken = parseAzureUserToken(token);
-    if (!parsedToken.ok) {
-      console.error(`Unable to parse token: ${parsedToken.error}`);
-      return null;
-    }
-
-    return {
-      name: parsedToken.name,
-      email: parsedToken.NAVident,
-    };
-  } catch (e) {
-    console.error("Failed to introspect token", e);
-    return null;
-  }
-});
+import { getLoggedInUser } from "./logged-in-user-actions.ts";
 
 export function LoggedInUser(): ReactElement {
   const {

@@ -1,5 +1,4 @@
 import type { PersonGroupIcon } from "@navikt/aksel-icons";
-
 import { Heading } from "@navikt/ds-react";
 import type { PropsWithChildren, ReactElement } from "react";
 
