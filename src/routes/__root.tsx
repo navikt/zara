@@ -1,18 +1,11 @@
-import { PropsWithChildren } from "react";
-import {
-  createRootRouteWithContext,
-  HeadContent,
-  Outlet,
-  Scripts,
-} from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type { QueryClient } from "@tanstack/react-query";
-
-import PageLayout from "../components/layout/PageLayout.tsx";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import { TanStackRouterDevtools, TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import type { PropsWithChildren } from "react";
 import Header from "../components/Header.tsx";
+import PageLayout from "../components/layout/PageLayout.tsx";
 
 import appCss from "../styles.css?url";
 

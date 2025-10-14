@@ -1,9 +1,8 @@
-import { ReactElement } from "react";
-import { Link } from "@tanstack/react-router";
 import { Heading } from "@navikt/ds-react";
-
-import logo from "./logo.webp";
+import { Link } from "@tanstack/react-router";
+import type { ReactElement } from "react";
 import { LoggedInUser } from "./logged-in-user/LoggedInUser.tsx";
+import logo from "./logo.webp";
 
 function Header(): ReactElement {
   return (

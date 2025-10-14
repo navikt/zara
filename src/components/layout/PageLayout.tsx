@@ -1,11 +1,14 @@
-import { PropsWithChildren, ReactElement, ReactNode } from "react";
 import { Page } from "@navikt/ds-react";
+import type { PropsWithChildren, ReactElement, ReactNode } from "react";
 
 import Sidebar from "../sidebar/Sidebar.tsx";
 
 import styles from "./PageLayout.module.css";
 
-function PageLayout({ header, children }: PropsWithChildren<{
+function PageLayout({
+  header,
+  children,
+}: PropsWithChildren<{
   header: ReactNode;
 }>): ReactElement {
   return (

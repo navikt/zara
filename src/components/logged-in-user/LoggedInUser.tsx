@@ -1,9 +1,9 @@
-import { ReactElement } from "react";
+import { BodyShort, Detail, Skeleton, Tooltip } from "@navikt/ds-react";
+import { getToken, parseAzureUserToken } from "@navikt/oasis";
 import { useQuery } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/start-server-core";
-import { BodyShort, Detail, Skeleton, Tooltip } from "@navikt/ds-react";
-import { getToken, parseAzureUserToken } from "@navikt/oasis";
+import type { ReactElement } from "react";
 
 export const getLoggedInUser = createServerFn().handler(async () => {
   if (import.meta.env.DEV) {
@@ -19,8 +19,8 @@ export const getLoggedInUser = createServerFn().handler(async () => {
   try {
     const parsedToken = parseAzureUserToken(token);
     if (!parsedToken.ok) {
-        console.error(`Unable to parse token: ${parsedToken.error}`)
-        return null;
+      console.error(`Unable to parse token: ${parsedToken.error}`);
+      return null;
     }
 
     return {
@@ -34,7 +34,11 @@ export const getLoggedInUser = createServerFn().handler(async () => {
 });
 
 export function LoggedInUser(): ReactElement {
-  const { data: user, isLoading, error } = useQuery({
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["user"],
     queryFn: getLoggedInUser,
   });

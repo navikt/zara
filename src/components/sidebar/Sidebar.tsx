@@ -1,7 +1,7 @@
-import { ReactElement } from "react";
-import SidebarMenuItem from "./SidebarMenuItem.tsx";
 import { BandageIcon } from "@navikt/aksel-icons";
 import { Link } from "@tanstack/react-router";
+import type { ReactElement } from "react";
+import SidebarMenuItem from "./SidebarMenuItem.tsx";
 
 type Props = {
   className?: string;
