@@ -1,9 +1,9 @@
-import process from "node:process";
 import { ReactElement } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestHeader } from "@tanstack/start-server-core";
+import { getRequest } from "@tanstack/start-server-core";
 import { BodyShort, Detail, Skeleton, Tooltip } from "@navikt/ds-react";
+import { getToken, parseAzureUserToken } from "@navikt/oasis";
 
 export const getLoggedInUser = createServerFn().handler(async () => {
   if (import.meta.env.DEV) {
@@ -13,34 +13,24 @@ export const getLoggedInUser = createServerFn().handler(async () => {
     };
   }
 
-  const token = getRequestHeader("authorization")?.replace("Bearer ", "");
+  const token = getToken(getRequest());
   if (!token) return null;
 
-  const texasIntrospect = await fetch(
-    process.env.NAIS_TOKEN_INTROSPECTION_ENDPOINT!,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        "identity_provider": "azuread",
-        "token": token,
-      }),
-    },
-  );
+  try {
+    const parsedToken = parseAzureUserToken(token);
+    if (!parsedToken.ok) {
+        console.error(`Unable to parse token: ${parsedToken.error}`)
+        return null;
+    }
 
-  if (!texasIntrospect.ok) {
-    console.error("Failed to introspect token", await texasIntrospect.text());
+    return {
+      name: parsedToken.name,
+      email: parsedToken.NAVident,
+    };
+  } catch (e) {
+    console.error("Failed to introspect token", e);
     return null;
   }
-
-  const body = await texasIntrospect.json();
-
-  console.info(`Debug body: ${JSON.stringify(body)}`);
-
-  return {
-    name: body.name,
-    email: body.NAVident,
-  };
 });
 
 export function LoggedInUser(): ReactElement {

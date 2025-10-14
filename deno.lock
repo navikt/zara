@@ -5,6 +5,7 @@
     "npm:@navikt/ds-css@^7.32.1": "7.32.1",
     "npm:@navikt/ds-react@^7.32.1": "7.32.1_@types+react@19.2.2_react@19.2.0_react-dom@19.2.0__react@19.2.0",
     "npm:@navikt/ds-tailwind@^7.32.1": "7.32.1",
+    "npm:@navikt/oasis@^4.0.0-20251014130705": "4.0.0-20251014130705",
     "npm:@navikt/pino-logger@^4.3.3": "4.3.3_pino@10.0.0",
     "npm:@tailwindcss/vite@^4.0.6": "4.1.14_vite@7.1.9__@types+node@22.18.8__picomatch@4.0.3_@types+node@22.18.8",
     "npm:@tanstack/nitro-v2-vite-plugin@^1.132.31": "1.132.40_vite@7.1.9__@types+node@22.18.8__picomatch@4.0.3_@types+node@22.18.8",
@@ -602,6 +603,10 @@
     "@navikt/ds-tokens@7.32.1": {
       "integrity": "sha512-hDACF+rsNpPH2AcvD0xvTVfnHenMu2okosoQFwjt18WqbUa46DNSdy28ydgQpoPs4e3Fwk8L+ctrT/85w+zyXw==",
       "tarball": "https://npm.pkg.github.com/download/@navikt/ds-tokens/7.32.1/50a447c61a00e24c7a44b5b5aa6fd2f1369a0eee"
+    },
+    "@navikt/oasis@4.0.0-20251014130705": {
+      "integrity": "sha512-LjCRTLCFmiibzv9VB43xgRigcK4CsFIYqzXm42N3YlH8N2+Qrq/A0TDfCsj6YIPhG1dca4bw/FCunzWeExVKCA==",
+      "tarball": "https://npm.pkg.github.com/download/@navikt/oasis/4.0.0-20251014130705/c1e6bab3fea5fd79766e6778c21ff7d4cb3fe391"
     },
     "@navikt/pino-logger@4.3.3_pino@10.0.0": {
       "integrity": "sha512-JSPCbR9MBV+gyZXEdfYLoV38gtZEkDM/06ZDdAhfD/9WUeaXBGHvT5EScfaP6ADbfcgZTms/nj43QsM9a970sA==",
@@ -4241,6 +4246,7 @@
         "npm:@navikt/ds-css@^7.32.1",
         "npm:@navikt/ds-react@^7.32.1",
         "npm:@navikt/ds-tailwind@^7.32.1",
+        "npm:@navikt/oasis@^4.0.0-20251014130705",
         "npm:@navikt/pino-logger@^4.3.3",
         "npm:@tailwindcss/vite@^4.0.6",
         "npm:@tanstack/nitro-v2-vite-plugin@^1.132.31",
