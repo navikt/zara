@@ -2,8 +2,8 @@ FROM denoland/deno:distroless-2.5-3@sha256:fa186b5128ad3a95cca539ab3af738c522ba7
 
 WORKDIR /app
 
-COPY .output /app/
-COPY deno.jsonc /app/server
+COPY next-logger.config.cjs /app/
+COPY .next/standalone /app/
 
 EXPOSE 3000
 
@@ -11,4 +11,4 @@ ENV NODE_ENV=production
 ENV DENO_TRACE_PERMISSIONS=1
 ENV DENO_UNSTABLE_DETECT_CJS=1
 
-CMD ["--no-prompt", "--allow-all", "server/index.mjs"]
+CMD ["--no-prompt", "--allow-all", "server.js"]

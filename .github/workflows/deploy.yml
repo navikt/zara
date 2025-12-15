@@ -17,17 +17,15 @@ jobs:
         with:
           deno-version: v2.x
       - run: echo "NPM_AUTH_TOKEN=${{ secrets.READER_TOKEN }}" >> $GITHUB_ENV
-      - run: deno install --allow-scripts=npm:@parcel/watcher,npm:@tailwindcss/oxide
-      - run: deno task build
-      - name: Push docker image to GAR
-        uses: nais/docker-build-push@v0
-        env:
-          ACTIONS_RUNTIME_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
-          DOCKER_BUILD_SUMMARY: false
-        id: docker-build-push
+      - run: deno install
+      - uses: navikt/tsm-workflows/actions/next/next-to-gar@main
+        id: build-and-publish
         with:
+          app: zara
+          env: dev
           team: tsm
-          image_suffix: dev
+          build-command: 'deno run build'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       image: ${{ steps.docker-build-push.outputs.image }}
 

@@ -1,58 +1,46 @@
 {
-  "name": "zara",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "vite dev --port 3000",
-    "build": "vite build",
-    "serve": "vite preview",
-    "test": "vitest run",
-    "prepare": "husky"
-  },
-  "dependencies": {
-    "@navikt/aksel-icons": "^7.32.1",
-    "@navikt/ds-css": "^7.32.1",
-    "@navikt/ds-react": "^7.32.1",
-    "@navikt/ds-tailwind": "^7.32.1",
-    "@navikt/oasis": "^4.0.0-20251014130705",
-    "@navikt/pino-logger": "^4.3.3",
-    "@tailwindcss/vite": "^4.1.14",
-    "@tanstack/nitro-v2-vite-plugin": "^1.132.40",
-    "@tanstack/react-devtools": "^0.7.6",
-    "@tanstack/react-query": "^5.90.3",
-    "@tanstack/react-query-devtools": "^5.90.2",
-    "@tanstack/react-router": "^1.132.47",
-    "@tanstack/react-router-devtools": "^1.133.1",
-    "@tanstack/react-router-ssr-query": "^1.132.47",
-    "@tanstack/react-start": "^1.132.56",
-    "@tanstack/router-plugin": "^1.132.56",
-    "@tanstack/start-server-core": "^1.132.54",
-    "lucide-react": "^0.545.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "tailwindcss": "^4.1.14",
-    "vite-tsconfig-paths": "^5.1.4"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.2.6",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/react": "^16.3.0",
-    "@types/node": "^24.7.2",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "@vitejs/plugin-react": "^5.0.4",
-    "husky": "^9.1.7",
-    "jsdom": "^27.0.0",
-    "lint-staged": "^16.2.4",
-    "typescript": "^5.9.3",
-    "vite": "^7.1.10",
-    "vitest": "^3.2.4",
-    "web-vitals": "^5.1.0"
-  },
-  "lint-staged": {
-    "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
-      "biome format --write --no-errors-on-unmatched",
-      "biome lint --write --no-errors-on-unmatched"
-    ]
-  }
+    "name": "zara",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "gen": "next typegen",
+        "lint": "biome check",
+        "lint:fix": "biome check --write",
+        "prepare": "husky"
+    },
+    "dependencies": {
+        "@navikt/aksel-icons": "^7.35.2",
+        "@navikt/ds-css": "^7.35.2",
+        "@navikt/ds-react": "^7.35.2",
+        "@navikt/ds-tailwind": "^7.35.2",
+        "@navikt/next-logger": "^4.4.4",
+        "@navikt/oasis": "^4.1.1",
+        "@navikt/pino-logger": "^4.4.4",
+        "next": "^16.0.10",
+        "react": "^19.2.3",
+        "react-dom": "^19.2.3"
+    },
+    "devDependencies": {
+        "@navikt/tsm-biome": "^1.0.1",
+        "@tailwindcss/postcss": "^4.1.18",
+        "tailwindcss": "^4.1.18",
+        "@biomejs/biome": "^2.3.8",
+        "@types/node": "^24.10.4",
+        "@types/react": "^19.2.7",
+        "@types/react-dom": "^19.2.3",
+        "husky": "^9.1.7",
+        "jsdom": "^27.3.0",
+        "lint-staged": "^16.2.7",
+        "typescript": "^5.9.3",
+        "vitest": "^4.0.15"
+    },
+    "lint-staged": {
+        "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}": [
+            "biome format --write --no-errors-on-unmatched",
+            "biome lint --write --no-errors-on-unmatched"
+        ]
+    }
 }

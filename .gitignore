@@ -1,16 +1,18 @@
 node_modules
 .DS_Store
-dist
-dist-ssr
-*.local
-count.txt
-.env
-.nitro
-.tanstack
-.output
-.vinxi
-todos.json
 
 # IDE
 .idea
 .vscode
+
+# next.js
+/.next/
+/out/
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# local env files
+.env*.local
+.env.production
