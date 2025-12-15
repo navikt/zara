@@ -8,21 +8,18 @@ metadata:
 spec:
   port: 3000
   replicas:
-    min: 1
+    min: 2
     max: 2
   ingresses:
-    - 'https://zara.intern.dev.nav.no'
+    - 'https://zara.intern.nav.no'
   azure:
     application:
-      allowAllUsers: true
       enabled: true
-      tenant: trygdeetaten.no
-    sidecar:
-      enabled: true
-      autoLogin: true
-      autoLoginIgnorePaths:
-        - /api/*
-        - /favicon.ico
+      tenant: nav.no
+      claims:
+        groups:
+          # EntraAD: nais-team-tsm
+          - id: '35c70ac7-e8e6-4cec-933b-86106a97c0d4'
   observability:
     autoInstrumentation:
       enabled: true

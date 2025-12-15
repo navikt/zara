@@ -1,14 +1,13 @@
-FROM denoland/deno:distroless-2.5-3@sha256:fa186b5128ad3a95cca539ab3af738c522ba793bfbe71b7aa983daaba573bcd4
+FROM gcr.io/distroless/nodejs24-debian12@sha256:056a45d3ba58057ca4f39036f8350216260d347b72082540f049cef5fe1d9c0a
 
 WORKDIR /app
 
-COPY .output /app/
-COPY deno.jsonc /app/server
+COPY next-logger.config.cjs /app/
+COPY .next/standalone /app/
 
 EXPOSE 3000
 
 ENV NODE_ENV=production
-ENV DENO_TRACE_PERMISSIONS=1
-ENV DENO_UNSTABLE_DETECT_CJS=1
+ENV HOSTNAME=0.0.0.0
 
-CMD ["--no-prompt", "--allow-all", "server/index.mjs"]
+CMD ["server.js"]
