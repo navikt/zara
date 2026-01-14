@@ -31,7 +31,6 @@ spec:
     logging:
       destinations:
         - id: loki
-        - id: elastic
   liveness:
     path: /api/internal/is-alive
   readiness:
