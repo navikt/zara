@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react'
 
 function Page(): ReactElement {
-    return <div>Hello I am Zara</div>
+    return <main className="p-4">Hello I am Zara!</main>
 }
 
 export default Page
