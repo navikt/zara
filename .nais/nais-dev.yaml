@@ -46,6 +46,8 @@ spec:
       mountPath: /app/.next/cache
   accessPolicy:
     outbound:
+      external:
+        - host: cdn.nav.no
       rules:
         - application: logging
           namespace: nais-system

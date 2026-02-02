@@ -42,6 +42,8 @@ spec:
         medium: Memory
       mountPath: /app/.next/cache
   accessPolicy:
+    external:
+      - host: cdn.nav.no
     outbound:
       rules:
         - application: logging
