@@ -57,8 +57,9 @@ const ServerEnvSchema = z.object({
  * the server is configured correctly before receiving any traffic.
  */
 export function getServerEnv(): ServerEnv {
+    const useLocalSykInn = process.env.USE_SYK_INN_VALKEY === 'true'
     const valkeyConfig =
-        bundledEnv.runtimeEnv === 'dev-gcp' || bundledEnv.runtimeEnv === 'prod-gcp'
+        bundledEnv.runtimeEnv === 'dev-gcp' || bundledEnv.runtimeEnv === 'prod-gcp' || useLocalSykInn
             ? ({
                   runtimeEnv: process.env.NEXT_PUBLIC_RUNTIME_ENV,
                   username: process.env.VALKEY_USERNAME_SYK_INN,
@@ -74,7 +75,7 @@ export function getServerEnv(): ServerEnv {
             : undefined
 
     const parsedEnv = ServerEnvSchema.parse({
-        useSykInnValkey: process.env.USE_SYK_INN_VALKEY === 'true',
+        useSykInnValkey: useLocalSykInn,
         valkeyConfig: valkeyConfig,
     } satisfies Record<keyof ServerEnv, unknown | undefined>)
 
