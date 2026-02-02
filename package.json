@@ -7,7 +7,7 @@
         "node": "24"
     },
     "scripts": {
-        "dev": "yarn dev:next",
+        "dev": "./scripts/pre-dev.sh && PORT=3005 yarn dev:next",
         "dev:next": "next dev --turbo | pino-pretty --messageKey=message",
         "build": "./scripts/pre-build.sh && next build",
         "lint": "eslint src",

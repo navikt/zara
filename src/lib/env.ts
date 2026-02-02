@@ -1,6 +1,6 @@
 import * as z from 'zod'
 
-import { raise } from './ts'
+import { KeysOfUnion, raise } from './ts'
 
 export type BundledEnv = z.infer<typeof BundledEnvSchema>
 const BundledEnvSchema = z.object({
@@ -21,10 +21,31 @@ export const bundledEnv = BundledEnvSchema.parse({
     NEXT_PUBLIC_BUILD_TIME: process.env.NEXT_PUBLIC_BUILD_TIME,
 } satisfies Record<keyof BundledEnv, unknown>)
 
+type ValkeyConfig = z.infer<typeof ValkeyConfigSchema>
+const ValkeyConfigSchema = z.union([
+    /**
+     * Defines a union type for strongly typing Valkey configurations for local and production environments.
+     * The local setup doesn't require authentication but does need the Docker image URL.
+     */
+    z.object({
+        runtimeEnv: z.union([z.literal('dev-gcp'), z.literal('prod-gcp')]),
+        username: z.string(),
+        password: z.string(),
+        tls: z.object({
+            host: z.string(),
+            port: z.coerce.number(),
+        }),
+    }),
+    z.object({
+        runtimeEnv: z.literal('local'),
+        host: z.string(),
+    }),
+])
+
 type ServerEnv = z.infer<typeof ServerEnvSchema>
 const ServerEnvSchema = z.object({
-    useLocalSykInnApi: z.boolean().default(false),
-    localSykInnApiHost: z.string().default('localhost:8080'),
+    useSykInnValkey: z.boolean().default(false),
+    valkeyConfig: ValkeyConfigSchema.nullish(),
 })
 
 /**
@@ -36,13 +57,29 @@ const ServerEnvSchema = z.object({
  * the server is configured correctly before receiving any traffic.
  */
 export function getServerEnv(): ServerEnv {
+    const valkeyConfig =
+        bundledEnv.runtimeEnv === 'dev-gcp' || bundledEnv.runtimeEnv === 'prod-gcp'
+            ? ({
+                  runtimeEnv: process.env.NEXT_PUBLIC_RUNTIME_ENV,
+                  username: process.env.VALKEY_USERNAME_SYK_INN,
+                  password: process.env.VALKEY_PASSWORD_SYK_INN,
+                  // Local
+                  host: process.env.VALKEY_HOST_SYK_INN,
+                  // Cloud
+                  tls: {
+                      host: process.env.VALKEY_HOST_SYK_INN,
+                      port: process.env.VALKEY_PORT_SYK_INN,
+                  },
+              } satisfies Record<KeysOfUnion<ValkeyConfig>, unknown | undefined>)
+            : undefined
+
     const parsedEnv = ServerEnvSchema.parse({
-        useLocalSykInnApi: process.env.USE_LOCAL_SYK_INN_API === 'true',
-        localSykInnApiHost: process.env.LOCAL_SYK_INN_API_HOST,
+        useSykInnValkey: process.env.USE_SYK_INN_VALKEY === 'true',
+        valkeyConfig: valkeyConfig,
     } satisfies Record<keyof ServerEnv, unknown | undefined>)
 
-    if (bundledEnv.runtimeEnv !== 'local' && parsedEnv.useLocalSykInnApi) {
-        raise('USE_LOCAL_SYK_INN_API should only be set to true in local environment')
+    if (bundledEnv.runtimeEnv !== 'local' && parsedEnv.useSykInnValkey) {
+        raise('USE_SYK_INN_VALKEY should only be set to true in local environment')
     }
 
     return parsedEnv
