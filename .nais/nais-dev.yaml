@@ -23,6 +23,9 @@ spec:
       autoLoginIgnorePaths:
         - /api/*
         - /favicon.ico
+  valkey:
+    - instance: syk-inn
+      access: read
   observability:
     autoInstrumentation:
       enabled: true

@@ -20,6 +20,9 @@ spec:
         groups:
           # EntraAD: nais-team-tsm
           - id: '35c70ac7-e8e6-4cec-933b-86106a97c0d4'
+  valkey:
+    - instance: syk-inn
+      access: read
   observability:
     autoInstrumentation:
       enabled: true
