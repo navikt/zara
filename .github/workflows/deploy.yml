@@ -98,10 +98,10 @@ jobs:
 
   deploy-production:
     name: Deploy main to production
-    if: github.ref_name == 'main' || false
+    if: github.ref_name == 'main' && false
     environment:
       name: production
-      url: https://nav.no/samarbeidspartner/sykmelding
+      url: https://zara.intern.dev.nav.no
     runs-on: ubuntu-latest
     needs: [deploy-dev, build-prod]
     steps:
