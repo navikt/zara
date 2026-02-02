@@ -2,6 +2,7 @@ import './globals.css'
 
 import React, { ReactElement } from 'react'
 import type { Metadata } from 'next'
+import { Page } from '@navikt/ds-react'
 
 import Header from '@components/Header'
 
@@ -16,8 +17,10 @@ export default function StandaloneLayout({ children }: LayoutProps<'/'>): ReactE
         <html lang="nb" suppressHydrationWarning>
             <body>
                 <Providers>
-                    <Header />
-                    {children}
+                    <Page>
+                        <Header />
+                        {children}
+                    </Page>
                 </Providers>
             </body>
         </html>
