@@ -1,14 +1,7 @@
 import Valkey from 'iovalkey'
 
-import { getServerEnv } from '@lib/env'
-
-import { productionValkey } from './production-valkey'
-import { localDevFakeValkey } from './local-dev-valkey'
+import { realValkey } from './production-valkey'
 
 export function getValkey(): Valkey {
-    if (!getServerEnv().useSykInnValkey) {
-        return localDevFakeValkey()
-    }
-
-    return productionValkey()
+    return realValkey()
 }

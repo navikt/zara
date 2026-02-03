@@ -1,0 +1,6 @@
+services:
+  valkey:
+    image: valkey/valkey:latest
+    container_name: zara-dev-valkey
+    ports:
+      - '6380:6379'

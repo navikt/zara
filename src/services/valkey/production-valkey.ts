@@ -6,7 +6,7 @@ import { logger } from '@navikt/next-logger'
 import { getServerEnv } from '@lib/env'
 import { raise } from '@lib/ts'
 
-export const productionValkey = lazyNextleton('valkey-client', () => initializeValkey())
+export const realValkey = lazyNextleton('valkey-client', () => initializeValkey())
 
 function initializeValkey(): Valkey {
     const valkeyConfig = getServerEnv().valkeyConfig ?? raise('Valkey config is not set! :(')

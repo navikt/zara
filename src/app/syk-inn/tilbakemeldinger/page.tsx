@@ -5,25 +5,25 @@ import { PageBlock } from '@navikt/ds-react/Page'
 import { bundledEnv } from '@lib/env'
 
 import { getFeedbackClient } from '../../../services/feedback/feedback-client'
-import { seedInMemValkey } from '../../../dev/in-mem-seed'
+import { seedDevelopmentValkey } from '../../../dev/seed-valkey'
 
 export const dynamic = 'force-dynamic'
 
 async function Page(): Promise<ReactElement> {
     const feedback = getFeedbackClient()
 
-    const dump = await feedback.dump()
-    if (dump.length === 0 || bundledEnv.runtimeEnv === 'local') {
-        await seedInMemValkey(feedback)
+    if (bundledEnv.runtimeEnv === 'local' && (await feedback.dump()).length === 0) {
+        await seedDevelopmentValkey(feedback)
     }
 
+    const valkeyDump = await feedback.dump()
     return (
         <PageBlock as="main" width="2xl" gutters>
             <Heading level="2" size="xlarge" spacing>
                 {`Valkey Testin' Arena`}
             </Heading>
             <div className="bg-ax-bg-raised p-2 rounded-md">
-                <pre className="overflow-auto">{JSON.stringify(dump, null, 2)}</pre>
+                <pre className="overflow-auto">{JSON.stringify(valkeyDump, null, 2)}</pre>
             </div>
         </PageBlock>
     )

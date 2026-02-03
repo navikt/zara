@@ -39,6 +39,7 @@ const ValkeyConfigSchema = z.union([
     z.object({
         runtimeEnv: z.literal('local'),
         host: z.string(),
+        port: z.coerce.number(),
     }),
 ])
 
@@ -58,21 +59,19 @@ const ServerEnvSchema = z.object({
  */
 export function getServerEnv(): ServerEnv {
     const useLocalSykInn = process.env.USE_SYK_INN_VALKEY === 'true'
-    const valkeyConfig =
-        bundledEnv.runtimeEnv === 'dev-gcp' || bundledEnv.runtimeEnv === 'prod-gcp' || useLocalSykInn
-            ? ({
-                  runtimeEnv: process.env.NEXT_PUBLIC_RUNTIME_ENV,
-                  username: process.env.VALKEY_USERNAME_SYK_INN,
-                  password: process.env.VALKEY_PASSWORD_SYK_INN,
-                  // Local
-                  host: process.env.VALKEY_HOST_SYK_INN,
-                  // Cloud
-                  tls: {
-                      host: process.env.VALKEY_HOST_SYK_INN,
-                      port: process.env.VALKEY_PORT_SYK_INN,
-                  },
-              } satisfies Record<KeysOfUnion<ValkeyConfig>, unknown | undefined>)
-            : undefined
+    const valkeyConfig = {
+        runtimeEnv: process.env.NEXT_PUBLIC_RUNTIME_ENV,
+        username: process.env.VALKEY_USERNAME_SYK_INN,
+        password: process.env.VALKEY_PASSWORD_SYK_INN,
+        // Local
+        host: process.env.VALKEY_HOST_SYK_INN,
+        port: process.env.VALKEY_PORT_SYK_INN,
+        // Cloud
+        tls: {
+            host: process.env.VALKEY_HOST_SYK_INN,
+            port: process.env.VALKEY_PORT_SYK_INN,
+        },
+    } satisfies Record<KeysOfUnion<ValkeyConfig>, unknown>
 
     const parsedEnv = ServerEnvSchema.parse({
         useSykInnValkey: useLocalSykInn,
