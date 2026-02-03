@@ -9,6 +9,25 @@ export function createInMemoryValkey(): Valkey {
             if (prop === 'then') return target
 
             switch (prop) {
+                case 'keys': {
+                    return async (pattern: string) => {
+                        const regex = new RegExp(
+                            '^' +
+                                pattern
+                                    .replace(/[-\/\\^$+?.()|[\]{}]/g, '\\$&')
+                                    .replace(/\*/g, '.*')
+                                    .replace(/\?/g, '.') +
+                                '$',
+                        )
+                        const matchedKeys: string[] = []
+                        for (const key of store.keys()) {
+                            if (regex.test(key)) {
+                                matchedKeys.push(key)
+                            }
+                        }
+                        return matchedKeys
+                    }
+                }
                 case 'hset':
                     return async (key: string, values: Record<string, unknown>) => {
                         const existingValue = store.get(key) ?? {}

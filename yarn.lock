@@ -785,6 +785,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@navikt/syk-zara@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "@navikt/syk-zara@npm:0.0.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fsyk-zara%2F0.0.2%2Fe2d4d7fbc8ebc67c0cfe37b7ebbc155771719bf2"
+  checksum: 10c0/44982252092f967d55c3d5d4d01b44bf276d7fec4f9586b8886688dcc4c4e2fb7ad5d88cdd55ad6124bba08a30df7cda92c4053979e0fb7ab3f0e3f57e1d935f
+  languageName: node
+  linkType: hard
+
 "@navikt/texas@npm:^4.1.1":
   version: 4.1.1
   resolution: "@navikt/texas@npm:4.1.1::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Ftexas%2F4.1.1%2Fa4875c9cc658d6cebf4185bb2c89a17c54f15827"
@@ -5491,6 +5498,7 @@ __metadata:
     "@navikt/ds-tailwind": "npm:^8.2.0"
     "@navikt/next-logger": "npm:^4.5.1"
     "@navikt/oasis": "npm:^4.1.1"
+    "@navikt/syk-zara": "npm:^0.0.2"
     "@navikt/tsm-eslint-react": "npm:^1.0.0"
     "@navikt/tsm-prettier": "npm:^2.0.0"
     "@opentelemetry/api": "npm:^1.9.0"
