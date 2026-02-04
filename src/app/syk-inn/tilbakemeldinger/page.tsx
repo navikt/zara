@@ -5,7 +5,7 @@ import { PageBlock } from '@navikt/ds-react/Page'
 import { bundledEnv } from '@lib/env'
 
 import { getFeedbackClient } from '../../../services/feedback/feedback-client'
-import { seedDevelopmentValkey } from '../../../dev/seed-valkey'
+import { seedDevelopmentFeedback } from '../../../dev/seed-valkey'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,7 +13,7 @@ async function Page(): Promise<ReactElement> {
     const feedback = getFeedbackClient()
 
     if (bundledEnv.runtimeEnv === 'local' && (await feedback.dump()).length === 0) {
-        await seedDevelopmentValkey(feedback)
+        await seedDevelopmentFeedback(feedback)
     }
 
     const valkeyDump = await feedback.dump()

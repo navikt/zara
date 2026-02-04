@@ -44,9 +44,8 @@ function createFeedbackClient(valkey: Valkey): FeedbackClient {
     }
 }
 
-export function getFeedbackClient(): FeedbackClient {
-    const valkey = getValkey()
-    const feedbackClient = createFeedbackClient(valkey)
+export function getFeedbackClient(valkey?: Valkey): FeedbackClient {
+    const feedbackClient = createFeedbackClient(valkey ?? getValkey())
 
     return feedbackClient
 }

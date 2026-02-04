@@ -700,49 +700,49 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/aksel-icons@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@navikt/aksel-icons@npm:8.2.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Faksel-icons%2F8.2.0%2F815b0ce71ba251f4443c3677106887ea2a70ad3d"
-  checksum: 10c0/599bc78fc6af9fb964baad9e9909a22010b896bb8d654f9296798151716cb662402525b2b03e0ebd492d8f48ee6f24494bc93d3d007e22fa112250af6b7acc0b
+"@navikt/aksel-icons@npm:^8.2.2":
+  version: 8.2.2
+  resolution: "@navikt/aksel-icons@npm:8.2.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Faksel-icons%2F8.2.2%2F1faa9eded50736d7c382132852b540eebd2b8dcf"
+  checksum: 10c0/8bf4cef113140be1bf4a47165643b00914c7cc40e8d99c1ac1c75940eda4ed525a1388dfc8ff77a5f5cfcda0a17709b0273459b2629c4d91b2483a4e49e2e15b
   languageName: node
   linkType: hard
 
-"@navikt/ds-css@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@navikt/ds-css@npm:8.2.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-css%2F8.2.0%2Fb8e8326ecf70d2dd9fcaeddaabaf8c37a906c6ef"
-  checksum: 10c0/7a00f9b56064b130dac523628380280348fcae776fb253888af8b4c6f5a84edd3b4b7297e8771bbc3b52c3fc3821cfdfdba0e7a05f56980e1d3b2a0f11c7d8c2
+"@navikt/ds-css@npm:^8.2.2":
+  version: 8.2.2
+  resolution: "@navikt/ds-css@npm:8.2.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-css%2F8.2.2%2Ff6d24b248c6657c494423687bbdaf0129bae9cd2"
+  checksum: 10c0/b0779f7e4c2f3d720c138f3e014988d429e503021ece7dac3444bcb0852927d6018f586b26b87a8c00fd9478cb880d7eaf8a67fa9b49d4772f1df54971cdafea
   languageName: node
   linkType: hard
 
-"@navikt/ds-react@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@navikt/ds-react@npm:8.2.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-react%2F8.2.0%2F3796f65287a19791d516cac0d6df69e0ce1118a4"
+"@navikt/ds-react@npm:^8.2.2":
+  version: 8.2.2
+  resolution: "@navikt/ds-react@npm:8.2.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-react%2F8.2.2%2F03f71885f10b43720f46d3cc848259de69bf769d"
   dependencies:
     "@floating-ui/react": "npm:0.27.8"
     "@floating-ui/react-dom": "npm:^2.1.6"
-    "@navikt/aksel-icons": "npm:^8.2.0"
-    "@navikt/ds-tokens": "npm:^8.2.0"
+    "@navikt/aksel-icons": "npm:^8.2.2"
+    "@navikt/ds-tokens": "npm:^8.2.2"
     date-fns: "npm:^4.0.0"
     react-day-picker: "npm:9.7.0"
   peerDependencies:
     "@types/react": ^17.0.30 || ^18 || ^19
     react: ^17 || ^18 || ^19
     react-dom: ^17 || ^18 || ^19
-  checksum: 10c0/d858605165a88cb17035cc1daacc75e75310372e0ae46b50fc3c1c3eb87f72674e30289dcc66dca20d1b1b1923a18e9c00a7525a5a02f0042a39ef35248a0c11
+  checksum: 10c0/f04470ff7640e732cfde4213b500199b135fd3bf62a0227f7b21cf8a4e0daf0c3233de4d587b441b6be6ec466b236c2e7f4f6f96e40edf67eaf5143c78fc5f82
   languageName: node
   linkType: hard
 
-"@navikt/ds-tailwind@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@navikt/ds-tailwind@npm:8.2.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-tailwind%2F8.2.0%2F2cb2645728973c82d133b50f614d67b094e798a2"
-  checksum: 10c0/0cba572e59ad36e15c51d584dc77ce74e602660af7dbe7aad00c636b01dd00a50f019a7083c32b20360ffe5f516159ef6820590d3474c014d3c18c6e5a23d348
+"@navikt/ds-tailwind@npm:^8.2.2":
+  version: 8.2.2
+  resolution: "@navikt/ds-tailwind@npm:8.2.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-tailwind%2F8.2.2%2F7b7809fdbd7e2baa27519d4094116df9c340f76f"
+  checksum: 10c0/552fd188a4c2eb0d776f766a0756029a9749d8073f403d89a6f4e3cd6db7a1c89e1ab281f956e842f1b351a69b572345abbfc0e3c2b8db8f505158050701d0dc
   languageName: node
   linkType: hard
 
-"@navikt/ds-tokens@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "@navikt/ds-tokens@npm:8.2.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-tokens%2F8.2.0%2F5e15fcf3bffb277f8730edb0c033ee289d2798e4"
-  checksum: 10c0/bfae7558673006ce4b94d7616cec0f1a558a87e85b45dd9fd574eed23608f22ad14d6d79986dca224b6c9622a28e675994db2ad9658eb669e657124bb8195573
+"@navikt/ds-tokens@npm:^8.2.2":
+  version: 8.2.2
+  resolution: "@navikt/ds-tokens@npm:8.2.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fds-tokens%2F8.2.2%2F67e79a7faf0c22339866fb9678529dce85789610"
+  checksum: 10c0/e19a46fe5dbe5037e7e0f2c00b40e441fe6505c2c74a713c7cf89849b58c08e0eed5823b911544826f8ddd84a618f2f0af2586a980f4c455c986c084823f2ce4
   languageName: node
   linkType: hard
 
@@ -758,15 +758,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/oasis@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "@navikt/oasis@npm:4.1.1::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Foasis%2F4.1.1%2F970a0555b93c862b7c7b0919349f48fc8e7de53c"
+"@navikt/oasis@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "@navikt/oasis@npm:4.1.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Foasis%2F4.1.2%2F71dd8c0ce6b1e944771e742fb6db0e2898e4bb43"
   dependencies:
-    "@navikt/texas": "npm:^4.1.1"
+    "@navikt/texas": "npm:^4.1.2"
     "@opentelemetry/api": "npm:^1.9.0"
-    jose: "npm:^6.1.0"
+    jose: "npm:^6.1.3"
     prom-client: "npm:^15.1.3"
-  checksum: 10c0/c83a88fd909801de38d0e05044439cf49d06e7274b8cca741045761ea059e8ab2b0eb40e0d29465e9b264996dc159ab21908a2ce447b8335c1c6301a808654db
+  checksum: 10c0/8287ea0629358c4946af5a11ff70783606611b0720c5230c2f9b9cbcddfd47d0ba69ea776fa42e38700520bd6a03c445e53242e3e7876a52d16572a0c970ea70
   languageName: node
   linkType: hard
 
@@ -785,17 +785,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/syk-zara@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "@navikt/syk-zara@npm:0.0.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fsyk-zara%2F0.0.2%2Fe2d4d7fbc8ebc67c0cfe37b7ebbc155771719bf2"
-  checksum: 10c0/44982252092f967d55c3d5d4d01b44bf276d7fec4f9586b8886688dcc4c4e2fb7ad5d88cdd55ad6124bba08a30df7cda92c4053979e0fb7ab3f0e3f57e1d935f
+"@navikt/syk-zara@npm:^0.0.3":
+  version: 0.0.3
+  resolution: "@navikt/syk-zara@npm:0.0.3::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fsyk-zara%2F0.0.3%2F6efba35cd1038fe256df84ce713532aa8f19a791"
+  checksum: 10c0/592e4ff4a46cb0d7dcea3b3d18548b8248e33f29766b3a15a25fdb09c9486620468adb44e96b4551b734f818d2aeab631f6d4d934848c3c260fa6f873886358b
   languageName: node
   linkType: hard
 
-"@navikt/texas@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "@navikt/texas@npm:4.1.1::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Ftexas%2F4.1.1%2Fa4875c9cc658d6cebf4185bb2c89a17c54f15827"
-  checksum: 10c0/656334257044382dc9de693538f23740a77ea2529e9e6c3e6ad98470dd34da87d5344e995d5f334812e11ef03c8ac07e0dbc9519e3659d23bf31efe5deacb114
+"@navikt/texas@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "@navikt/texas@npm:4.1.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Ftexas%2F4.1.2%2F1186a3e4a52af4b774eb768a5081821f02f28605"
+  checksum: 10c0/60f669b7f3edc36c715d014417888ffee8b8b0c062b29c61b0441965982c5bb16168d5ad3c96c65866ec008d0ee1c5a31368cf8be87c7b32abedeb0d7a8fc6db
   languageName: node
   linkType: hard
 
@@ -3329,7 +3329,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jose@npm:^6.1.0":
+"jose@npm:^6.1.3":
   version: 6.1.3
   resolution: "jose@npm:6.1.3"
   checksum: 10c0/b9577b4a7a5e84131011c23823db9f5951eae3ba796771a6a2401ae5dd50daf71104febc8ded9c38146aa5ebe94a92ac09c725e699e613ef26949b9f5a8bc30f
@@ -5492,13 +5492,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "zara@workspace:."
   dependencies:
-    "@navikt/aksel-icons": "npm:^8.2.0"
-    "@navikt/ds-css": "npm:^8.2.0"
-    "@navikt/ds-react": "npm:^8.2.0"
-    "@navikt/ds-tailwind": "npm:^8.2.0"
+    "@navikt/aksel-icons": "npm:^8.2.2"
+    "@navikt/ds-css": "npm:^8.2.2"
+    "@navikt/ds-react": "npm:^8.2.2"
+    "@navikt/ds-tailwind": "npm:^8.2.2"
     "@navikt/next-logger": "npm:^4.5.1"
-    "@navikt/oasis": "npm:^4.1.1"
-    "@navikt/syk-zara": "npm:^0.0.2"
+    "@navikt/oasis": "npm:^4.1.2"
+    "@navikt/syk-zara": "npm:^0.0.3"
     "@navikt/tsm-eslint-react": "npm:^1.0.0"
     "@navikt/tsm-prettier": "npm:^2.0.0"
     "@opentelemetry/api": "npm:^1.9.0"

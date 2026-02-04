@@ -1,12 +1,13 @@
 import * as R from 'remeda'
 import { logger } from '@navikt/next-logger'
+import Valkey from 'iovalkey'
 
 import { bundledEnv } from '@lib/env'
 import { raise } from '@lib/ts'
 
 import { FeedbackClient } from '../services/feedback/feedback-client'
 
-export async function seedDevelopmentValkey(client: FeedbackClient): Promise<void> {
+export async function seedDevelopmentFeedback(client: FeedbackClient): Promise<void> {
     if (bundledEnv.runtimeEnv !== 'local') {
         raise("What the hell are you doing?! Don't seed any cloud environments! :angst:")
     }
@@ -19,4 +20,14 @@ export async function seedDevelopmentValkey(client: FeedbackClient): Promise<voi
 
         await client.create(id, `Melding nummer ${index}`)
     }
+}
+
+export async function clearDevelopmentFeedback(valkey: Valkey): Promise<void> {
+    if (bundledEnv.runtimeEnv !== 'local') {
+        raise('⚠️☠️🚨 You are trying to clear feedback in a non-development environment! 🚨☠️⚠️')
+    }
+
+    const feedbackKeys = await valkey.keys('feedback:*')
+    logger.warn(`Deleting all feedback entries (${feedbackKeys.length}) in Valkey...`)
+    feedbackKeys.forEach((key) => valkey.del(key))
 }
