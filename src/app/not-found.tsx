@@ -5,7 +5,7 @@ import Image from 'next/image'
 
 import { AkselNextLink } from '@components/AkselNextLink'
 
-import logo from '../images/sad-sara.webp'
+import sadSara from '../images/sad-sara.webp'
 
 export default function NotFound(): ReactElement {
     return (
@@ -13,7 +13,7 @@ export default function NotFound(): ReactElement {
             <Heading level="2" size="xlarge" spacing>
                 404 - Zara fant ikke noe :(
             </Heading>
-            <Image src={logo.src} width={256} height={256} alt="Zara!" />
+            <Image src={sadSara.src} width={256} height={256} alt="Zara!" />
             <BodyShort className="mt-8">
                 Gå tilbake til <AkselNextLink href="/">startsiden</AkselNextLink>
             </BodyShort>

@@ -6,25 +6,27 @@ import { bundledEnv } from '@lib/env'
 
 import { getFeedbackClient } from '../../../services/feedback/feedback-client'
 import { seedDevelopmentFeedback } from '../../../dev/seed-valkey'
+import FeedbackList from '../../../features/syk-inn/FeedbackList'
 
 export const dynamic = 'force-dynamic'
 
 async function Page(): Promise<ReactElement> {
-    const feedback = getFeedbackClient()
-
-    if (bundledEnv.runtimeEnv === 'local' && (await feedback.dump()).length === 0) {
-        await seedDevelopmentFeedback(feedback)
+    const client = getFeedbackClient()
+    if (bundledEnv.runtimeEnv === 'local' && (await client.all()).length === 0) {
+        await seedDevelopmentFeedback(client)
     }
 
-    const valkeyDump = await feedback.dump()
+    /**
+     * No fanciness or pagination for now.
+     */
+    const feedback = await client.all()
+
     return (
         <PageBlock as="main" width="2xl" gutters>
-            <Heading level="2" size="xlarge" spacing>
-                {`Valkey Testin' Arena`}
+            <Heading level="2" size="large" spacing>
+                Tilbakemelding fra brukere i syk-inn
             </Heading>
-            <div className="bg-ax-bg-raised p-2 rounded-md">
-                <pre className="overflow-auto">{JSON.stringify(valkeyDump, null, 2)}</pre>
-            </div>
+            <FeedbackList feedback={feedback} />
         </PageBlock>
     )
 }

@@ -17,12 +17,18 @@ export async function seedDevelopmentFeedback(client: FeedbackClient): Promise<v
 
     const range = R.range(0, 50)
     logger.info(`Seeding valkey with ${range.length} feedback entries...`)
-    for (const {} of range) {
+    for (const index of range) {
         const id = crypto.randomUUID()
 
+        const timestamp =
+            index < 10
+                ? faker.date.between({ from: subDays(new Date(), 1), to: Date.now() }).toISOString()
+                : faker.date.between({ from: subDays(new Date(), 60), to: Date.now() }).toISOString()
+
         await client.create(id, {
+            name: faker.person.fullName(),
             message: faker.lorem.lines({ min: 1, max: 5 }),
-            timestamp: faker.date.between({ from: subDays(new Date(), 60), to: Date.now() }).toISOString(),
+            timestamp: timestamp,
             contact: faker.helpers.arrayElement(['PHONE', 'EMAIL', 'NONE']),
         })
     }

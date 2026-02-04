@@ -1,10 +1,12 @@
 import Valkey from 'iovalkey'
-import { feedbackValkeyKey } from '@navikt/syk-zara'
+import * as R from 'remeda'
+import { FEEDBACK_KEY_PREFIX, feedbackValkeyKey } from '@navikt/syk-zara'
 
 import { getValkey } from '../valkey/valkey'
 
 export type Feedback = {
     id: string
+    name: string
     message: string
     timestamp: string
     contact: string
@@ -12,8 +14,7 @@ export type Feedback = {
 
 export type FeedbackClient = {
     create: (id: string, feedback: Omit<Feedback, 'id'>) => Promise<void>
-    // Dev only,
-    dump: () => Promise<Feedback[]>
+    all: () => Promise<Feedback[]>
 }
 
 function createFeedbackClient(valkey: Valkey): FeedbackClient {
@@ -21,28 +22,24 @@ function createFeedbackClient(valkey: Valkey): FeedbackClient {
         create: async (id, feedback) => {
             const key = feedbackValkeyKey(id)
 
-            await valkey.hset(key, feedback)
+            await valkey.hset(key, {
+                id: id,
+                ...feedback,
+            })
         },
-        dump: async () => {
-            const pattern = 'feedback:*'
-            const keys = await valkey.keys(pattern)
-
-            const results = await Promise.all(
-                keys.map(async (key) => {
+        all: async () => {
+            const allkeys = await valkey.keys(`${FEEDBACK_KEY_PREFIX}*`)
+            const feedback = await Promise.all(
+                allkeys.map(async (key) => {
                     const data = await valkey.hgetall(key)
-                    // Extract id from key (remove "feedback:" prefix)
-                    const id = key.replace(/^feedback:/, '')
                     return {
-                        id,
-                        // TODO: Zod based mapping probably
-                        message: data.message || '',
-                        timestamp: data.timestamp || '',
-                        contact: data.contact || '',
-                    }
+                        // TODO this is poor typing
+                        ...data,
+                    } as Feedback
                 }),
             )
 
-            return results
+            return R.sortBy(feedback, [(it) => it.timestamp, 'desc'])
         },
     }
 }

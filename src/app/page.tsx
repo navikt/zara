@@ -9,7 +9,7 @@ import { PageBlock } from '@navikt/ds-react/Page'
 function Page(): ReactElement {
     return (
         <PageBlock as="main" width="2xl" gutters>
-            <Heading level="2" size="xlarge" spacing>
+            <Heading level="2" size="large" spacing>
                 Hva vil du gjøre i dag?
             </Heading>
             <div className="bg-ax-bg-raised p-4 rounded-md w-full">
