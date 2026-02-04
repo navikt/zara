@@ -2,6 +2,8 @@ import Valkey from 'iovalkey'
 import * as R from 'remeda'
 import { FEEDBACK_KEY_PREFIX, feedbackValkeyKey } from '@navikt/syk-zara'
 
+import { raise } from '@lib/ts'
+
 import { getValkey } from '../valkey/valkey'
 
 import { Feedback, FeedbackSchema } from './feedback-schema'
@@ -11,6 +13,8 @@ export type FeedbackClient = {
     all: () => Promise<Feedback[]>
     byId: (id: string) => Promise<Feedback | null>
     updateFeedback: (id: string, message: string, whom: { name: string; count: number }) => Promise<void>
+    markVerified: (id: string, by: string) => Promise<void>
+    markContacted: (id: string, by: string) => Promise<void>
 }
 
 function createFeedbackClient(valkey: Valkey): FeedbackClient {
@@ -58,6 +62,30 @@ function createFeedbackClient(valkey: Valkey): FeedbackClient {
             await valkey.hset(key, {
                 message,
                 redactionLog: JSON.stringify(redactionLog),
+            })
+        },
+        markVerified: async (id, by) => {
+            const key = feedbackValkeyKey(id)
+            const existingAt = await valkey.hget(key, 'verifiedContentAt')
+            if (existingAt) {
+                raise(`Unable to mark feedback as verified, it was already verified at ${existingAt}`)
+            }
+
+            await valkey.hset(key, {
+                verifiedContentAt: new Date().toISOString(),
+                verifiedContentBy: by,
+            })
+        },
+        markContacted: async (id, by) => {
+            const key = feedbackValkeyKey(id)
+            const existingAt = await valkey.hget(key, 'contactedAt')
+            if (existingAt) {
+                raise(`Unable to mark feedback as contacted, it was already contacted at ${existingAt}`)
+            }
+
+            await valkey.hset(key, {
+                contactedAt: new Date().toISOString(),
+                contactedBy: by,
             })
         },
     }
