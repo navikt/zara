@@ -13,7 +13,7 @@ export async function redactFeedbackContent(
     id: string,
     redactLocations: [number, number][],
 ): Promise<{ redacted: boolean }> {
-    await validateTokenInServerAction()
+    const user = await validateTokenInServerAction()
 
     const client = getFeedbackClient()
     const feedback = await client.byId(id)
@@ -27,7 +27,7 @@ export async function redactFeedbackContent(
         )
         .join('\n')
 
-    await client.updateFeedback(id, rebuilt)
+    await client.updateFeedback(id, rebuilt, { name: user.name, count: redactLocations.length })
     revalidatePath(`/syk-inn/tilbakemeldinger/${id}`)
 
     logger.info(`Updated feedback ${id} by redacting ${redactLocations.length} words`)

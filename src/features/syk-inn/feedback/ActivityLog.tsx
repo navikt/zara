@@ -1,7 +1,7 @@
 import { Process } from '@navikt/ds-react'
 import React, { ReactElement } from 'react'
 import * as R from 'remeda'
-import { EyeWithPupilIcon, InboxDownIcon, PersonGavelIcon, TasklistSendIcon } from '@navikt/aksel-icons'
+import { EyeWithPupilIcon, InboxDownIcon, PersonGavelIcon, ScissorsIcon, TasklistSendIcon } from '@navikt/aksel-icons'
 
 import { Feedback } from '@services/feedback/feedback-schema'
 import { toReadableDateTime } from '@lib/date'
@@ -35,6 +35,15 @@ function ActivityLog({ feedback }: Props): ReactElement {
             bullet: <TasklistSendIcon aria-hidden />,
         })
     }
+
+    events.push(
+        ...feedback.redactionLog.map((it) => ({
+            title: 'Sladding utført',
+            timestamp: it.timestamp,
+            body: `${it.name} sladdet ${it.count} ord`,
+            bullet: <ScissorsIcon aria-hidden />,
+        })),
+    )
 
     const now = new Date().toISOString()
     const sortedEvents = R.sortBy(events, [(it) => it.timestamp ?? now, 'desc'])

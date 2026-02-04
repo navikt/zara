@@ -7,10 +7,10 @@ import { getValkey } from '../valkey/valkey'
 import { Feedback, FeedbackSchema } from './feedback-schema'
 
 export type FeedbackClient = {
-    create: (id: string, feedback: Omit<Feedback, 'id'>) => Promise<void>
+    create: (id: string, feedback: Omit<Feedback, 'id' | 'redactionLog'>) => Promise<void>
     all: () => Promise<Feedback[]>
     byId: (id: string) => Promise<Feedback | null>
-    updateFeedback: (id: string, message: string) => Promise<void>
+    updateFeedback: (id: string, message: string, whom: { name: string; count: number }) => Promise<void>
 }
 
 function createFeedbackClient(valkey: Valkey): FeedbackClient {
@@ -21,7 +21,8 @@ function createFeedbackClient(valkey: Valkey): FeedbackClient {
             await valkey.hset(key, {
                 id: id,
                 ...feedback,
-            })
+                redactionLog: JSON.stringify([]),
+            } satisfies Record<keyof Feedback, unknown>)
         },
         all: async () => {
             const allkeys = await valkey.keys(`${FEEDBACK_KEY_PREFIX}*`)
@@ -44,10 +45,19 @@ function createFeedbackClient(valkey: Valkey): FeedbackClient {
 
             return FeedbackSchema.parse(data)
         },
-        updateFeedback: async (id, message) => {
+        updateFeedback: async (id, message, whom) => {
             const key = feedbackValkeyKey(id)
+            const existingRedactionLog = await valkey.hget(key, 'redactionLog')
+            const redactionLog = existingRedactionLog ? JSON.parse(existingRedactionLog) : []
+            redactionLog.push({
+                name: whom.name,
+                count: whom.count,
+                timestamp: new Date().toISOString(),
+            })
+
             await valkey.hset(key, {
                 message,
+                redactionLog: JSON.stringify(redactionLog),
             })
         },
     }
