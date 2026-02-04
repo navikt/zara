@@ -22,12 +22,13 @@ export function FeedbackCard({ feedback }: { feedback: Feedback }): ReactElement
                         aria-hidden
                     />
                 </Link>
-                <div className="p-3">
-                    <div className="mb-2">
-                        <UserContact contactType={feedback.contactType} contactDetails={feedback.contactDetails} />
+                <div className="p-3 pt-0">
+                    <div className="mb-3">
+                        <UserContact contactType={feedback.contactType} />
                     </div>
-                    <div className="flex flex-col items-start bg-ax-bg-neutral-soft rounded-sm p-2">
+                    <div className="relative flex flex-col items-start bg-ax-bg-neutral-soft rounded-sm p-2 min-h-32 max-h-32 overflow-hidden">
                         <MultilineUserFeedback message={feedback.message} />
+                        <div className="absolute left-0 bottom-0 w-full pointer-events-none h-12 bg-linear-to-b from-transparent to-ax-bg-neutral-soft" />
                     </div>
                     <Detail className="mt-2">
                         {formatDistanceToNowStrict(feedback.timestamp, { locale: nb, addSuffix: true })}
@@ -38,11 +39,11 @@ export function FeedbackCard({ feedback }: { feedback: Feedback }): ReactElement
     )
 }
 
-function UserContact({ contactType, contactDetails }: Pick<Feedback, 'contactType' | 'contactDetails'>): ReactElement {
+function UserContact({ contactType }: Pick<Feedback, 'contactType'>): ReactElement {
     switch (contactType) {
         case 'NONE': {
             return (
-                <Detail className="flex items-center gap-1 ml-1">
+                <Detail className="flex items-center gap-1 ml-1 italic">
                     <CircleSlashIcon aria-hidden />
                     Bruker ønsker ikke å bli kontaktet
                 </Detail>
@@ -52,8 +53,7 @@ function UserContact({ contactType, contactDetails }: Pick<Feedback, 'contactTyp
             return (
                 <Detail className="flex items-center gap-1 ml-1 flex-wrap">
                     <EnvelopeClosedIcon aria-hidden className="-mt-0.5" />
-                    Bruker vil bli kontaktet via e-post:{' '}
-                    <span className="bg-ax-bg-sunken px-1 rounded-sm">{contactDetails}</span>
+                    Bruker vil bli kontaktet via e-post
                 </Detail>
             )
         }
@@ -61,8 +61,7 @@ function UserContact({ contactType, contactDetails }: Pick<Feedback, 'contactTyp
             return (
                 <Detail className="flex items-center gap-1 ml-1">
                     <PhoneIcon aria-hidden />
-                    Bruker vil bli kontaktet via telefon:{' '}
-                    <span className="bg-ax-bg-sunken px-1 rounded-sm">{contactDetails}</span>
+                    Bruker vil bli kontaktet via telefon
                 </Detail>
             )
         }

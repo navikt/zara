@@ -26,13 +26,19 @@ function FeedbackList({ feedback }: Props): ReactElement {
                     <Image src={zaraImages.cry.src} width={256} height={256} alt="Zara!" />
                 </div>
             ) : (
-                <div className="grid grid-cols-3 gap-3">
-                    {feedback.map((it) => (
-                        <FeedbackCard key={it.id} feedback={it} />
-                    ))}
-                </div>
+                <FeedbackChunked feedback={feedback} />
             )}
         </section>
+    )
+}
+
+function FeedbackChunked({ feedback }: Props): ReactElement {
+    return (
+        <div className="grid grid-cols-3 gap-3">
+            {feedback.map((it) => (
+                <FeedbackCard key={it.id} feedback={it} />
+            ))}
+        </div>
     )
 }
 

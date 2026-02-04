@@ -64,7 +64,7 @@ function StatusItem({
                         {toReadableDateTime(at)}, av {by}
                     </Detail>
                 ) : (
-                    <Detail className="italic text-xs -mt-1">Ikke utført</Detail>
+                    <Detail className="italic text-xs -mt-1">Ikke sjekket</Detail>
                 )}
             </div>
         </div>
