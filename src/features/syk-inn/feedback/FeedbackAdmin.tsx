@@ -2,10 +2,9 @@ import React, { ReactElement } from 'react'
 import { CheckmarkHeavyIcon, EnvelopeClosedIcon, PersonGavelIcon } from '@navikt/aksel-icons'
 import { Detail, Heading } from '@navikt/ds-react'
 
+import { Feedback } from '@services/feedback/feedback-schema'
 import { cn } from '@lib/tw'
 import { toReadableDateTime } from '@lib/date'
-
-import { Feedback } from '../../../services/feedback/feedback-client'
 
 import { UserContact } from './UserContact'
 import UserFeedback from './UserFeedback'

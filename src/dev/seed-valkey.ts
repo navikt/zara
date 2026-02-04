@@ -5,10 +5,10 @@ import { faker } from '@faker-js/faker'
 import { subDays } from 'date-fns'
 import { FEEDBACK_KEY_PREFIX } from '@navikt/syk-zara'
 
+import { FeedbackClient } from '@services/feedback/feedback-client'
+import { Feedback } from '@services/feedback/feedback-schema'
 import { bundledEnv } from '@lib/env'
 import { raise } from '@lib/ts'
-
-import { Feedback, FeedbackClient } from '../services/feedback/feedback-client'
 
 export async function seedDevelopmentFeedback(client: FeedbackClient): Promise<void> {
     if (bundledEnv.runtimeEnv !== 'local') {
@@ -31,6 +31,7 @@ export async function seedDevelopmentFeedback(client: FeedbackClient): Promise<v
             timestamp: timestamp,
             ...contactDetails,
             ...createContactedInfo(contactDetails.contactType),
+            ...createVerifiedContentInfo(),
         })
     }
     logger.info(`Seeding valkey done!`)
@@ -61,6 +62,18 @@ function createContactedInfo(type: Feedback['contactType']): Pick<Feedback, 'con
     return {
         contactedAt: faker.date.between({ from: subDays(new Date(), 30), to: new Date() }).toISOString(),
         contactedBy: faker.person.fullName(),
+    }
+}
+
+function createVerifiedContentInfo(): Pick<Feedback, 'verifiedContentAt' | 'verifiedContentBy'> {
+    const wasVerified = faker.datatype.boolean()
+    if (!wasVerified) {
+        return { verifiedContentAt: null, verifiedContentBy: null }
+    }
+
+    return {
+        verifiedContentAt: faker.date.between({ from: subDays(new Date(), 30), to: new Date() }).toISOString(),
+        verifiedContentBy: faker.person.fullName(),
     }
 }
 

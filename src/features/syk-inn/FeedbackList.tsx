@@ -2,7 +2,8 @@ import React, { ReactElement } from 'react'
 import { Heading } from '@navikt/ds-react'
 import Image from 'next/image'
 
-import { Feedback } from '../../services/feedback/feedback-client'
+import { Feedback } from '@services/feedback/feedback-schema'
+
 import { zaraImages } from '../../images/zaras'
 
 import { FeedbackCard } from './FeedbackCard'

@@ -5,9 +5,8 @@ import Link from 'next/link'
 import { formatDistanceToNowStrict } from 'date-fns'
 import { nb } from 'date-fns/locale'
 
+import { Feedback } from '@services/feedback/feedback-schema'
 import { MultilineUserFeedback } from '@components/feedback/MultilineUserFeedback'
-
-import { Feedback } from '../../services/feedback/feedback-client'
 
 export function FeedbackCard({ feedback }: { feedback: Feedback }): ReactElement {
     return (

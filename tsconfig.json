@@ -15,7 +15,8 @@
         "plugins": [{ "name": "next" }],
         "paths": {
             "@components/*": ["./src/components/*"],
-            "@lib/*": ["./src/lib/*"]
+            "@lib/*": ["./src/lib/*"],
+            "@services/*": ["./src/services/*"]
         },
         "target": "ES2017"
     },

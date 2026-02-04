@@ -8,9 +8,8 @@ import {
 } from '@navikt/aksel-icons'
 import { BodyShort, CopyButton, Detail } from '@navikt/ds-react'
 
+import { Feedback } from '@services/feedback/feedback-schema'
 import { toReadableDateTime } from '@lib/date'
-
-import { Feedback } from '../../../services/feedback/feedback-client'
 
 export function UserContact({
     contactType,

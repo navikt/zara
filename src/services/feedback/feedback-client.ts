@@ -4,16 +4,7 @@ import { FEEDBACK_KEY_PREFIX, feedbackValkeyKey } from '@navikt/syk-zara'
 
 import { getValkey } from '../valkey/valkey'
 
-export type Feedback = {
-    id: string
-    name: string
-    message: string
-    timestamp: string
-    contactType: 'PHONE' | 'EMAIL' | 'NONE'
-    contactDetails: string | null
-    contactedAt: string | null
-    contactedBy: string | null
-}
+import { Feedback, FeedbackSchema } from './feedback-schema'
 
 export type FeedbackClient = {
     create: (id: string, feedback: Omit<Feedback, 'id'>) => Promise<void>
@@ -36,10 +27,8 @@ function createFeedbackClient(valkey: Valkey): FeedbackClient {
             const feedback = await Promise.all(
                 allkeys.map(async (key) => {
                     const data = await valkey.hgetall(key)
-                    return {
-                        // TODO this is poor typing
-                        ...data,
-                    } as Feedback
+
+                    return FeedbackSchema.parse(data)
                 }),
             )
 
@@ -52,10 +41,7 @@ function createFeedbackClient(valkey: Valkey): FeedbackClient {
                 return null
             }
 
-            return {
-                // TODO this is poor typing
-                ...data,
-            } as Feedback
+            return FeedbackSchema.parse(data)
         },
     }
 }
