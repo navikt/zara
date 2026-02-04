@@ -11,11 +11,14 @@ export type Feedback = {
     timestamp: string
     contactType: 'PHONE' | 'EMAIL' | 'NONE'
     contactDetails: string | null
+    contactedAt: string | null
+    contactedBy: string | null
 }
 
 export type FeedbackClient = {
     create: (id: string, feedback: Omit<Feedback, 'id'>) => Promise<void>
     all: () => Promise<Feedback[]>
+    byId: (id: string) => Promise<Feedback | null>
 }
 
 function createFeedbackClient(valkey: Valkey): FeedbackClient {
@@ -41,6 +44,18 @@ function createFeedbackClient(valkey: Valkey): FeedbackClient {
             )
 
             return R.sortBy(feedback, [(it) => it.timestamp, 'desc'])
+        },
+        byId: async (id) => {
+            const key = feedbackValkeyKey(id)
+            const data = await valkey.hgetall(key)
+            if (Object.keys(data).length === 0) {
+                return null
+            }
+
+            return {
+                // TODO this is poor typing
+                ...data,
+            } as Feedback
         },
     }
 }

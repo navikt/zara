@@ -19,17 +19,18 @@ export async function seedDevelopmentFeedback(client: FeedbackClient): Promise<v
     logger.info(`Seeding valkey with ${range.length} feedback entries...`)
     for (const index of range) {
         const id = crypto.randomUUID()
-
         const timestamp =
             index < 10
                 ? faker.date.between({ from: subDays(new Date(), 1), to: Date.now() }).toISOString()
                 : faker.date.between({ from: subDays(new Date(), 60), to: Date.now() }).toISOString()
+        const contactDetails = createContactDetails()
 
         await client.create(id, {
             name: faker.person.fullName(),
             message: faker.lorem.lines({ min: 1, max: 5 }),
             timestamp: timestamp,
-            ...createContactDetails(),
+            ...contactDetails,
+            ...createContactedInfo(contactDetails.contactType),
         })
     }
     logger.info(`Seeding valkey done!`)
@@ -44,6 +45,22 @@ function createContactDetails(): Pick<Feedback, 'contactType' | 'contactDetails'
             return { contactType, contactDetails: faker.helpers.fromRegExp(/[49][0-9]{7}/) }
         default:
             return { contactType, contactDetails: faker.internet.email() }
+    }
+}
+
+function createContactedInfo(type: Feedback['contactType']): Pick<Feedback, 'contactedAt' | 'contactedBy'> {
+    if (type === 'NONE') {
+        return { contactedAt: null, contactedBy: null }
+    }
+
+    const wasContacted = faker.datatype.boolean()
+    if (!wasContacted) {
+        return { contactedAt: null, contactedBy: null }
+    }
+
+    return {
+        contactedAt: faker.date.between({ from: subDays(new Date(), 30), to: new Date() }).toISOString(),
+        contactedBy: faker.person.fullName(),
     }
 }
 
