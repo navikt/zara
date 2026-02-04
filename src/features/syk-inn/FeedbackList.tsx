@@ -1,6 +1,8 @@
 import React, { ReactElement } from 'react'
-import { Heading } from '@navikt/ds-react'
+import { BodyShort, Heading } from '@navikt/ds-react'
 import Image from 'next/image'
+import * as R from 'remeda'
+import { isToday } from 'date-fns'
 
 import { Feedback } from '@services/feedback/feedback-schema'
 
@@ -13,32 +15,54 @@ type Props = {
 }
 
 function FeedbackList({ feedback }: Props): ReactElement {
-    const hasFeedback = feedback.length > 0
-
     return (
         <section aria-labelledby="all-feedback-heading">
             <Heading id="all-feedback-heading" level="3" size="medium" spacing className="ml-3">
                 Alle tilbakemeldinger ({feedback.length})
             </Heading>
-            {!hasFeedback ? (
-                <div className="bg-ax-bg-raised border border-ax-border-neutral-subtle max-w-prose rounded-md p-6 flex justify-center items-center h-96 flex-col">
-                    <div className="text-4xl mb-4 text-ax-text-neutral-subtle">Ingen tilbakemeldinger enda :(</div>
-                    <Image src={zaraImages.cry.src} width={256} height={256} alt="Zara!" />
-                </div>
-            ) : (
-                <FeedbackChunked feedback={feedback} />
-            )}
+            <FeedbackChunked feedback={feedback} />
         </section>
     )
 }
 
 function FeedbackChunked({ feedback }: Props): ReactElement {
+    const [today, older] = R.partition(feedback, (it) => isToday(it.timestamp))
+
     return (
-        <div className="grid grid-cols-3 gap-3">
-            {feedback.map((it) => (
-                <FeedbackCard key={it.id} feedback={it} />
-            ))}
-        </div>
+        <>
+            <Heading id="all-feedback-heading" level="4" size="small" spacing className="ml-3">
+                I dag ({today.length})
+            </Heading>
+            <div className="grid grid-cols-3 gap-3">
+                {today.map((it) => (
+                    <FeedbackCard key={it.id} feedback={it} />
+                ))}
+                {today.length === 0 && (
+                    <div className="p-4 bg-ax-bg-raised border border-ax-border-neutral-subtle rounded-md flex gap-4 items-center justify-start">
+                        <Image src={zaraImages.mad.src} width={64} height={64} alt="" />
+                        <BodyShort size="large" className="text-ax-text-neutral-subtle">
+                            Ingen sykmeldinger i dag
+                        </BodyShort>
+                    </div>
+                )}
+            </div>
+            <Heading id="all-feedback-heading" level="4" size="small" spacing className="mt-6 ml-3">
+                Tidligere ({older.length})
+            </Heading>
+            <div className="grid grid-cols-3 gap-3">
+                {older.map((it) => (
+                    <FeedbackCard key={it.id} feedback={it} />
+                ))}
+                {today.length === 0 && (
+                    <div className="p-4 bg-ax-bg-raised border border-ax-border-neutral-subtle rounded-md flex gap-4 items-center justify-start">
+                        <Image src={zaraImages.mad.src} width={64} height={64} alt="" />
+                        <BodyShort size="large" className="text-ax-text-neutral-subtle">
+                            Ingen tidligere sykmeldinger
+                        </BodyShort>
+                    </div>
+                )}
+            </div>
+        </>
     )
 }
 

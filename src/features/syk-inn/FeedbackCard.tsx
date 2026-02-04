@@ -1,38 +1,69 @@
 import React, { ReactElement } from 'react'
-import { Detail, Heading } from '@navikt/ds-react'
-import { ArrowRightIcon, CircleSlashIcon, EnvelopeClosedIcon, PhoneIcon } from '@navikt/aksel-icons'
+import { Detail, Heading, Tooltip } from '@navikt/ds-react'
+import {
+    ArrowRightIcon,
+    CheckmarkHeavyIcon,
+    CircleSlashIcon,
+    EnvelopeClosedIcon,
+    PersonGavelIcon,
+    PhoneIcon,
+} from '@navikt/aksel-icons'
 import Link from 'next/link'
 import { formatDistanceToNowStrict } from 'date-fns'
 import { nb } from 'date-fns/locale'
 
 import { Feedback } from '@services/feedback/feedback-schema'
 import { MultilineUserFeedback } from '@components/feedback/MultilineUserFeedback'
+import { cn } from '@lib/tw'
+import { toReadableDateTime } from '@lib/date'
 
 export function FeedbackCard({ feedback }: { feedback: Feedback }): ReactElement {
     return (
-        <div>
-            <div className="bg-ax-bg-raised border border-ax-border-neutral-subtle rounded-md flex flex-col justify-between overflow-hidden">
-                <Link
-                    href={`/syk-inn/tilbakemeldinger/${feedback.id}`}
-                    className="group px-3 py-2 flex justify-between hover:bg-ax-bg-meta-purple-moderate-hover"
-                >
-                    <Heading size="xsmall">Tilbakemelding fra {feedback.name}</Heading>
-                    <ArrowRightIcon
-                        className="size-6 transition-transform duration-200 group-hover:translate-x-1"
-                        aria-hidden
-                    />
-                </Link>
-                <div className="p-3 pt-0">
-                    <div className="mb-3">
-                        <UserContact contactType={feedback.contactType} />
-                    </div>
-                    <div className="relative flex flex-col items-start bg-ax-bg-neutral-soft rounded-sm p-2 min-h-32 max-h-32 overflow-hidden">
-                        <MultilineUserFeedback message={feedback.message} />
-                        <div className="absolute left-0 bottom-0 w-full pointer-events-none h-12 bg-linear-to-b from-transparent to-ax-bg-neutral-soft" />
-                    </div>
-                    <Detail className="mt-2">
-                        {formatDistanceToNowStrict(feedback.timestamp, { locale: nb, addSuffix: true })}
-                    </Detail>
+        <div className="bg-ax-bg-raised border border-ax-border-neutral-subtle rounded-md flex flex-col justify-between overflow-hidden">
+            <Link
+                href={`/syk-inn/tilbakemeldinger/${feedback.id}`}
+                className="group px-3 py-2 flex justify-between hover:bg-ax-bg-meta-purple-moderate-hover"
+            >
+                <Heading size="xsmall">Tilbakemelding fra {feedback.name}</Heading>
+                <ArrowRightIcon
+                    className="size-6 transition-transform duration-200 group-hover:translate-x-1"
+                    aria-hidden
+                />
+            </Link>
+            <div className="p-3 pt-0">
+                <div className="mb-3">
+                    <UserContact contactType={feedback.contactType} />
+                </div>
+                <div className="relative flex flex-col items-start bg-ax-bg-neutral-soft rounded-sm p-2 min-h-32 max-h-32 overflow-hidden">
+                    <MultilineUserFeedback message={feedback.message} />
+                    <div className="absolute left-0 bottom-0 w-full pointer-events-none h-12 bg-linear-to-b from-transparent to-ax-bg-neutral-soft" />
+                </div>
+            </div>
+            <div className="p-1 px-2 flex justify-between items-center">
+                <Detail>
+                    Skrevet {formatDistanceToNowStrict(feedback.timestamp, { locale: nb, addSuffix: true })}
+                </Detail>
+                <div className="flex gap-1">
+                    <Tooltip
+                        content={
+                            feedback.verifiedContentAt
+                                ? `Verifisert av ${feedback.verifiedContentBy}, ${toReadableDateTime(feedback.verifiedContentAt)}`
+                                : `Innhold ikke verifisert`
+                        }
+                    >
+                        <StatusIcon Icon={PersonGavelIcon} done={!!feedback.verifiedContentAt} />
+                    </Tooltip>
+                    {feedback.contactType !== 'NONE' && (
+                        <Tooltip
+                            content={
+                                feedback.contactedAt
+                                    ? `Bruker kontaktet av ${feedback.contactedBy}, ${toReadableDateTime(feedback.contactedAt)}`
+                                    : `Bruker ikke kontaktet`
+                            }
+                        >
+                            <StatusIcon Icon={EnvelopeClosedIcon} done={!!feedback.contactedAt} />
+                        </Tooltip>
+                    )}
                 </div>
             </div>
         </div>
@@ -66,4 +97,23 @@ function UserContact({ contactType }: Pick<Feedback, 'contactType'>): ReactEleme
             )
         }
     }
+}
+
+function StatusIcon({ Icon, done }: { Icon: typeof EnvelopeClosedIcon; done: boolean }): ReactElement {
+    return (
+        <div className="relative size-6">
+            <Icon
+                aria-hidden
+                className={cn('h-full w-full', {
+                    'opacity-50': done,
+                })}
+            />
+            {done && (
+                <CheckmarkHeavyIcon
+                    aria-hidden
+                    className="size-3 absolute -bottom-1 -right-1 bg-ax-bg-success-soft text-ax-text-success-decoration rounded-full"
+                />
+            )}
+        </div>
+    )
 }
