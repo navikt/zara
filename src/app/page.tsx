@@ -17,7 +17,7 @@ function Page(): ReactElement {
                     <BandageIcon aria-hidden className="-mb-0.5" />
                     syk-inn
                 </Heading>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid sm:grid-cols-2 grid-cols-3 gap-4">
                     <LinkCard className="max-w-prose">
                         <LinkCard.Icon>
                             <NotePencilDashIcon fontSize="2rem" aria-hidden />

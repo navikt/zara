@@ -10,6 +10,7 @@ export type FeedbackClient = {
     create: (id: string, feedback: Omit<Feedback, 'id'>) => Promise<void>
     all: () => Promise<Feedback[]>
     byId: (id: string) => Promise<Feedback | null>
+    updateFeedback: (id: string, message: string) => Promise<void>
 }
 
 function createFeedbackClient(valkey: Valkey): FeedbackClient {
@@ -42,6 +43,12 @@ function createFeedbackClient(valkey: Valkey): FeedbackClient {
             }
 
             return FeedbackSchema.parse(data)
+        },
+        updateFeedback: async (id, message) => {
+            const key = feedbackValkeyKey(id)
+            await valkey.hset(key, {
+                message,
+            })
         },
     }
 }

@@ -1,14 +1,27 @@
-import React, { ReactElement } from 'react'
+import React, { Fragment, ReactElement } from 'react'
 import { BodyShort } from '@navikt/ds-react'
 
+import { feedbackToWordsByLines } from '../../features/syk-inn/feedback/utils'
+import { RedactedWord } from '../../features/syk-inn/feedback/redaction/Words'
+
 export function MultilineUserFeedback({ message }: { message: string }): ReactElement {
-    const lines = message.split('\n')
+    const wordsByLines = feedbackToWordsByLines(message)
 
     return (
         <>
-            {lines.map((line, index) => (
-                <BodyShort key={index} spacing={index < lines.length - 1}>
-                    {line}
+            {wordsByLines.map((words, lineIndex) => (
+                <BodyShort key={lineIndex} spacing={lineIndex < wordsByLines.length - 1}>
+                    {words.map((word, wordIndex) => {
+                        if (word === '<redacted>') {
+                            return <RedactedWord key={wordIndex} />
+                        }
+
+                        return (
+                            <Fragment key={wordIndex}>
+                                <span>{word}</span>{' '}
+                            </Fragment>
+                        )
+                    })}
                 </BodyShort>
             ))}
         </>

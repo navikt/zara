@@ -53,21 +53,21 @@ export function UserContact({
 
 function UserContactStatus({ contactedAt, contactedBy }: Pick<Feedback, 'contactedAt' | 'contactedBy'>): ReactElement {
     return (
-        <div>
+        <div className="mb-2">
             <Detail className="flex gap-1 items-center font-bold">
                 <InformationSquareIcon aria-hidden className="-mt-0.5" />
                 Status
             </Detail>
             {contactedAt != null ? (
                 <div>
-                    <div className="flex gap-1 items-center">
+                    <BodyShort className="flex gap-1 items-center">
                         Bruker ble kontaktet <span>{toReadableDateTime(contactedAt)}</span>
                         <CheckmarkCircleIcon />
-                    </div>
+                    </BodyShort>
                     <div className="text-sm">av {contactedBy}</div>
                 </div>
             ) : (
-                <div>A</div>
+                <BodyShort className="italic">Bruker er ikke kontaktet</BodyShort>
             )}
         </div>
     )

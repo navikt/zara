@@ -1,6 +1,8 @@
-import React, { ReactElement } from 'react'
-import { CheckmarkHeavyIcon, EnvelopeClosedIcon, PersonGavelIcon } from '@navikt/aksel-icons'
-import { Detail, Heading } from '@navikt/ds-react'
+'use client'
+
+import React, { ReactElement, useState } from 'react'
+import { CheckmarkHeavyIcon, EnvelopeClosedIcon, PersonGavelIcon, ScissorsIcon } from '@navikt/aksel-icons'
+import { Button, Detail, Heading, Tooltip } from '@navikt/ds-react'
 
 import { Feedback } from '@services/feedback/feedback-schema'
 import { cn } from '@lib/tw'
@@ -8,20 +10,44 @@ import { toReadableDateTime } from '@lib/date'
 
 import { UserContact } from './UserContact'
 import UserFeedback from './UserFeedback'
+import RedactableUserFeedback from './redaction/RedactableUserFeedback'
 
 type Props = {
     feedback: Feedback
 }
 
 function FeedbackAdmin({ feedback }: Props): ReactElement {
+    const [redactMode, setRedactMode] = useState(false)
+
     return (
         <div className="flex flex-col gap-4">
             <StatusBar {...feedback} />
-            <div>
-                <Heading size="small" level="4" spacing>
-                    Tilbakemelding
-                </Heading>
-                <UserFeedback message={feedback.message} />
+            <div className="max-w-prose">
+                <div className="flex justify-between items-center h-8">
+                    <Heading size="small" level="4">
+                        Tilbakemelding
+                    </Heading>
+                    {!redactMode ? (
+                        <div>
+                            <Tooltip content="Gå i sladde-modus">
+                                <Button
+                                    onClick={() => setRedactMode(true)}
+                                    icon={<ScissorsIcon aria-hidden />}
+                                    size="small"
+                                    variant="tertiary"
+                                    data-color="neutral"
+                                />
+                            </Tooltip>
+                        </div>
+                    ) : (
+                        <Detail className="animate-bounce">Sladdemodus aktiv!</Detail>
+                    )}
+                </div>
+                {!redactMode ? (
+                    <UserFeedback message={feedback.message} />
+                ) : (
+                    <RedactableUserFeedback feedback={feedback} onRedactionDone={() => setRedactMode(false)} />
+                )}
             </div>
 
             <div>
@@ -74,12 +100,7 @@ function StatusItem({
 function DoableIcon({ Icon, done }: { Icon: typeof EnvelopeClosedIcon; done: boolean }): ReactElement {
     return (
         <div className="relative">
-            <Icon
-                aria-hidden
-                className={cn('size-8', {
-                    'opacity-50': done,
-                })}
-            />
+            <Icon aria-hidden className={cn('size-8', { 'opacity-50': done })} />
             {done && (
                 <CheckmarkHeavyIcon
                     aria-hidden

@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
     },
     experimental: {
         optimizePackageImports: ['@navikt/ds-react', '@navikt/aksel-icons'],
+        authInterrupts: true,
     },
     images: { remotePatterns: [new URL('https://cdn.nav.no/**')] },
     logging: {

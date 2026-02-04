@@ -33,7 +33,7 @@ function FeedbackChunked({ feedback }: Props): ReactElement {
             <Heading id="all-feedback-heading" level="4" size="small" spacing className="ml-3">
                 I dag ({today.length})
             </Heading>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid sm:grid-cols-2 grid-cols-3 gap-3">
                 {today.map((it) => (
                     <FeedbackCard key={it.id} feedback={it} />
                 ))}
