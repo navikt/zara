@@ -26,7 +26,13 @@ function RedactableUserFeedback({ feedback, onRedactionDone }: Props): ReactElem
                     <BodyShort key={lineIndex} spacing={lineIndex < wordsByLines.length - 1}>
                         {words.map((word, wordIndex) => {
                             if (word === '<redacted>') {
-                                return <RedactedWord key={wordIndex} type="already-redacted" />
+                                return (
+                                    <RedactedWord
+                                        key={wordIndex}
+                                        seed={lineIndex + wordIndex}
+                                        type="already-redacted"
+                                    />
+                                )
                             }
 
                             const wordKey = `${lineIndex}:${wordIndex}`
@@ -42,7 +48,7 @@ function RedactableUserFeedback({ feedback, onRedactionDone }: Props): ReactElem
                                         )}
                                         onClick={() => {
                                             setRedactedWords((prev) => {
-                                                if (prev[wordKey]) R.omit(prev, [wordKey])
+                                                if (prev[wordKey]) return R.omit(prev, [wordKey])
 
                                                 return { ...prev, [wordKey]: [lineIndex, wordIndex] }
                                             })

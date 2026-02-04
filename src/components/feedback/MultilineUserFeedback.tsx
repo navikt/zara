@@ -13,12 +13,12 @@ export function MultilineUserFeedback({ message }: { message: string }): ReactEl
                 <BodyShort key={lineIndex} spacing={lineIndex < wordsByLines.length - 1}>
                     {words.map((word, wordIndex) => {
                         if (word === '<redacted>') {
-                            return <RedactedWord key={wordIndex} />
+                            return <RedactedWord seed={lineIndex + wordIndex} key={wordIndex} />
                         }
 
                         return (
                             <Fragment key={wordIndex}>
-                                <span>{word}</span>{' '}
+                                <span className="inline-block">{word}</span>{' '}
                             </Fragment>
                         )
                     })}
