@@ -33,7 +33,7 @@ function FeedbackChunked({ feedback }: Props): ReactElement {
             <Heading id="all-feedback-heading" level="4" size="small" spacing className="ml-3">
                 I dag ({today.length})
             </Heading>
-            <div className="grid sm:grid-cols-2 grid-cols-3 gap-3">
+            <div className="gap-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {today.map((it) => (
                     <FeedbackCard key={it.id} feedback={it} />
                 ))}
@@ -49,7 +49,7 @@ function FeedbackChunked({ feedback }: Props): ReactElement {
             <Heading id="all-feedback-heading" level="4" size="small" spacing className="mt-6 ml-3">
                 Tidligere ({older.length})
             </Heading>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="gap-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {older.map((it) => (
                     <FeedbackCard key={it.id} feedback={it} />
                 ))}

@@ -11,6 +11,8 @@ import { toReadableDateTime } from '@lib/date'
 import { UserContact } from './UserContact'
 import UserFeedback from './UserFeedback'
 import RedactableUserFeedback from './redaction/RedactableUserFeedback'
+import AdminSection from './AdminSection'
+import ActivityLog from './ActivityLog'
 
 type Props = {
     feedback: Feedback
@@ -22,40 +24,44 @@ function FeedbackAdmin({ feedback }: Props): ReactElement {
     return (
         <div className="flex flex-col gap-4">
             <StatusBar {...feedback} />
-            <div className="max-w-prose">
-                <div className="flex justify-between items-center h-8">
-                    <Heading size="small" level="4">
-                        Tilbakemelding
-                    </Heading>
-                    {!redactMode ? (
-                        <div>
-                            <Tooltip content="Gå i sladde-modus">
-                                <Button
-                                    onClick={() => setRedactMode(true)}
-                                    icon={<ScissorsIcon aria-hidden />}
-                                    size="small"
-                                    variant="tertiary"
-                                    data-color="neutral"
-                                />
-                            </Tooltip>
-                        </div>
-                    ) : (
-                        <Detail className="animate-bounce">Sladdemodus aktiv!</Detail>
-                    )}
-                </div>
+            <AdminSection
+                className="max-w-prose"
+                heading={
+                    <div className="flex justify-between items-center h-8">
+                        <Heading size="small" level="4">
+                            Tilbakemelding
+                        </Heading>
+                        {!redactMode ? (
+                            <div>
+                                <Tooltip content="Gå i sladde-modus">
+                                    <Button
+                                        onClick={() => setRedactMode(true)}
+                                        icon={<ScissorsIcon aria-hidden />}
+                                        size="small"
+                                        variant="tertiary"
+                                        data-color="neutral"
+                                    />
+                                </Tooltip>
+                            </div>
+                        ) : (
+                            <Detail className="animate-bounce">Sladdemodus aktiv!</Detail>
+                        )}
+                    </div>
+                }
+            >
                 {!redactMode ? (
                     <UserFeedback message={feedback.message} />
                 ) : (
                     <RedactableUserFeedback feedback={feedback} onRedactionDone={() => setRedactMode(false)} />
                 )}
-            </div>
+            </AdminSection>
 
-            <div>
-                <Heading size="small" level="4">
-                    Kontakt
-                </Heading>
+            <AdminSection className="max-w-prose" heading="Kontakt">
                 <UserContact {...feedback} />
-            </div>
+            </AdminSection>
+            <AdminSection className="max-w-prose" heading="Hendelseslogg">
+                <ActivityLog feedback={feedback} />
+            </AdminSection>
         </div>
     )
 }
@@ -90,7 +96,7 @@ function StatusItem({
                         {toReadableDateTime(at)}, av {by}
                     </Detail>
                 ) : (
-                    <Detail className="italic text-xs -mt-1">Ikke sjekket</Detail>
+                    <Detail className="italic text-xs -mt-1">Ikke utført</Detail>
                 )}
             </div>
         </div>

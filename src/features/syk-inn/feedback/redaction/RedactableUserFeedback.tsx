@@ -21,7 +21,7 @@ function RedactableUserFeedback({ feedback, onRedactionDone }: Props): ReactElem
 
     return (
         <div>
-            <div className="bg-ax-bg-raised border border-ax-border-danger p-3 rounded-md drop-shadow-xl drop-shadow-ax-danger-600">
+            <div className="bg-ax-bg-sunken border border-ax-border-danger p-3 rounded-md drop-shadow-xl drop-shadow-ax-danger-600">
                 {wordsByLines.map((words, lineIndex) => (
                     <BodyShort key={lineIndex} spacing={lineIndex < wordsByLines.length - 1}>
                         {words.map((word, wordIndex) => {
