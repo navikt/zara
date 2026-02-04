@@ -8,7 +8,7 @@ import { FEEDBACK_KEY_PREFIX } from '@navikt/syk-zara'
 import { bundledEnv } from '@lib/env'
 import { raise } from '@lib/ts'
 
-import { FeedbackClient } from '../services/feedback/feedback-client'
+import { Feedback, FeedbackClient } from '../services/feedback/feedback-client'
 
 export async function seedDevelopmentFeedback(client: FeedbackClient): Promise<void> {
     if (bundledEnv.runtimeEnv !== 'local') {
@@ -29,10 +29,22 @@ export async function seedDevelopmentFeedback(client: FeedbackClient): Promise<v
             name: faker.person.fullName(),
             message: faker.lorem.lines({ min: 1, max: 5 }),
             timestamp: timestamp,
-            contact: faker.helpers.arrayElement(['PHONE', 'EMAIL', 'NONE']),
+            ...createContactDetails(),
         })
     }
     logger.info(`Seeding valkey done!`)
+}
+
+function createContactDetails(): Pick<Feedback, 'contactType' | 'contactDetails'> {
+    const contactType = faker.helpers.arrayElement(['PHONE', 'EMAIL', 'NONE'])
+    switch (contactType) {
+        case 'NONE':
+            return { contactType, contactDetails: null }
+        case 'PHONE':
+            return { contactType, contactDetails: faker.helpers.fromRegExp(/[49][0-9]{7}/) }
+        default:
+            return { contactType, contactDetails: faker.internet.email() }
+    }
 }
 
 export async function clearDevelopmentFeedback(valkey: Valkey): Promise<void> {

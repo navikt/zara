@@ -9,7 +9,8 @@ export type Feedback = {
     name: string
     message: string
     timestamp: string
-    contact: string
+    contactType: 'PHONE' | 'EMAIL' | 'NONE'
+    contactDetails: string | null
 }
 
 export type FeedbackClient = {
