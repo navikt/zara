@@ -41,6 +41,7 @@
         "zod": "^4.3.6"
     },
     "devDependencies": {
+        "@faker-js/faker": "^10.2.0",
         "@navikt/tsm-eslint-react": "^1.0.0",
         "@navikt/tsm-prettier": "^2.0.0",
         "@tailwindcss/postcss": "^4.1.18",

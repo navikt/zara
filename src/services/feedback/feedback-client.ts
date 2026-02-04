@@ -6,22 +6,22 @@ import { getValkey } from '../valkey/valkey'
 export type Feedback = {
     id: string
     message: string
+    timestamp: string
+    contact: string
 }
 
 export type FeedbackClient = {
-    create: (id: string, message: string) => Promise<void>
+    create: (id: string, feedback: Omit<Feedback, 'id'>) => Promise<void>
     // Dev only,
     dump: () => Promise<Feedback[]>
 }
 
 function createFeedbackClient(valkey: Valkey): FeedbackClient {
     return {
-        create: async (id, message) => {
+        create: async (id, feedback) => {
             const key = feedbackValkeyKey(id)
 
-            await valkey.hset(key, {
-                message: message,
-            })
+            await valkey.hset(key, feedback)
         },
         dump: async () => {
             const pattern = 'feedback:*'
@@ -34,7 +34,10 @@ function createFeedbackClient(valkey: Valkey): FeedbackClient {
                     const id = key.replace(/^feedback:/, '')
                     return {
                         id,
+                        // TODO: Zod based mapping probably
                         message: data.message || '',
+                        timestamp: data.timestamp || '',
+                        contact: data.contact || '',
                     }
                 }),
             )
