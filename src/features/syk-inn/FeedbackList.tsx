@@ -3,10 +3,11 @@ import { BodyShort, Detail, Heading } from '@navikt/ds-react'
 import { formatDistanceToNowStrict } from 'date-fns'
 import { nb } from 'date-fns/locale'
 import Image from 'next/image'
-import { CircleSlashIcon, EnvelopeClosedIcon, PhoneIcon } from '@navikt/aksel-icons'
+import { ArrowRightIcon, CircleSlashIcon, EnvelopeClosedIcon, PhoneIcon } from '@navikt/aksel-icons'
+import Link from 'next/link'
 
 import { Feedback } from '../../services/feedback/feedback-client'
-import sadSara from '../../images/sad-sara.webp'
+import { zaraImages } from '../../images/zaras'
 
 type Props = {
     feedback: Feedback[]
@@ -23,29 +24,46 @@ function FeedbackList({ feedback }: Props): ReactElement {
             {!hasFeedback ? (
                 <div className="bg-ax-bg-raised border border-ax-border-neutral-subtle max-w-prose rounded-md p-6 flex justify-center items-center h-96 flex-col">
                     <div className="text-4xl mb-4 text-ax-text-neutral-subtle">Ingen tilbakemeldinger enda :(</div>
-                    <Image src={sadSara.src} width={256} height={256} alt="Zara!" />
+                    <Image src={zaraImages.cry.src} width={256} height={256} alt="Zara!" />
                 </div>
             ) : (
                 <div className="grid grid-cols-3 gap-3">
                     {feedback.map((it) => (
-                        <div key={it.id}>
-                            <div className="bg-ax-bg-raised border border-ax-border-neutral-subtle rounded-md p-3 flex flex-col justify-between">
-                                <Heading size="xsmall">Tilbakemelding fra {it.name}</Heading>
-                                <div className="mb-2">
-                                    <UserContact contactType={it.contactType} contactDetails={it.contactDetails} />
-                                </div>
-                                <div className="flex flex-col items-start bg-ax-bg-neutral-soft rounded-sm p-2">
-                                    <MultilineUserFeedback message={it.message} />
-                                </div>
-                                <Detail className="mt-2">
-                                    {formatDistanceToNowStrict(it.timestamp, { locale: nb, addSuffix: true })}
-                                </Detail>
-                            </div>
-                        </div>
+                        <FeedbackCard key={it.id} feedback={it} />
                     ))}
                 </div>
             )}
         </section>
+    )
+}
+
+function FeedbackCard({ feedback }: { feedback: Feedback }): ReactElement {
+    return (
+        <div>
+            <div className="bg-ax-bg-raised border border-ax-border-neutral-subtle rounded-md flex flex-col justify-between overflow-hidden">
+                <Link
+                    href={`/syk-inn/tilbakemeldinger/${feedback.id}`}
+                    className="group px-3 py-2 flex justify-between hover:bg-ax-bg-meta-purple-moderate-hover"
+                >
+                    <Heading size="xsmall">Tilbakemelding fra {feedback.name}</Heading>
+                    <ArrowRightIcon
+                        className="size-6 transition-transform duration-200 group-hover:translate-x-1"
+                        aria-hidden
+                    />
+                </Link>
+                <div className="p-3">
+                    <div className="mb-2">
+                        <UserContact contactType={feedback.contactType} contactDetails={feedback.contactDetails} />
+                    </div>
+                    <div className="flex flex-col items-start bg-ax-bg-neutral-soft rounded-sm p-2">
+                        <MultilineUserFeedback message={feedback.message} />
+                    </div>
+                    <Detail className="mt-2">
+                        {formatDistanceToNowStrict(feedback.timestamp, { locale: nb, addSuffix: true })}
+                    </Detail>
+                </div>
+            </div>
+        </div>
     )
 }
 
