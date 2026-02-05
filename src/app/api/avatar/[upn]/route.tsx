@@ -1,6 +1,6 @@
 import { logger } from '@navikt/next-logger'
+import { requestAzureClientCredentialsToken } from '@navikt/oasis'
 
-import { getMsOboToken } from '@services/entra/ms-graph'
 import { bundledEnv } from '@lib/env'
 
 import { devAvatarBase64 } from '../../../../dev/dev-image'
@@ -22,11 +22,19 @@ export async function GET(_: Request, { params }: RouteContext<'/api/avatar/[upn
     }
 
     try {
-        const obo = await getMsOboToken()
+        const response = await requestAzureClientCredentialsToken('https://graph.microsoft.com/.default')
+        if (!response.ok) {
+            logger.error(
+                new Error(`Unable to acquire Azure client credentials token: ${response.error.message}`, {
+                    cause: response.error,
+                }),
+            )
+            return new Response(undefined, { status: 404 })
+        }
 
         return fetch(`https://graph.microsoft.com/v1.0/users/${upn}/photo/$value`, {
             method: 'GET',
-            headers: { Authorization: `Bearer ${obo}` },
+            headers: { Authorization: `Bearer ${response.token}` },
         })
     } catch (e) {
         logger.error(e)
