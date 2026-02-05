@@ -8,6 +8,7 @@ import { faker } from '@faker-js/faker'
 
 import useInterval from '@lib/hooks/useInterval'
 import { cn } from '@lib/tw'
+import { bundledEnv } from '@lib/env'
 
 import { pingMe } from './live-actions'
 import Avatar from './Avatar'
@@ -23,6 +24,8 @@ type ActiveUsers = Record<
 function FeedbackListLiveViewBadges(): ReactElement {
     const [now, setNow] = useState(() => Date.now())
     const [whoOnline, setWhoOnline] = useState<ActiveUsers>({})
+
+    useLocalDevUsers(setWhoOnline)
 
     useInterval(() => {
         setNow(Date.now())
@@ -62,17 +65,6 @@ function FeedbackListLiveViewBadges(): ReactElement {
             es.close()
         }
     }, [setWhoOnline])
-
-    // TODO: Dev users
-    useInterval(() => {
-        setWhoOnline((prev) => ({
-            ...prev,
-            [crypto.randomUUID()]: {
-                name: faker.person.fullName(),
-                seen: Date.now(),
-            },
-        }))
-    }, 15000)
 
     return (
         <motion.ul layout className="flex items-center gap-1">
@@ -116,6 +108,24 @@ function removeStaleUsers(now: number) {
         })
         return cleaned
     }
+}
+
+function useLocalDevUsers(
+    setWhoOnline: (value: ((prevState: ActiveUsers) => ActiveUsers) | ActiveUsers) => void,
+): void {
+    useInterval(() => {
+        if (bundledEnv.runtimeEnv !== 'local') {
+            return
+        }
+
+        setWhoOnline((prev) => ({
+            ...prev,
+            [crypto.randomUUID()]: {
+                name: faker.person.fullName(),
+                seen: Date.now(),
+            },
+        }))
+    }, 15000)
 }
 
 export default FeedbackListLiveViewBadges
