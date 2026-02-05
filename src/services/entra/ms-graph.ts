@@ -1,5 +1,5 @@
-import { getToken, requestOboToken } from '@navikt/oasis'
 import { headers } from 'next/headers'
+import { getToken, requestOboToken } from '@navikt/oasis'
 
 export async function getMsOboToken(): Promise<string> {
     const token = getToken(await headers())

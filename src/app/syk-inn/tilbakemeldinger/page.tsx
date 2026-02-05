@@ -4,8 +4,8 @@ import { PageBlock } from '@navikt/ds-react/Page'
 
 import { bundledEnv } from '@lib/env'
 import { validateUserSession } from '@services/auth/auth'
+import { getFeedbackClient } from '@services/feedback/feedback-client'
 
-import { getFeedbackClient } from '../../../services/feedback/feedback-client'
 import { seedDevelopmentFeedback } from '../../../dev/seed-valkey'
 import FeedbackList from '../../../features/syk-inn/FeedbackList'
 import FeedbackListLiveViewBadges from '../../../features/syk-inn/live-view/FeedbackListLiveViewBadges'

@@ -1,4 +1,4 @@
-import { notFound } from 'next/dist/client/components/not-found'
+import { notFound } from 'next/navigation'
 import { logger } from '@navikt/next-logger'
 
 import { bundledEnv } from '@lib/env'
