@@ -5,6 +5,7 @@ import { ArrowLeftIcon } from '@navikt/aksel-icons'
 import Image from 'next/image'
 
 import { AkselNextLink } from '@components/AkselNextLink'
+import { validateUserSession } from '@services/auth/auth'
 
 import { getFeedbackClient } from '../../../../services/feedback/feedback-client'
 import { zaraImages } from '../../../../images/zaras'
@@ -13,6 +14,7 @@ import FeedbackAdmin from '../../../../features/syk-inn/feedback/FeedbackAdmin'
 async function Page({ params }: PageProps<'/syk-inn/tilbakemeldinger/[tilbakemeldingsId]'>): Promise<ReactElement> {
     const { tilbakemeldingsId } = await params
 
+    await validateUserSession()
     const client = getFeedbackClient()
     const feedback = await client.byId(tilbakemeldingsId)
 

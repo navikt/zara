@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { logger } from '@navikt/next-logger'
 
 import { getFeedbackClient } from '@services/feedback/feedback-client'
-import { validateTokenInServerAction } from '@services/auth/auth'
+import { validateUserSession } from '@services/auth/auth'
 
 import { feedbackToWordsByLines } from '../utils'
 
@@ -13,8 +13,7 @@ export async function redactFeedbackContent(
     id: string,
     redactLocations: [number, number][],
 ): Promise<{ redacted: boolean }> {
-    const user = await validateTokenInServerAction()
-
+    const user = await validateUserSession()
     const client = getFeedbackClient()
     const feedback = await client.byId(id)
     if (!feedback) unauthorized()

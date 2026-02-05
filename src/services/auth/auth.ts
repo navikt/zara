@@ -9,7 +9,7 @@ type User = { oid: string; name: string; userId: string }
 /**
  * Throws auth interrupt if token is missing or invalid
  */
-export async function validateTokenInServerAction(): Promise<User> {
+export async function validateUserSession(): Promise<User> {
     if (bundledEnv.runtimeEnv === 'local') {
         return { name: 'Loccy McDevsson', userId: 'loccy@example.com', oid: 'fake-dev-oid' }
     }

@@ -15,6 +15,10 @@ spec:
   azure:
     application:
       enabled: true
+      autoLogin: true
+      autoLoginIgnorePaths:
+        - /api/*
+        - /favicon.ico
       tenant: nav.no
       claims:
         groups:

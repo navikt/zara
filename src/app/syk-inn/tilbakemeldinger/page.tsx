@@ -3,6 +3,7 @@ import { Heading } from '@navikt/ds-react'
 import { PageBlock } from '@navikt/ds-react/Page'
 
 import { bundledEnv } from '@lib/env'
+import { validateUserSession } from '@services/auth/auth'
 
 import { getFeedbackClient } from '../../../services/feedback/feedback-client'
 import { seedDevelopmentFeedback } from '../../../dev/seed-valkey'
@@ -20,6 +21,7 @@ async function Page(): Promise<ReactElement> {
     /**
      * No fanciness or pagination for now.
      */
+    await validateUserSession()
     const feedback = await client.all()
 
     return (
