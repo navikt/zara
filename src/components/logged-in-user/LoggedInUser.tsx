@@ -2,6 +2,7 @@ import { BodyShort, Detail, Skeleton, Tooltip } from '@navikt/ds-react'
 import React, { ReactElement } from 'react'
 
 import { userInfo } from '@services/auth/auth'
+import LoggedInUserAvatar from '@components/logged-in-user/LoggedInUserAvatar'
 
 export async function LoggedInUser(): Promise<ReactElement> {
     const user = await userInfo()
@@ -22,17 +23,8 @@ export async function LoggedInUser(): Promise<ReactElement> {
             </div>
 
             <Tooltip content={`Logget in som ${user.name} (${user.userId})`}>
-                <div className="relative size-11 border-2 border-ax-border-neutral-subtle rounded-full overflow-hidden">
-                    <div className="w-full h-full bg-ax-bg-raised rounded-full flex items-center justify-center text-2xl">
-                        {user.name[0]}
-                    </div>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                        className="w-full h-full rounded-full absolute top-0 left-0"
-                        src={`/api/avatar/${user.oid}`}
-                        alt=""
-                        width={32}
-                    />
+                <div>
+                    <LoggedInUserAvatar name={user.name} oid={user.oid} />
                 </div>
             </Tooltip>
         </div>
