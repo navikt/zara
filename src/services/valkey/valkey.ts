@@ -1,7 +1,9 @@
 import Valkey from 'iovalkey'
 
-import { realValkey } from './production-valkey'
+import { realValkey, subscriberValkey } from './production-valkey'
 
 export function getValkey(): Valkey {
+    subscriberValkey()
+
     return realValkey()
 }

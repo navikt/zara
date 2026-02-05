@@ -8,9 +8,9 @@ import { bundledEnv } from '@lib/env'
 import { getFeedbackClient } from '@services/feedback/feedback-client'
 import { getValkey } from '@services/valkey/valkey'
 
-export async function POST(_: Request, { params }: RouteContext<'/api/dev/[action]'>): Promise<Response> {
-    // ⚠️ Dev only endpoint
-    if (bundledEnv.runtimeEnv !== 'local') return notFound()
+export async function POST(_: Request, { params }: RouteContext<'/api/internal/dev/[action]'>): Promise<Response> {
+    // ⚠️ Dev only endpoint (allow dev-gcp for now)
+    if (bundledEnv.runtimeEnv === 'prod-gcp') return notFound()
 
     const { action } = await params
 
@@ -27,9 +27,11 @@ export async function POST(_: Request, { params }: RouteContext<'/api/dev/[actio
             return Response.json({ message: `Re-seeded!` }, { status: 201 })
         }
         case 'new-feedback': {
-            const client = getFeedbackClient()
+            const valkey = getValkey()
+            const client = getFeedbackClient(valkey)
 
-            await client.create(crypto.randomUUID(), {
+            const newId = crypto.randomUUID()
+            await client.create(newId, {
                 name: faker.person.fullName(),
                 message: faker.lorem.lines({ min: 2, max: 5 }),
                 timestamp: new Date().toISOString(),
@@ -39,6 +41,8 @@ export async function POST(_: Request, { params }: RouteContext<'/api/dev/[actio
                 verifiedContentAt: null,
                 verifiedContentBy: null,
             })
+
+            valkey.publish('channel:new-feedback', newId)
 
             return Response.json({ message: `Random feedback added!` }, { status: 201 })
         }

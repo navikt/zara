@@ -9,17 +9,21 @@ import {
     PhoneIcon,
 } from '@navikt/aksel-icons'
 import Link from 'next/link'
-import { formatDistanceToNowStrict } from 'date-fns'
-import { nb } from 'date-fns/locale'
 
 import { Feedback } from '@services/feedback/feedback-schema'
 import { MultilineUserFeedback } from '@components/feedback/MultilineUserFeedback'
 import { cn } from '@lib/tw'
 import { toReadableDateTime } from '@lib/date'
+import { AutoUpdatingDistance } from '@components/AutoUpdatingDistance'
 
-export function FeedbackCard({ feedback }: { feedback: Feedback }): ReactElement {
+export function FeedbackCard({ feedback, fresh }: { feedback: Feedback; fresh: boolean }): ReactElement {
     return (
-        <div className="bg-ax-bg-raised border border-ax-border-neutral-subtle rounded-md flex flex-col justify-between overflow-hidden">
+        <div
+            className={cn(
+                'bg-ax-bg-raised border border-ax-border-neutral-subtle rounded-md flex flex-col justify-between overflow-hidden',
+                { 'drop-shadow-xl drop-shadow-ax-meta-purple-500': fresh },
+            )}
+        >
             <Link
                 href={`/syk-inn/tilbakemeldinger/${feedback.id}`}
                 className="group px-3 py-2 flex justify-between hover:bg-ax-bg-meta-purple-moderate-hover"
@@ -40,9 +44,7 @@ export function FeedbackCard({ feedback }: { feedback: Feedback }): ReactElement
                 </div>
             </div>
             <div className="p-1 px-2 flex justify-between items-center">
-                <Detail>
-                    Skrevet {formatDistanceToNowStrict(feedback.timestamp, { locale: nb, addSuffix: true })}
-                </Detail>
+                <AutoUpdatingDistance prefix="Skrevet " time={feedback.timestamp} />
                 <div className="flex gap-2 -mt-2">
                     <Tooltip
                         content={

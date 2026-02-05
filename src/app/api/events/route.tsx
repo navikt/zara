@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 
 import { liveService } from '@services/live-service/users'
 import { Pages } from '@services/live-service/pages'
+import { validateUserSession } from '@services/auth/auth'
 
 export async function GET(request: NextRequest): Promise<Response> {
     const pageToGetEventsFor = request.nextUrl.searchParams.get('page')
@@ -9,6 +10,7 @@ export async function GET(request: NextRequest): Promise<Response> {
         return new Response('Missing page parameter', { status: 400 })
     }
 
+    await validateUserSession()
     const encoder = new TextEncoder()
 
     let closed = false

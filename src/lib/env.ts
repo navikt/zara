@@ -39,7 +39,7 @@ const ValkeyConfigSchema = z.union([
     z.object({
         runtimeEnv: z.literal('local'),
         host: z.string(),
-        port: z.coerce.number(),
+        port: z.coerce.number().optional(),
     }),
 ])
 
@@ -65,7 +65,7 @@ export function getServerEnv(): ServerEnv {
         password: process.env.VALKEY_PASSWORD_SYK_INN,
         // Local
         host: process.env.VALKEY_HOST_SYK_INN,
-        port: process.env.VALKEY_PORT_SYK_INN,
+        port: useLocalSykInn ? undefined : process.env.VALKEY_PORT_SYK_INN,
         // Cloud
         tls: {
             host: process.env.VALKEY_HOST_SYK_INN,
