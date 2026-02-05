@@ -6,7 +6,6 @@ on:
 
 env:
   APP: zara
-  BASE_PATH: /samarbeidspartner/sykmelding
 
 permissions:
   contents: read

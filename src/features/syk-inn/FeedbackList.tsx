@@ -41,7 +41,7 @@ function FeedbackChunked({ feedback }: Props): ReactElement {
                     <div className="p-4 bg-ax-bg-raised border border-ax-border-neutral-subtle rounded-md flex gap-4 items-center justify-start">
                         <Image src={zaraImages.mad.src} width={64} height={64} alt="" />
                         <BodyShort size="large" className="text-ax-text-neutral-subtle">
-                            Ingen sykmeldinger i dag
+                            Ingen tilbakemeldinger i dag
                         </BodyShort>
                     </div>
                 )}
@@ -53,11 +53,11 @@ function FeedbackChunked({ feedback }: Props): ReactElement {
                 {older.map((it) => (
                     <FeedbackCard key={it.id} feedback={it} />
                 ))}
-                {today.length === 0 && (
+                {older.length === 0 && (
                     <div className="p-4 bg-ax-bg-raised border border-ax-border-neutral-subtle rounded-md flex gap-4 items-center justify-start">
                         <Image src={zaraImages.mad.src} width={64} height={64} alt="" />
                         <BodyShort size="large" className="text-ax-text-neutral-subtle">
-                            Ingen tidligere sykmeldinger
+                            Ingen tidligere tilbakemeldinger
                         </BodyShort>
                     </div>
                 )}
