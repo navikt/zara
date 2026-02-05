@@ -29,8 +29,10 @@ function FeedbackListLiveViewBadges(): ReactElement {
     }, 1000)
 
     useEffect(() => {
-        // Register me as active on mount
-        pingMe()
+        setTimeout(() => {
+            // Register me as active on mount
+            pingMe()
+        }, 69)
     }, [])
 
     useInterval(() => {

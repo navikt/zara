@@ -45,9 +45,9 @@ spec:
         medium: Memory
       mountPath: /app/.next/cache
   accessPolicy:
-    external:
-      - host: cdn.nav.no
     outbound:
+      external:
+        - host: cdn.nav.no
       rules:
         - application: logging
           namespace: nais-system

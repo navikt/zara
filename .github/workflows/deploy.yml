@@ -98,7 +98,7 @@ jobs:
 
   deploy-production:
     name: Deploy main to production
-    if: github.ref_name == 'main' && false
+    if: github.ref_name == 'main'
     environment:
       name: production
       url: https://zara.intern.dev.nav.no
