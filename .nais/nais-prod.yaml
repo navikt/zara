@@ -15,15 +15,17 @@ spec:
   azure:
     application:
       enabled: true
-      autoLogin: true
-      autoLoginIgnorePaths:
-        - /api/*
-        - /favicon.ico
       tenant: nav.no
       claims:
         groups:
           # EntraAD: nais-team-tsm
           - id: '35c70ac7-e8e6-4cec-933b-86106a97c0d4'
+    sidecar:
+      enabled: true
+      autoLogin: true
+      autoLoginIgnorePaths:
+        - /api/*
+        - /favicon.ico
   valkey:
     - instance: syk-inn
       access: read
