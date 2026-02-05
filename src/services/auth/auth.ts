@@ -1,0 +1,53 @@
+import { getToken, validateToken, parseAzureUserToken } from '@navikt/oasis'
+import { headers } from 'next/headers'
+import { unauthorized } from 'next/navigation'
+
+import { bundledEnv } from '@lib/env'
+
+type User = { oid: string; name: string; userId: string }
+
+/**
+ * Throws auth interrupt if token is missing or invalid
+ */
+export async function validateTokenInServerAction(): Promise<User> {
+    if (bundledEnv.runtimeEnv === 'local') {
+        return { name: 'Loccy McDevsson', userId: 'loccy@example.com', oid: 'fake-dev-oid' }
+    }
+
+    const token = getToken(await headers())
+    if (!token) unauthorized()
+
+    const validation = await validateToken(token)
+    if (!validation.ok) unauthorized()
+
+    const info = await userInfo(token)
+    if (!info) unauthorized()
+
+    const { oid } = JSON.parse(atob(token.split('.')[1]))
+
+    return {
+        oid: oid,
+        name: info.name,
+        userId: info.userId,
+    }
+}
+
+export async function userInfo(token?: string): Promise<User | null> {
+    if (bundledEnv.runtimeEnv === 'local') {
+        return { name: 'Loccy McDevsson', userId: 'loccy@example.com', oid: 'fake-dev-oid' }
+    }
+
+    const _token = token ?? getToken(await headers())
+    if (!_token) return null
+
+    const parsed = parseAzureUserToken(_token)
+    if (!parsed.ok) return null
+
+    const { oid } = JSON.parse(atob(_token.split('.')[1]))
+
+    return {
+        oid: oid,
+        name: parsed.name,
+        userId: parsed.preferred_username,
+    }
+}

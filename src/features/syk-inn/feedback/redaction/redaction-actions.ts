@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { logger } from '@navikt/next-logger'
 
 import { getFeedbackClient } from '@services/feedback/feedback-client'
-import { validateTokenInServerAction } from '@lib/auth/auth'
+import { validateTokenInServerAction } from '@services/auth/auth'
 
 import { feedbackToWordsByLines } from '../utils'
 
