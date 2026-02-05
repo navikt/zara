@@ -792,10 +792,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/syk-zara@npm:^0.0.3":
-  version: 0.0.3
-  resolution: "@navikt/syk-zara@npm:0.0.3::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fsyk-zara%2F0.0.3%2F6efba35cd1038fe256df84ce713532aa8f19a791"
-  checksum: 10c0/592e4ff4a46cb0d7dcea3b3d18548b8248e33f29766b3a15a25fdb09c9486620468adb44e96b4551b734f818d2aeab631f6d4d934848c3c260fa6f873886358b
+"@navikt/syk-zara@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "@navikt/syk-zara@npm:0.0.4::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fsyk-zara%2F0.0.4%2F206e6950754d65c4da05ee29bf2c988f1d6f4be2"
+  checksum: 10c0/31df456d6103174aded8cfe0f5e7631bed9b6e00077e35c948c5dd5074a99001463d7c0e2fee73d9b304453a2ce64163c8e3eadeca2093ccccefd3b97e22f790
   languageName: node
   linkType: hard
 
@@ -2108,12 +2108,12 @@ __metadata:
   linkType: hard
 
 "enhanced-resolve@npm:^5.18.3":
-  version: 5.18.4
-  resolution: "enhanced-resolve@npm:5.18.4"
+  version: 5.19.0
+  resolution: "enhanced-resolve@npm:5.19.0"
   dependencies:
     graceful-fs: "npm:^4.2.4"
-    tapable: "npm:^2.2.0"
-  checksum: 10c0/8f6d42c8a0787a746c493e724c9de5d091cfe8e3f871f2464e2f78a6c55fa1a3aaba495334f923c8ea3ac23e1472491f79feef6fc0fb46a75169cb447ffbe2dc
+    tapable: "npm:^2.3.0"
+  checksum: 10c0/966b1dffb82d5f6a4d6a86e904e812104a999066aa29f9223040aaa751e7c453b462a3f5ef91f8bd4408131ff6f7f90651dd1c804bdcb7944e2099a9c2e45ee2
   languageName: node
   linkType: hard
 
@@ -2730,9 +2730,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^12.30.1":
-  version: 12.30.1
-  resolution: "framer-motion@npm:12.30.1"
+"framer-motion@npm:^12.31.0":
+  version: 12.31.0
+  resolution: "framer-motion@npm:12.31.0"
   dependencies:
     motion-dom: "npm:^12.30.1"
     motion-utils: "npm:^12.29.2"
@@ -2748,7 +2748,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/62af6d0426edda7e1f2da03ace89e5c8d5d965dfb329872d2871447f99e6580cf5960bb5a2ed62df1fd50bff1e92f3e630bc1461815e07da4256ca1ae02746c3
+  checksum: 10c0/30d7bbc2eb57914d8e7ac2269d8f8eaacfee79e268aa1635096c8ba47977554ec70a8bb8b5746cc3de3c25775535c9d6f3e6443c02625575ac85756fbd5864dd
   languageName: node
   linkType: hard
 
@@ -3782,11 +3782,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"motion@npm:^12.30.1":
-  version: 12.30.1
-  resolution: "motion@npm:12.30.1"
+"motion@npm:^12.31.0":
+  version: 12.31.0
+  resolution: "motion@npm:12.31.0"
   dependencies:
-    framer-motion: "npm:^12.30.1"
+    framer-motion: "npm:^12.31.0"
     tslib: "npm:^2.4.0"
   peerDependencies:
     "@emotion/is-prop-valid": "*"
@@ -3799,7 +3799,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10c0/e65fd3528f68e7da9b70f13a68a2694ceea034029195ead76603822da004c764ebbcc4d9e5b698ec30980cf7eb73e70d001c109c1dd1cb556984606c79b61298
+  checksum: 10c0/c7964c05dc868389d272d4fc7af205500c3ead21e2e815b7715f74a1a756f5aef7e6371af01651ea40946ae6b35e70dfefd77ec549f8f45e49ec84c2c1b7b556
   languageName: node
   linkType: hard
 
@@ -5106,7 +5106,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tapable@npm:^2.2.0":
+"tapable@npm:^2.3.0":
   version: 2.3.0
   resolution: "tapable@npm:2.3.0"
   checksum: 10c0/cb9d67cc2c6a74dedc812ef3085d9d681edd2c1fa18e4aef57a3c0605fdbe44e6b8ea00bd9ef21bc74dd45314e39d31227aa031ebf2f5e38164df514136f2681
@@ -5531,7 +5531,7 @@ __metadata:
     "@navikt/ds-tailwind": "npm:^8.2.2"
     "@navikt/next-logger": "npm:^4.5.1"
     "@navikt/oasis": "npm:^4.1.4"
-    "@navikt/syk-zara": "npm:^0.0.3"
+    "@navikt/syk-zara": "npm:^0.0.4"
     "@navikt/tsm-eslint-react": "npm:^1.0.0"
     "@navikt/tsm-prettier": "npm:^2.0.0"
     "@opentelemetry/api": "npm:^1.9.0"
@@ -5548,7 +5548,7 @@ __metadata:
     husky: "npm:^9.1.7"
     iovalkey: "npm:^0.3.3"
     lint-staged: "npm:^16.2.7"
-    motion: "npm:^12.30.1"
+    motion: "npm:^12.31.0"
     next: "npm:^16.1.6"
     next-logger: "npm:^5.0.2"
     next-themes: "npm:^0.4.6"
