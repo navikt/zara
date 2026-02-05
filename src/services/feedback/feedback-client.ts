@@ -10,6 +10,7 @@ import { Feedback, FeedbackSchema } from './feedback-schema'
 
 export type FeedbackClient = {
     create: (id: string, feedback: Omit<Feedback, 'id' | 'redactionLog'>) => Promise<void>
+    delete: (id: string) => Promise<void>
     all: () => Promise<Feedback[]>
     byId: (id: string) => Promise<Feedback | null>
     updateFeedback: (id: string, message: string, whom: { name: string; count: number }) => Promise<void>
@@ -27,6 +28,14 @@ function createFeedbackClient(valkey: Valkey): FeedbackClient {
                 ...feedback,
                 redactionLog: JSON.stringify([]),
             } satisfies Record<keyof Feedback, unknown>)
+        },
+        delete: async (id) => {
+            const key = feedbackValkeyKey(id)
+
+            const exists = await valkey.exists(key)
+            if (exists !== 1) return
+
+            await valkey.del(key)
         },
         all: async () => {
             const allkeys = await valkey.keys(`${FEEDBACK_KEY_PREFIX}*`)

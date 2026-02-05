@@ -13,6 +13,7 @@ import { UserFeedback } from './message/UserFeedback'
 import RedactableUserFeedback from './redaction/RedactableUserFeedback'
 import AdminSection from './AdminSection'
 import ActivityLog from './ActivityLog'
+import DangerAdminSection from './danger/DangerAdminSection'
 
 type Props = {
     feedback: Feedback
@@ -61,6 +62,9 @@ function FeedbackAdmin({ feedback }: Props): ReactElement {
             </AdminSection>
             <AdminSection className="max-w-prose" heading="Hendelseslogg">
                 <ActivityLog feedback={feedback} />
+            </AdminSection>
+            <AdminSection className="max-w-prose" heading="Admin">
+                <DangerAdminSection feedback={feedback} />
             </AdminSection>
         </div>
     )
