@@ -22,10 +22,8 @@ export async function validateUserSession(): Promise<User> {
     const info = await userInfo(token)
     if (!info) unauthorized()
 
-    const { oid } = JSON.parse(atob(token.split('.')[1]))
-
     return {
-        oid: oid,
+        oid: info.oid,
         name: info.name,
         userId: info.userId,
     }
@@ -42,10 +40,8 @@ export async function userInfo(token?: string): Promise<User | null> {
     const parsed = parseAzureUserToken(_token)
     if (!parsed.ok) return null
 
-    const { oid } = JSON.parse(atob(_token.split('.')[1]))
-
     return {
-        oid: oid,
+        oid: parsed.oid,
         name: parsed.name,
         userId: parsed.preferred_username,
     }

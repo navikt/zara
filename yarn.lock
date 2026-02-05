@@ -765,15 +765,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/oasis@npm:^4.1.2":
-  version: 4.1.2
-  resolution: "@navikt/oasis@npm:4.1.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Foasis%2F4.1.2%2F71dd8c0ce6b1e944771e742fb6db0e2898e4bb43"
+"@navikt/oasis@npm:^4.1.3":
+  version: 4.1.3
+  resolution: "@navikt/oasis@npm:4.1.3::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Foasis%2F4.1.3%2F0f77e6b523b6ce56ef1873987ddea488cb518e51"
   dependencies:
-    "@navikt/texas": "npm:^4.1.2"
+    "@navikt/texas": "npm:^4.1.3"
     "@opentelemetry/api": "npm:^1.9.0"
     jose: "npm:^6.1.3"
     prom-client: "npm:^15.1.3"
-  checksum: 10c0/8287ea0629358c4946af5a11ff70783606611b0720c5230c2f9b9cbcddfd47d0ba69ea776fa42e38700520bd6a03c445e53242e3e7876a52d16572a0c970ea70
+  checksum: 10c0/9faa45774f0be0c84290dbef95c832a16977b8000e2dda03179f337601cb1c1337dbd9baf3a0e7d8a70096937040e33cd98ee3b4a9915ff6c2bb4f6d31e61689
   languageName: node
   linkType: hard
 
@@ -799,10 +799,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/texas@npm:^4.1.2":
-  version: 4.1.2
-  resolution: "@navikt/texas@npm:4.1.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Ftexas%2F4.1.2%2F1186a3e4a52af4b774eb768a5081821f02f28605"
-  checksum: 10c0/60f669b7f3edc36c715d014417888ffee8b8b0c062b29c61b0441965982c5bb16168d5ad3c96c65866ec008d0ee1c5a31368cf8be87c7b32abedeb0d7a8fc6db
+"@navikt/texas@npm:^4.1.3":
+  version: 4.1.3
+  resolution: "@navikt/texas@npm:4.1.3::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Ftexas%2F4.1.3%2Fd817b20bc3859f1268bf0ad97d46f01bfac82849"
+  checksum: 10c0/5452df654a2ad86af30142ef78745170cf201194b9f38c76ca4473c01114032a75b87708741d5ef5fdb039c82a8bc8cc4b66229975b3f659d83b6f2d53b41ca5
   languageName: node
   linkType: hard
 
@@ -5564,7 +5564,7 @@ __metadata:
     "@navikt/ds-react": "npm:^8.2.2"
     "@navikt/ds-tailwind": "npm:^8.2.2"
     "@navikt/next-logger": "npm:^4.5.1"
-    "@navikt/oasis": "npm:^4.1.2"
+    "@navikt/oasis": "npm:^4.1.3"
     "@navikt/syk-zara": "npm:^0.0.3"
     "@navikt/tsm-eslint-react": "npm:^1.0.0"
     "@navikt/tsm-prettier": "npm:^2.0.0"
