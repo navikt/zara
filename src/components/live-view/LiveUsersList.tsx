@@ -29,12 +29,7 @@ type Props = {
 
 function LiveUsersList({ page, me }: Props): ReactElement {
     const [now, setNow] = useState(() => Date.now())
-    const [whoOnline, setWhoOnline] = useState<ActiveUsers>(() => ({
-        [me.oid]: {
-            name: me.name,
-            seen: Date.now(),
-        },
-    }))
+    const [whoOnline, setWhoOnline] = useState<ActiveUsers>(() => ({}))
 
     useLocalDevUsers(setWhoOnline)
 
@@ -63,6 +58,9 @@ function LiveUsersList({ page, me }: Props): ReactElement {
 
         es.onmessage = (e) => {
             const payload = JSON.parse(e.data)
+            // Skip me!
+            if (payload.oid === me.oid) return
+
             setWhoOnline((prev) => ({
                 ...prev,
                 [payload.oid]: {
@@ -75,10 +73,24 @@ function LiveUsersList({ page, me }: Props): ReactElement {
         return () => {
             es.close()
         }
-    }, [page, setWhoOnline])
+    }, [me.oid, page, setWhoOnline])
 
     return (
         <motion.ul layout className="flex items-center gap-1">
+            <AnimatePresence initial={true}>
+                <motion.li
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.25 }}
+                >
+                    <Tooltip content="You are here!">
+                        <div>
+                            <Avatar id={me.oid} name={me.name} />
+                        </div>
+                    </Tooltip>
+                </motion.li>
+            </AnimatePresence>
             <AnimatePresence>
                 {R.entries(whoOnline).map(([id, meta]) => {
                     const lastSeen = now - meta.seen
@@ -92,7 +104,7 @@ function LiveUsersList({ page, me }: Props): ReactElement {
                             exit={{ opacity: 0, y: 8 }}
                             transition={{ duration: 0.25 }}
                             className={cn('overflow-hidden w-fit', {
-                                'opacity-50!': lastSeen > 5_000,
+                                'opacity-50!': lastSeen > 10_000,
                             })}
                         >
                             <Tooltip content={meta.name}>
@@ -113,7 +125,7 @@ function removeStaleUsers(now: number) {
         const cleaned: ActiveUsers = {}
         Object.entries(existing).forEach((it) => {
             const lastSeen = now - it[1].seen
-            if (lastSeen < 15_000) {
+            if (lastSeen < 30_000) {
                 cleaned[it[0]] = it[1]
             }
         })
