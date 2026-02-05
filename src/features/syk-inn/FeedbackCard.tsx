@@ -86,7 +86,7 @@ function UserContact({ contactType }: Pick<Feedback, 'contactType'>): ReactEleme
             return (
                 <Detail className="flex items-center gap-1 ml-1 flex-wrap">
                     <EnvelopeClosedIcon aria-hidden className="-mt-0.5" />
-                    Bruker vil bli kontaktet via e-post
+                    Bruker ønsker å bli kontaktet via e-post
                 </Detail>
             )
         }
@@ -94,7 +94,7 @@ function UserContact({ contactType }: Pick<Feedback, 'contactType'>): ReactEleme
             return (
                 <Detail className="flex items-center gap-1 ml-1">
                     <PhoneIcon aria-hidden />
-                    Bruker vil bli kontaktet via telefon
+                    Bruker ønsker å bli kontaktet via telefon
                 </Detail>
             )
         }

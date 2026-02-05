@@ -1,7 +1,7 @@
 'use client'
 
 import React, { ReactElement, useCallback, useEffect, useState } from 'react'
-import { BodyShort, Heading } from '@navikt/ds-react'
+import { BodyShort, Heading, Switch, Tooltip } from '@navikt/ds-react'
 import Image from 'next/image'
 import { AnimatePresence, motion } from 'motion/react'
 
@@ -12,27 +12,59 @@ import { zaraImages } from '../../images/zaras'
 import { FeedbackCard } from './FeedbackCard'
 
 function FeedbackToday({ today }: { today: Feedback[] }): ReactElement {
+    const [live, setLive] = useState(true)
     const [allToday, setAllToday] = useState(today)
     const newFeedback = useCallback((feedback: Feedback): void => {
         setAllToday((prev) => [feedback, ...prev])
     }, [])
 
-    useLiveFeedback(newFeedback)
+    useLiveFeedback(newFeedback, live)
 
     return (
         <>
-            <Heading id="all-feedback-heading" level="4" size="small" spacing className="ml-3">
-                I dag ({allToday.length})
-            </Heading>
+            <div className="flex justify-between items-start">
+                <Heading
+                    id="all-feedback-heading"
+                    level="4"
+                    size="small"
+                    spacing
+                    className="ml-3 flex items-center gap-2"
+                >
+                    I dag ({allToday.length})
+                    {live && (
+                        <Tooltip content="Live modus aktivert!">
+                            <div className="relative size-3">
+                                <div className="bg-ax-meta-purple-500 size-3 rounded-full absolute top-0 left-0" />
+                                <div className="bg-ax-meta-purple-500 size-3 rounded-full absolute top-0 left-0 animate-ping" />
+                            </div>
+                        </Tooltip>
+                    )}
+                </Heading>
+                <Switch
+                    size="small"
+                    checked={live}
+                    onClick={() => {
+                        setLive((prev) => !prev)
+                    }}
+                >
+                    Live
+                </Switch>
+            </div>
             <motion.div className="gap-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 <AnimatePresence initial={false}>
                     {allToday.map((it) => (
                         <motion.div
                             key={it.id}
-                            initial={{ opacity: 0, y: -8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 8 }}
-                            transition={{ duration: 0.25 }}
+                            layout
+                            initial={{ opacity: 0, scale: 0.8, y: -20, rotate: -5 }}
+                            animate={{ opacity: 1, scale: 1, y: 0, rotate: 0 }}
+                            exit={{ opacity: 0, scale: 0.8, y: 20, rotate: 5 }}
+                            transition={{
+                                type: 'spring',
+                                stiffness: 260,
+                                damping: 20,
+                                mass: 0.8,
+                            }}
                         >
                             <FeedbackCard feedback={it} fresh={'funkyFresh' in it} />
                         </motion.div>
@@ -51,8 +83,10 @@ function FeedbackToday({ today }: { today: Feedback[] }): ReactElement {
     )
 }
 
-function useLiveFeedback(newFeedback: (feedback: Feedback) => void): void {
+function useLiveFeedback(newFeedback: (feedback: Feedback) => void, liveActive: boolean): void {
     useEffect(() => {
+        if (!liveActive) return
+
         const es = new EventSource(`/syk-inn/tilbakemeldinger/live`)
 
         es.onmessage = (e) => {
@@ -64,7 +98,7 @@ function useLiveFeedback(newFeedback: (feedback: Feedback) => void): void {
         return () => {
             es.close()
         }
-    }, [newFeedback])
+    }, [newFeedback, liveActive])
 }
 
 export default FeedbackToday
