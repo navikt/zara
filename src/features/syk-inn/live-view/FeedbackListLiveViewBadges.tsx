@@ -1,8 +1,10 @@
 'use client'
 
 import * as R from 'remeda'
+import { motion, AnimatePresence } from 'motion/react'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { Tooltip } from '@navikt/ds-react'
+import { faker } from '@faker-js/faker'
 
 import useInterval from '@lib/hooks/useInterval'
 import { cn } from '@lib/tw'
@@ -59,25 +61,45 @@ function FeedbackListLiveViewBadges(): ReactElement {
         }
     }, [setWhoOnline])
 
-    return (
-        <div className="flex items-center gap-1">
-            {R.entries(whoOnline).map(([id, meta]) => {
-                const lastSeen = now - meta.seen
+    // TODO: Dev users
+    useInterval(() => {
+        setWhoOnline((prev) => ({
+            ...prev,
+            [crypto.randomUUID()]: {
+                name: faker.person.fullName(),
+                seen: Date.now(),
+            },
+        }))
+    }, 15000)
 
-                return (
-                    <div
-                        key={id}
-                        className={cn('rounded-full overflow-hidden w-fit border-2 border-ax-border-success', {
-                            'opacity-50': lastSeen > 5_000,
-                        })}
-                    >
-                        <Tooltip content={meta.name}>
-                            <Avatar id={id} name={meta.name} />
-                        </Tooltip>
-                    </div>
-                )
-            })}
-        </div>
+    return (
+        <motion.ul layout className="flex items-center gap-1">
+            <AnimatePresence>
+                {R.entries(whoOnline).map(([id, meta]) => {
+                    const lastSeen = now - meta.seen
+
+                    return (
+                        <motion.li
+                            key={id}
+                            layout
+                            initial={{ opacity: 0, y: -8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 8 }}
+                            transition={{ duration: 0.25 }}
+                            className={cn('rounded-full overflow-hidden w-fit border-2 border-ax-border-success', {
+                                'opacity-50!': lastSeen > 5_000,
+                            })}
+                        >
+                            <Tooltip content={meta.name}>
+                                <div className="max-h-8 max-w-8">
+                                    <Avatar id={id} name={meta.name} />
+                                </div>
+                            </Tooltip>
+                        </motion.li>
+                    )
+                })}
+            </AnimatePresence>
+        </motion.ul>
     )
 }
 
