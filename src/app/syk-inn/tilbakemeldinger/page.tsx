@@ -26,7 +26,7 @@ async function Page(): Promise<ReactElement> {
 
     return (
         <PageBlock as="main" width="2xl" gutters>
-            <div className="flex justify-between">
+            <div className="flex justify-between items-start">
                 <Heading level="2" size="large" spacing>
                     Tilbakemelding fra brukere i syk-inn
                 </Heading>
