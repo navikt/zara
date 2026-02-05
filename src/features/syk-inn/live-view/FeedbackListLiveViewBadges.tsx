@@ -2,13 +2,13 @@
 
 import * as R from 'remeda'
 import React, { ReactElement, useEffect, useState } from 'react'
-import Image from 'next/image'
 import { Tooltip } from '@navikt/ds-react'
 
 import useInterval from '@lib/hooks/useInterval'
 import { cn } from '@lib/tw'
 
 import { pingMe } from './live-actions'
+import Avatar from './Avatar'
 
 type ActiveUsers = Record<
     string,
@@ -60,7 +60,7 @@ function FeedbackListLiveViewBadges(): ReactElement {
     }, [setWhoOnline])
 
     return (
-        <div className="flex items-center">
+        <div className="flex items-center gap-1">
             {R.entries(whoOnline).map(([id, meta]) => {
                 const lastSeen = now - meta.seen
 
@@ -72,7 +72,7 @@ function FeedbackListLiveViewBadges(): ReactElement {
                         })}
                     >
                         <Tooltip content={meta.name}>
-                            <Image src={`/api/avatar/${id}`} alt="AH!" height={32} width={32} />
+                            <Avatar id={id} name={meta.name} />
                         </Tooltip>
                     </div>
                 )
