@@ -46,7 +46,7 @@ function ActivityLog({ feedback }: Props): ReactElement {
     )
 
     const now = new Date().toISOString()
-    const sortedEvents = R.sortBy(events, [(it) => it.timestamp ?? now, 'desc'])
+    const sortedEvents = R.sortBy(events, [(it) => it.timestamp ?? now, 'asc'])
 
     return (
         <div className="mt-4">
@@ -62,7 +62,7 @@ function ActivityLog({ feedback }: Props): ReactElement {
                             <Process.Event
                                 key={index}
                                 title={event.title}
-                                timestamp={event.timestamp ? toReadableDateTime(event.timestamp) : undefined}
+                                timestamp={event.timestamp ? toReadableDateTime(event.timestamp, true) : undefined}
                                 bullet={event.bullet}
                             >
                                 {event.body}
@@ -73,7 +73,6 @@ function ActivityLog({ feedback }: Props): ReactElement {
                 }
                 <Process.Event
                     title="Du ser på denne aktivitetsloggen, hei du!"
-                    timestamp={toReadableDateTime(new Date())}
                     bullet={<EyeWithPupilIcon aria-hidden />}
                 />
             </Process>

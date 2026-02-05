@@ -5,6 +5,6 @@ export function toReadableDate(date: string | Date): string {
     return format(date, `d. MMMM yyyy`, { locale: nb })
 }
 
-export function toReadableDateTime(date: string | Date): string {
-    return format(date, `d. MMMM yyyy HH:mm`, { locale: nb })
+export function toReadableDateTime(date: string | Date, seconds?: true): string {
+    return format(date, `d. MMMM yyyy HH:mm${seconds ? ':ss' : ''}`, { locale: nb })
 }
