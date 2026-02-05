@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react'
-import { Heading } from '@navikt/ds-react'
+import { Detail, Heading } from '@navikt/ds-react'
 import { PageBlock } from '@navikt/ds-react/Page'
 import { ArrowLeftIcon } from '@navikt/aksel-icons'
 import * as R from 'remeda'
@@ -37,6 +37,7 @@ async function Page(): Promise<ReactElement> {
                 </div>
                 <LiveUsersList page="/syk-inn/tilbakemeldinger/personvernsmodus" me={user} />
             </div>
+            {relevant.length > 0 && <Detail>Det er {relevant.length} tilbakemeldinger å sjekke!</Detail>}
             {relevant.length === 0 ? (
                 <div className="w-full flex flex-col items-center justify-center min-h-96">
                     <Image src={zaraImages.happy.src} width={256} height={256} alt="Zara!" />

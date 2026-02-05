@@ -53,7 +53,9 @@ export function FeedbackCard({ feedback, fresh }: { feedback: Feedback; fresh: b
                                 : `Innhold ikke verifisert`
                         }
                     >
-                        <StatusIcon Icon={PersonGavelIcon} done={!!feedback.verifiedContentAt} />
+                        <div>
+                            <StatusIcon Icon={PersonGavelIcon} done={!!feedback.verifiedContentAt} />
+                        </div>
                     </Tooltip>
                     {feedback.contactType !== 'NONE' && (
                         <Tooltip
@@ -63,7 +65,9 @@ export function FeedbackCard({ feedback, fresh }: { feedback: Feedback; fresh: b
                                     : `Bruker ikke kontaktet`
                             }
                         >
-                            <StatusIcon Icon={EnvelopeClosedIcon} done={!!feedback.contactedAt} />
+                            <div>
+                                <StatusIcon Icon={EnvelopeClosedIcon} done={!!feedback.contactedAt} />
+                            </div>
                         </Tooltip>
                     )}
                 </div>

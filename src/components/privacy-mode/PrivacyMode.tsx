@@ -15,24 +15,28 @@ import { setFeedbackVerified } from '../../features/syk-inn/feedback/message/fee
 
 import styles from './PrivacyMode.module.css'
 
-function PrivacyMode({ feedback }: { feedback: Feedback[] }): ReactElement {
+function PrivacyMode({ feedback }: { feedback: Feedback[] }): ReactElement | null {
     const stableList = useRef(feedback)
     const [currentCard, setCurrentCard] = useState(0)
 
-    if (currentCard >= feedback.length) {
-        return <div>I think u done</div>
+    if (currentCard >= stableList.current.length) {
+        return null
     }
 
     return (
         <div className={cn(styles.root, 'flex items-center justify-center')}>
             <div className="relative w-150 h-90">
-                <AnimatePresence mode="wait">
+                <AnimatePresence>
                     <motion.div
                         key={currentCard}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.25, ease: 'easeOut' }}
+                        initial={{ opacity: 0, scale: 0.8, rotateY: -15, x: -100 }}
+                        animate={{ opacity: 1, scale: 1, rotateY: 0, x: 0 }}
+                        exit={{ opacity: 0, scale: 0.8, rotateY: 15, x: 100 }}
+                        transition={{
+                            duration: 0.5,
+                            ease: [0.34, 1.56, 0.64, 1],
+                            scale: { type: 'spring', stiffness: 200, damping: 20 },
+                        }}
                         style={{ position: 'absolute' }}
                         className="h-full w-full"
                     >
