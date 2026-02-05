@@ -3,6 +3,7 @@
 import * as R from 'remeda'
 import React, { ReactElement, useEffect, useState } from 'react'
 import Image from 'next/image'
+import { Tooltip } from '@navikt/ds-react'
 
 import useInterval from '@lib/hooks/useInterval'
 import { cn } from '@lib/tw'
@@ -70,7 +71,9 @@ function FeedbackListLiveViewBadges(): ReactElement {
                             'opacity-50': lastSeen > 5_000,
                         })}
                     >
-                        <Image src={`/api/avatar/${id}`} alt="AH!" height={32} width={32} />
+                        <Tooltip content={meta.name}>
+                            <Image src={`/api/avatar/${id}`} alt="AH!" height={32} width={32} />
+                        </Tooltip>
                     </div>
                 )
             })}
