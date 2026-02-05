@@ -1,5 +1,4 @@
 import React, { ReactElement, useState } from 'react'
-import Image from 'next/image'
 
 type Props = {
     id: string
@@ -18,9 +17,12 @@ function Avatar({ id, name }: Props): ReactElement {
     }
 
     return (
-        <Image
+        // next/image does NOT enjoy images that might 404, it spams the logs
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
             src={`/api/avatar/${id}`}
             alt={`Avatar of ${name}`}
+            className="size-8"
             height={32}
             width={32}
             onError={() => setError(true)}
