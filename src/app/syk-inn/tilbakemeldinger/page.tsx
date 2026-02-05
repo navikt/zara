@@ -21,7 +21,7 @@ async function Page(): Promise<ReactElement> {
     /**
      * No fanciness or pagination for now.
      */
-    await validateUserSession()
+    const user = await validateUserSession()
     const feedback = await client.all()
 
     return (
@@ -30,7 +30,7 @@ async function Page(): Promise<ReactElement> {
                 <Heading level="2" size="large" spacing>
                     Tilbakemelding fra brukere i syk-inn
                 </Heading>
-                <FeedbackListLiveViewBadges />
+                <FeedbackListLiveViewBadges me={user} />
             </div>
             <FeedbackList feedback={feedback} />
         </PageBlock>

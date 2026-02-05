@@ -1,10 +1,9 @@
-import { getToken, validateToken, parseAzureUserToken } from '@navikt/oasis'
+import { getToken, parseAzureUserToken, validateToken } from '@navikt/oasis'
 import { headers } from 'next/headers'
 import { unauthorized } from 'next/navigation'
 
 import { bundledEnv } from '@lib/env'
-
-type User = { oid: string; name: string; userId: string }
+import { User } from '@services/auth/user'
 
 /**
  * Throws auth interrupt if token is missing or invalid

@@ -9,6 +9,7 @@ import { faker } from '@faker-js/faker'
 import useInterval from '@lib/hooks/useInterval'
 import { cn } from '@lib/tw'
 import { bundledEnv } from '@lib/env'
+import { User } from '@services/auth/user'
 
 import { pingMe } from './live-actions'
 import Avatar from './Avatar'
@@ -21,9 +22,14 @@ type ActiveUsers = Record<
     }
 >
 
-function FeedbackListLiveViewBadges(): ReactElement {
+function FeedbackListLiveViewBadges({ me }: { me: User }): ReactElement {
     const [now, setNow] = useState(() => Date.now())
-    const [whoOnline, setWhoOnline] = useState<ActiveUsers>({})
+    const [whoOnline, setWhoOnline] = useState<ActiveUsers>(() => ({
+        [me.oid]: {
+            name: me.name,
+            seen: Date.now(),
+        },
+    }))
 
     useLocalDevUsers(setWhoOnline)
 
@@ -125,7 +131,7 @@ function useLocalDevUsers(
                 seen: Date.now(),
             },
         }))
-    }, 15000)
+    }, 13337)
 }
 
 export default FeedbackListLiveViewBadges
