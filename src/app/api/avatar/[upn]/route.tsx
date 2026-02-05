@@ -1,3 +1,5 @@
+import { logger } from '@navikt/next-logger'
+
 import { getMsOboToken } from '@services/entra/ms-graph'
 import { bundledEnv } from '@lib/env'
 
@@ -13,11 +15,16 @@ export async function GET(_: Request, { params }: RouteContext<'/api/avatar/[upn
         })
     }
 
-    const obo = await getMsOboToken()
-    const { upn } = await params
+    try {
+        const obo = await getMsOboToken()
+        const { upn } = await params
 
-    return fetch(`https://graph.microsoft.com/v1.0/users/${upn}/photo/$value`, {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${obo}` },
-    })
+        return fetch(`https://graph.microsoft.com/v1.0/users/${upn}/photo/$value`, {
+            method: 'GET',
+            headers: { Authorization: `Bearer ${obo}` },
+        })
+    } catch (e) {
+        logger.error(e)
+        return new Response(undefined, { status: 404 })
+    }
 }
