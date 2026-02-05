@@ -35,6 +35,18 @@ export async function GET(_: Request, { params }: RouteContext<'/api/avatar/[upn
         return fetch(`https://graph.microsoft.com/v1.0/users/${upn}/photo/$value`, {
             method: 'GET',
             headers: { Authorization: `Bearer ${response.token}` },
+        }).then(async (res) => {
+            if (!res.ok) {
+                const contentType = res.headers.get('Content-Type')
+                logger.warn(
+                    new Error(`Unable to fetch user photo from MS Graph: ${res.statusText}`, {
+                        cause: contentType != null ? new Error(await res.text()) : undefined,
+                    }),
+                )
+                return new Response(undefined, { status: 404 })
+            }
+
+            return res
         })
     } catch (e) {
         logger.error(e)
