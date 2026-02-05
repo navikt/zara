@@ -5,11 +5,15 @@ import type { Metadata } from 'next'
 import { Page } from '@navikt/ds-react'
 
 import Header from '@components/Header'
+import { bundledEnv } from '@lib/env'
 
 import Providers from './providers'
 
 export const metadata: Metadata = {
-    title: 'Zara - Verktøy for Team Symfoni',
+    title:
+        bundledEnv.runtimeEnv !== 'local'
+            ? 'Zara - Verktøy for Team Symfoni'
+            : 'Zara (Local) - Verktøy for Team Symfoni',
 }
 
 export default function StandaloneLayout({ children }: LayoutProps<'/'>): ReactElement {
