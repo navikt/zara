@@ -8,8 +8,8 @@ import { Feedback } from '@services/feedback/feedback-schema'
 import { cn } from '@lib/tw'
 import { toReadableDateTime } from '@lib/date'
 
-import { UserContact } from './UserContact'
-import UserFeedback from './UserFeedback'
+import { UserContact } from './contact/UserContact'
+import { UserFeedback } from './message/UserFeedback'
 import RedactableUserFeedback from './redaction/RedactableUserFeedback'
 import AdminSection from './AdminSection'
 import ActivityLog from './ActivityLog'
@@ -57,7 +57,7 @@ function FeedbackAdmin({ feedback }: Props): ReactElement {
             </AdminSection>
 
             <AdminSection className="max-w-prose" heading="Kontakt">
-                <UserContact {...feedback} />
+                <UserContact feedback={feedback} />
             </AdminSection>
             <AdminSection className="max-w-prose" heading="Hendelseslogg">
                 <ActivityLog feedback={feedback} />

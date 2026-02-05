@@ -17,8 +17,8 @@ function Page(): ReactElement {
                     <BandageIcon aria-hidden className="-mb-0.5" />
                     syk-inn
                 </Heading>
-                <div className="grid sm:grid-cols-2 grid-cols-3 gap-4">
-                    <LinkCard className="max-w-prose">
+                <div className="gap-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                    <LinkCard>
                         <LinkCard.Icon>
                             <NotePencilDashIcon fontSize="2rem" aria-hidden />
                         </LinkCard.Icon>
@@ -31,7 +31,7 @@ function Page(): ReactElement {
                             Oversikt over tilbakemeldinger fra brukere i syk-inn-applikasjonen.
                         </LinkCard.Description>
                     </LinkCard>
-                    <LinkCard className="max-w-prose">
+                    <LinkCard>
                         <LinkCard.Icon>
                             <GavelSoundBlockIcon fontSize="2rem" aria-hidden />
                         </LinkCard.Icon>

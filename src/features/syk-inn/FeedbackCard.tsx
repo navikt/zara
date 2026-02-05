@@ -43,7 +43,7 @@ export function FeedbackCard({ feedback }: { feedback: Feedback }): ReactElement
                 <Detail>
                     Skrevet {formatDistanceToNowStrict(feedback.timestamp, { locale: nb, addSuffix: true })}
                 </Detail>
-                <div className="flex gap-1">
+                <div className="flex gap-2 -mt-2">
                     <Tooltip
                         content={
                             feedback.verifiedContentAt

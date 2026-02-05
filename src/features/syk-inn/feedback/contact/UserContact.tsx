@@ -1,23 +1,24 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useTransition } from 'react'
 import {
-    CheckmarkCircleIcon,
+    CheckmarkHeavyIcon,
     CircleSlashIcon,
     EnvelopeClosedIcon,
     InformationSquareIcon,
     PhoneIcon,
 } from '@navikt/aksel-icons'
-import { BodyShort, CopyButton, Detail } from '@navikt/ds-react'
+import { BodyShort, Button, CopyButton, Detail } from '@navikt/ds-react'
 
 import { Feedback } from '@services/feedback/feedback-schema'
 import { toReadableDateTime } from '@lib/date'
 
-export function UserContact({
-    contactType,
-    contactDetails,
-    contactedAt,
-    contactedBy,
-}: Pick<Feedback, 'contactType' | 'contactDetails' | 'contactedAt' | 'contactedBy'>): ReactElement {
-    switch (contactType) {
+import { setUserContacted } from './contact-actions'
+
+type Props = {
+    feedback: Feedback
+}
+
+export function UserContact({ feedback }: Props): ReactElement {
+    switch (feedback.contactType) {
         case 'NONE': {
             return (
                 <div>
@@ -33,18 +34,28 @@ export function UserContact({
         case 'EMAIL': {
             return (
                 <div>
-                    <BodyShort spacing>Bruker har valgt å bli kontaktet via e-post</BodyShort>
-                    <UserContactStatus contactedAt={contactedAt} contactedBy={contactedBy} />
-                    <UserContactDetails Icon={EnvelopeClosedIcon} title="Epost" details={contactDetails} />
+                    <BodyShort spacing>
+                        Bruker {feedback.contactedAt == null ? 'ønsker' : 'ønsket'} å bli kontaktet via e-post
+                    </BodyShort>
+                    <div className="flex flex-col gap-3">
+                        <UserContactStatus contactedAt={feedback.contactedAt} contactedBy={feedback.contactedBy} />
+                        <UserContactDetails Icon={EnvelopeClosedIcon} title="Epost" details={feedback.contactDetails} />
+                        {feedback.contactedAt == null && <UserContactedButton id={feedback.id} />}
+                    </div>
                 </div>
             )
         }
         case 'PHONE': {
             return (
                 <div>
-                    <BodyShort spacing>Bruker har valgt å bli kontaktet via telefon</BodyShort>
-                    <UserContactStatus contactedAt={contactedAt} contactedBy={contactedBy} />
-                    <UserContactDetails Icon={PhoneIcon} title="Telefonnummer" details={contactDetails} />
+                    <BodyShort spacing>
+                        Bruker {feedback.contactedAt == null ? 'ønsker' : 'ønsket'} å bli kontaktet via telefon
+                    </BodyShort>
+                    <div className="flex flex-col gap-3">
+                        <UserContactStatus contactedAt={feedback.contactedAt} contactedBy={feedback.contactedBy} />
+                        <UserContactDetails Icon={PhoneIcon} title="Telefonnummer" details={feedback.contactDetails} />
+                        {feedback.contactedAt == null && <UserContactedButton id={feedback.id} />}
+                    </div>
                 </div>
             )
         }
@@ -59,10 +70,9 @@ function UserContactStatus({ contactedAt, contactedBy }: Pick<Feedback, 'contact
                 Status
             </Detail>
             {contactedAt != null ? (
-                <div>
-                    <BodyShort className="flex gap-1 items-center">
+                <div className="p-2">
+                    <BodyShort>
                         Bruker ble kontaktet <span>{toReadableDateTime(contactedAt)}</span>
-                        <CheckmarkCircleIcon />
                     </BodyShort>
                     <div className="text-sm">av {contactedBy}</div>
                 </div>
@@ -93,5 +103,27 @@ function UserContactDetails({
                 {details && <CopyButton copyText={details} size="xsmall" />}
             </div>{' '}
         </div>
+    )
+}
+
+function UserContactedButton({ id }: { id: string }): ReactElement {
+    const [isPending, startTransition] = useTransition()
+
+    return (
+        <Button
+            size="small"
+            variant="secondary"
+            data-color="neutral"
+            className="w-fit"
+            icon={<CheckmarkHeavyIcon aria-hidden className="inline" />}
+            loading={isPending}
+            onClick={async () => {
+                startTransition(async () => {
+                    await setUserContacted(id)
+                })
+            }}
+        >
+            Bruker har blitt kontaktet
+        </Button>
     )
 }

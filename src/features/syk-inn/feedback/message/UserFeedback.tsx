@@ -12,7 +12,7 @@ type Props = {
     feedback: Feedback
 }
 
-function UserFeedback({ feedback }: Props): ReactElement {
+export function UserFeedback({ feedback }: Props): ReactElement {
     return (
         <div>
             <div className="bg-ax-bg-sunken border border-ax-border-neutral-subtle p-3 rounded-md">
@@ -66,5 +66,3 @@ function VerificationButton({ id }: { id: string }): ReactElement {
         </Button>
     )
 }
-
-export default UserFeedback
