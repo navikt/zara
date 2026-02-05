@@ -35,7 +35,7 @@ export async function GET(_: Request, { params }: RouteContext<'/api/avatar/[upn
             return new Response(undefined, { status: 404 })
         }
 
-        const avatarResponse = await fetch(`https://graph.microsoft.com/v1.0/users/${upn}/photo/$value`, {
+        const avatarResponse = await fetch(`https://graph.microsoft.com/v1.0/users/${upn}/photo/64x64/$value`, {
             method: 'GET',
             headers: { Authorization: `Bearer ${clientCredentials.token}` },
         })
