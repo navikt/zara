@@ -6,9 +6,10 @@ import { subDays } from 'date-fns'
 import { FEEDBACK_KEY_PREFIX } from '@navikt/syk-zara'
 
 import { FeedbackClient } from '@services/feedback/feedback-client'
-import { Feedback } from '@services/feedback/feedback-schema'
 import { bundledEnv } from '@lib/env'
 import { raise } from '@lib/ts'
+
+import { createContactDetails, createContactedInfo, createVerifiedContentInfo } from './test-data'
 
 export async function seedDevelopmentFeedback(client: FeedbackClient): Promise<void> {
     if (bundledEnv.runtimeEnv !== 'local') {
@@ -35,46 +36,6 @@ export async function seedDevelopmentFeedback(client: FeedbackClient): Promise<v
         })
     }
     logger.info(`Seeding valkey done!`)
-}
-
-function createContactDetails(): Pick<Feedback, 'contactType' | 'contactDetails'> {
-    const contactType = faker.helpers.arrayElement(['PHONE', 'EMAIL', 'NONE'])
-    switch (contactType) {
-        case 'NONE':
-            return { contactType, contactDetails: null }
-        case 'PHONE':
-            return { contactType, contactDetails: faker.helpers.fromRegExp(/[49][0-9]{7}/) }
-        default:
-            return { contactType, contactDetails: faker.internet.email() }
-    }
-}
-
-function createContactedInfo(type: Feedback['contactType']): Pick<Feedback, 'contactedAt' | 'contactedBy'> {
-    if (type === 'NONE') {
-        return { contactedAt: null, contactedBy: null }
-    }
-
-    const wasContacted = faker.datatype.boolean()
-    if (!wasContacted) {
-        return { contactedAt: null, contactedBy: null }
-    }
-
-    return {
-        contactedAt: faker.date.between({ from: subDays(new Date(), 30), to: new Date() }).toISOString(),
-        contactedBy: faker.person.fullName(),
-    }
-}
-
-function createVerifiedContentInfo(): Pick<Feedback, 'verifiedContentAt' | 'verifiedContentBy'> {
-    const wasVerified = faker.datatype.boolean()
-    if (!wasVerified) {
-        return { verifiedContentAt: null, verifiedContentBy: null }
-    }
-
-    return {
-        verifiedContentAt: faker.date.between({ from: subDays(new Date(), 30), to: new Date() }).toISOString(),
-        verifiedContentBy: faker.person.fullName(),
-    }
 }
 
 export async function clearDevelopmentFeedback(valkey: Valkey): Promise<void> {

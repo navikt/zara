@@ -16,7 +16,8 @@
         "paths": {
             "@components/*": ["./src/components/*"],
             "@lib/*": ["./src/lib/*"],
-            "@services/*": ["./src/services/*"]
+            "@services/*": ["./src/services/*"],
+            "@dev/*": ["./src/dev/*"]
         },
         "target": "ES2017"
     },
