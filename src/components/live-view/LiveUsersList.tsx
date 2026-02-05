@@ -2,7 +2,7 @@
 
 import * as R from 'remeda'
 import { motion, AnimatePresence } from 'motion/react'
-import React, { ReactElement, useEffect, useState } from 'react'
+import React, { ReactElement, useCallback, useEffect, useState } from 'react'
 import { Tooltip } from '@navikt/ds-react'
 import { faker } from '@faker-js/faker'
 
@@ -28,52 +28,12 @@ type Props = {
 }
 
 function LiveUsersList({ page, me }: Props): ReactElement {
-    const [now, setNow] = useState(() => Date.now())
-    const [whoOnline, setWhoOnline] = useState<ActiveUsers>(() => ({}))
+    const now = useNow()
+    const { users, registerUser } = useActiveUsers()
 
-    useLocalDevUsers(setWhoOnline)
-
-    useInterval(() => {
-        setNow(Date.now())
-    }, 1000)
-
-    useEffect(() => {
-        setTimeout(() => {
-            // Register me as active on mount
-            meActive(page)
-        }, 69)
-    }, [page])
-
-    useInterval(() => {
-        // Register our own activity every 5 seconds
-        meActive(page)
-
-        // Clean up inactive users
-        const now = Date.now()
-        setWhoOnline(removeStaleUsers(now))
-    }, 5000)
-
-    useEffect(() => {
-        const es = new EventSource(`/api/events?page=${page}`)
-
-        es.onmessage = (e) => {
-            const payload = JSON.parse(e.data)
-            // Skip me!
-            if (payload.oid === me.oid) return
-
-            setWhoOnline((prev) => ({
-                ...prev,
-                [payload.oid]: {
-                    name: payload.name,
-                    seen: Date.now(),
-                },
-            }))
-        }
-
-        return () => {
-            es.close()
-        }
-    }, [me.oid, page, setWhoOnline])
+    useMyActivity(page)
+    useOthersActivity(me.oid, page, registerUser)
+    useLocalDevUsers(registerUser)
 
     return (
         <motion.ul layout className="flex items-center gap-1">
@@ -92,7 +52,7 @@ function LiveUsersList({ page, me }: Props): ReactElement {
                 </motion.li>
             </AnimatePresence>
             <AnimatePresence>
-                {R.entries(whoOnline).map(([id, meta]) => {
+                {R.entries(users).map(([id, meta]) => {
                     const lastSeen = now - meta.seen
 
                     return (
@@ -120,6 +80,75 @@ function LiveUsersList({ page, me }: Props): ReactElement {
     )
 }
 
+/**
+ * Keeps you active and visible for other users
+ */
+function useMyActivity(page: Pages): void {
+    // Register me as active on mount
+    useEffect(() => {
+        meActive(page)
+    }, [page])
+
+    // Register our own activity every 5 seconds
+    useInterval(() => {
+        meActive(page)
+    }, 5000)
+}
+
+function useActiveUsers(): {
+    users: ActiveUsers
+    registerUser: (user: User) => void
+} {
+    const [activeUsers, setActiveUsers] = useState<ActiveUsers>(() => ({}))
+
+    // Clean up inactive users every now and then
+    useInterval(() => {
+        const now = Date.now()
+
+        setActiveUsers(removeStaleUsers(now))
+    }, 5000)
+
+    const registerUser = useCallback((user: User) => {
+        setActiveUsers((prev) => ({
+            ...prev,
+            [user.oid]: {
+                name: user.name,
+                seen: Date.now(),
+            },
+        }))
+    }, [])
+
+    return { users: activeUsers, registerUser: registerUser }
+}
+
+function useOthersActivity(myOid: string, page: Pages, registerUser: (user: User) => void): void {
+    useEffect(() => {
+        const es = new EventSource(`/api/events?page=${page}`)
+
+        es.onmessage = (e) => {
+            const payload = JSON.parse(e.data)
+            // Skip me!
+            if (payload.oid === myOid) return
+
+            registerUser(payload)
+        }
+
+        return () => {
+            es.close()
+        }
+    }, [myOid, page, registerUser])
+}
+
+function useNow(): number {
+    const [now, setNow] = useState(() => Date.now())
+
+    useInterval(() => {
+        setNow(Date.now())
+    }, 1000)
+
+    return now
+}
+
 function removeStaleUsers(now: number) {
     return (existing: ActiveUsers) => {
         const cleaned: ActiveUsers = {}
@@ -133,21 +162,15 @@ function removeStaleUsers(now: number) {
     }
 }
 
-function useLocalDevUsers(
-    setWhoOnline: (value: ((prevState: ActiveUsers) => ActiveUsers) | ActiveUsers) => void,
-): void {
+function useLocalDevUsers(registerUser: (user: User) => void): void {
     useInterval(() => {
-        if (bundledEnv.runtimeEnv !== 'local') {
-            return
-        }
+        if (bundledEnv.runtimeEnv !== 'local') return
 
-        setWhoOnline((prev) => ({
-            ...prev,
-            [crypto.randomUUID()]: {
-                name: faker.person.fullName(),
-                seen: Date.now(),
-            },
-        }))
+        registerUser({
+            oid: crypto.randomUUID(),
+            name: faker.person.fullName(),
+            userId: faker.internet.email(),
+        })
     }, 13337)
 }
 
