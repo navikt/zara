@@ -101,7 +101,7 @@ jobs:
     if: github.ref_name == 'main'
     environment:
       name: production
-      url: https://zara.intern.dev.nav.no
+      url: https://zara.intern.nav.no
     runs-on: ubuntu-latest
     needs: [deploy-dev, build-prod]
     steps:
