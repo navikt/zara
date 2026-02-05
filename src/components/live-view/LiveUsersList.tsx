@@ -10,9 +10,9 @@ import useInterval from '@lib/hooks/useInterval'
 import { cn } from '@lib/tw'
 import { bundledEnv } from '@lib/env'
 import { User } from '@services/auth/user'
-
-import { pingMe } from './live-actions'
-import Avatar from './Avatar'
+import Avatar from '@components/live-view/Avatar'
+import { Pages } from '@services/live-service/pages'
+import { meActive } from '@components/live-view/live-actions'
 
 type ActiveUsers = Record<
     string,
@@ -22,7 +22,12 @@ type ActiveUsers = Record<
     }
 >
 
-function FeedbackListLiveViewBadges({ me }: { me: User }): ReactElement {
+type Props = {
+    page: Pages
+    me: User
+}
+
+function LiveUsersList({ page, me }: Props): ReactElement {
     const [now, setNow] = useState(() => Date.now())
     const [whoOnline, setWhoOnline] = useState<ActiveUsers>(() => ({
         [me.oid]: {
@@ -40,13 +45,13 @@ function FeedbackListLiveViewBadges({ me }: { me: User }): ReactElement {
     useEffect(() => {
         setTimeout(() => {
             // Register me as active on mount
-            pingMe()
+            meActive(page)
         }, 69)
-    }, [])
+    }, [page])
 
     useInterval(() => {
         // Register our own activity every 5 seconds
-        pingMe()
+        meActive(page)
 
         // Clean up inactive users
         const now = Date.now()
@@ -54,7 +59,7 @@ function FeedbackListLiveViewBadges({ me }: { me: User }): ReactElement {
     }, 5000)
 
     useEffect(() => {
-        const es = new EventSource('/syk-inn/tilbakemeldinger/events')
+        const es = new EventSource(`/api/events?page=${page}`)
 
         es.onmessage = (e) => {
             const payload = JSON.parse(e.data)
@@ -70,7 +75,7 @@ function FeedbackListLiveViewBadges({ me }: { me: User }): ReactElement {
         return () => {
             es.close()
         }
-    }, [setWhoOnline])
+    }, [page, setWhoOnline])
 
     return (
         <motion.ul layout className="flex items-center gap-1">
@@ -86,12 +91,12 @@ function FeedbackListLiveViewBadges({ me }: { me: User }): ReactElement {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 8 }}
                             transition={{ duration: 0.25 }}
-                            className={cn('rounded-full overflow-hidden w-fit border-2 border-ax-border-success', {
+                            className={cn('overflow-hidden w-fit', {
                                 'opacity-50!': lastSeen > 5_000,
                             })}
                         >
                             <Tooltip content={meta.name}>
-                                <div className="max-h-8 max-w-8">
+                                <div>
                                     <Avatar id={id} name={meta.name} />
                                 </div>
                             </Tooltip>
@@ -134,4 +139,4 @@ function useLocalDevUsers(
     }, 13337)
 }
 
-export default FeedbackListLiveViewBadges
+export default LiveUsersList

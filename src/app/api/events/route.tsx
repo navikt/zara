@@ -1,6 +1,14 @@
-import { liveService } from '@services/live-service/users'
+import { NextRequest } from 'next/server'
 
-export async function GET(): Promise<Response> {
+import { liveService } from '@services/live-service/users'
+import { Pages } from '@services/live-service/pages'
+
+export async function GET(request: NextRequest): Promise<Response> {
+    const pageToGetEventsFor = request.nextUrl.searchParams.get('page')
+    if (!pageToGetEventsFor) {
+        return new Response('Missing page parameter', { status: 400 })
+    }
+
     const encoder = new TextEncoder()
 
     let closed = false
@@ -17,7 +25,7 @@ export async function GET(): Promise<Response> {
                 }
             }
 
-            closeLiveService = liveService.seeUsersOnPage('/syk-inn/tilbakemeldinger', (users) => {
+            closeLiveService = liveService.seeUsersOnPage(pageToGetEventsFor as Pages, (users) => {
                 send(JSON.stringify(users))
             })
         },

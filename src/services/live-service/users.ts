@@ -2,11 +2,11 @@ import { EventEmitter } from 'node:events'
 
 import { nextleton } from 'nextleton'
 
+import { Pages } from '@services/live-service/pages'
+
 const emitter = nextleton('live-emitter', () => {
     return new EventEmitter()
 })
-
-type Pages = '/syk-inn/tilbakemeldinger'
 
 type User = {
     oid: string

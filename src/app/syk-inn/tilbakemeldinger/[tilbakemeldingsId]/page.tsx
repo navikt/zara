@@ -6,6 +6,7 @@ import Image from 'next/image'
 
 import { AkselNextLink } from '@components/AkselNextLink'
 import { validateUserSession } from '@services/auth/auth'
+import LiveUsersList from '@components/live-view/LiveUsersList'
 
 import { getFeedbackClient } from '../../../../services/feedback/feedback-client'
 import { zaraImages } from '../../../../images/zaras'
@@ -14,7 +15,7 @@ import FeedbackAdmin from '../../../../features/syk-inn/feedback/FeedbackAdmin'
 async function Page({ params }: PageProps<'/syk-inn/tilbakemeldinger/[tilbakemeldingsId]'>): Promise<ReactElement> {
     const { tilbakemeldingsId } = await params
 
-    await validateUserSession()
+    const user = await validateUserSession()
     const client = getFeedbackClient()
     const feedback = await client.byId(tilbakemeldingsId)
 
@@ -44,13 +45,18 @@ async function Page({ params }: PageProps<'/syk-inn/tilbakemeldinger/[tilbakemel
 
     return (
         <PageBlock as="main" width="2xl" gutters>
-            <AkselNextLink href="/syk-inn/tilbakemeldinger" className="text-ax-text-neutral-subtle">
-                <ArrowLeftIcon aria-hidden />
-                Tilbake til tilbakemeldinger
-            </AkselNextLink>
-            <Heading level="2" size="large">
-                Tilbakemelding fra {feedback.name}
-            </Heading>
+            <div className="flex justify-between items-start">
+                <div>
+                    <AkselNextLink href="/syk-inn/tilbakemeldinger" className="text-ax-text-neutral-subtle">
+                        <ArrowLeftIcon aria-hidden />
+                        Tilbake til tilbakemeldinger
+                    </AkselNextLink>
+                    <Heading level="2" size="large">
+                        Tilbakemelding fra {feedback.name}
+                    </Heading>
+                </div>
+                <LiveUsersList page={`/syk-inn/tilbakemeldinger/${tilbakemeldingsId}`} me={user} />
+            </div>
             <FeedbackAdmin feedback={feedback} />
         </PageBlock>
     )
