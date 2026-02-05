@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 export default function StandaloneLayout({ children }: LayoutProps<'/'>): ReactElement {
     return (
-        <html lang="nb" suppressHydrationWarning>
+        <html lang="nb" suppressHydrationWarning data-color="meta-purple">
             <body>
                 <Providers>
                     <Page>

@@ -41,7 +41,9 @@ function FeedbackAdmin({ feedback }: Props): ReactElement {
                                         size="small"
                                         variant="tertiary"
                                         data-color="neutral"
-                                    />
+                                    >
+                                        Sladding
+                                    </Button>
                                 </Tooltip>
                             </div>
                         ) : (

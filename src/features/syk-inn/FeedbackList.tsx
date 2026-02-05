@@ -1,8 +1,12 @@
+'use client'
+
 import React, { ReactElement } from 'react'
-import { BodyShort, Heading } from '@navikt/ds-react'
+import { BodyShort, Button, Heading } from '@navikt/ds-react'
 import Image from 'next/image'
 import * as R from 'remeda'
 import { isToday } from 'date-fns'
+import { GavelFillIcon } from '@navikt/aksel-icons'
+import Link from 'next/link'
 
 import { Feedback } from '@services/feedback/feedback-schema'
 
@@ -18,9 +22,20 @@ type Props = {
 function FeedbackList({ feedback }: Props): ReactElement {
     return (
         <section aria-labelledby="all-feedback-heading">
-            <Heading id="all-feedback-heading" level="3" size="medium" spacing className="ml-3">
-                Alle tilbakemeldinger ({feedback.length})
-            </Heading>
+            <div className="flex justify-between items-start">
+                <Heading id="all-feedback-heading" level="3" size="medium" spacing className="ml-3">
+                    Alle tilbakemeldinger ({feedback.length})
+                </Heading>
+                <Button
+                    icon={<GavelFillIcon aria-hidden />}
+                    variant="secondary"
+                    size="small"
+                    as={Link}
+                    href="/syk-inn/tilbakemeldinger/personvernsmodus"
+                >
+                    Gå i personvernmodus!
+                </Button>
+            </div>
             <FeedbackChunked feedback={feedback} />
         </section>
     )
