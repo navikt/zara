@@ -50,7 +50,7 @@ function FeedbackAdmin({ feedback }: Props): ReactElement {
                 }
             >
                 {!redactMode ? (
-                    <UserFeedback message={feedback.message} />
+                    <UserFeedback feedback={feedback} />
                 ) : (
                     <RedactableUserFeedback feedback={feedback} onRedactionDone={() => setRedactMode(false)} />
                 )}
@@ -66,10 +66,20 @@ function FeedbackAdmin({ feedback }: Props): ReactElement {
     )
 }
 
-function StatusBar({ contactedAt, contactedBy }: Pick<Feedback, 'contactedAt' | 'contactedBy'>): ReactElement {
+function StatusBar({
+    contactedAt,
+    contactedBy,
+    verifiedContentAt,
+    verifiedContentBy,
+}: Pick<Feedback, 'contactedAt' | 'contactedBy' | 'verifiedContentBy' | 'verifiedContentAt'>): ReactElement {
     return (
         <div className="flex gap-3 pt-2">
-            <StatusItem Icon={PersonGavelIcon} label="Personopplysninger" at={null} by={null} />
+            <StatusItem
+                Icon={PersonGavelIcon}
+                label="Personopplysninger"
+                at={verifiedContentAt}
+                by={verifiedContentBy}
+            />
             <StatusItem Icon={EnvelopeClosedIcon} label="Kontaktet bruker" at={contactedAt} by={contactedBy} />
         </div>
     )
