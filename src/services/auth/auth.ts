@@ -10,7 +10,7 @@ import { User } from '@services/auth/user'
  */
 export async function validateUserSession(): Promise<User> {
     if (bundledEnv.runtimeEnv === 'local') {
-        return { name: 'Loccy McDevsson', userId: 'loccy@example.com', oid: 'fake-dev-oid' }
+        return { name: 'Låccy McDevssøn', userId: 'loccy@example.com', oid: 'fake-dev-oid' }
     }
 
     const token = getToken(await headers())
@@ -33,7 +33,7 @@ export async function validateUserSession(): Promise<User> {
 
 export async function userInfo(token?: string): Promise<User | null> {
     if (bundledEnv.runtimeEnv === 'local') {
-        return { name: 'Loccy McDevsson', userId: 'loccy@example.com', oid: 'fake-dev-oid' }
+        return { name: 'Låccy McDevssøn', userId: 'loccy@example.com', oid: 'fake-dev-oid' }
     }
 
     const _token = token ?? getToken(await headers())

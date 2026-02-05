@@ -1,10 +1,10 @@
 import { BodyShort, Detail, Skeleton, Tooltip } from '@navikt/ds-react'
 import type { ReactElement } from 'react'
 
-import { getLoggedInUser } from './user-data'
+import { userInfo } from '@services/auth/auth'
 
 export async function LoggedInUser(): Promise<ReactElement> {
-    const user = await getLoggedInUser()
+    const user = await userInfo()
 
     if (user == null) {
         return (
@@ -18,9 +18,9 @@ export async function LoggedInUser(): Promise<ReactElement> {
         <div className="flex gap-4">
             <div className="hidden sm:block text-right">
                 <BodyShort>{user.name}</BodyShort>
-                <Detail className="whitespace-nowrap">{user.email}</Detail>
+                <Detail className="whitespace-nowrap">{user.userId}</Detail>
             </div>
-            <Tooltip content={`Logget in som ${user.name} (${user.email})`}>
+            <Tooltip content={`Logget in som ${user.name} (${user.userId})`}>
                 <div className="size-11 bg-ax-bg-raised rounded-full flex items-center justify-center text-2xl">
                     {user.name[0]}
                 </div>
