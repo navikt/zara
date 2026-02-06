@@ -1,10 +1,10 @@
 import { logger } from '@navikt/next-logger'
-import { requestAzureClientCredentialsToken } from '@navikt/oasis'
+import { getToken, requestAzureOboToken } from '@navikt/oasis'
+import { headers } from 'next/headers'
+import { unauthorized } from 'next/navigation'
 
 import { bundledEnv } from '@lib/env'
-import { validateUserSession } from '@services/auth/auth'
-
-import { devAvatarBase64 } from '../../../../dev/dev-image'
+import { devAvatarBase64 } from '@dev/dev-image'
 
 /**
  * Proxies any user's (using UPN) profile picture using a authenticated request to the MS Graph API.
@@ -13,19 +13,21 @@ export async function GET(_: Request, { params }: RouteContext<'/api/avatar/[upn
     const { upn } = await params
 
     /**
-     * Only allow authenticated users to proxy avatars.
-     */
-    await validateUserSession()
-
-    /**
      * Return a fixed avatar for dev user, 404 for fake "other" users.
      */
     if (bundledEnv.runtimeEnv === 'local') {
         return handleLocalDevelopmentRequest(upn)
     }
 
+    /**
+     * Only allow authenticated users to proxy avatars.
+     */
+
+    const token = getToken(await headers())
+    if (!token) unauthorized()
+
     try {
-        const clientCredentials = await requestAzureClientCredentialsToken('https://graph.microsoft.com/.default')
+        const clientCredentials = await requestAzureOboToken(token, 'https://graph.microsoft.com/.default')
         if (!clientCredentials.ok) {
             logger.error(
                 new Error(`Unable to acquire Azure client credentials token: ${clientCredentials.error.message}`, {
