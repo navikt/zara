@@ -1,8 +1,7 @@
 import { NextRequest } from 'next/server'
 
-import { liveService } from '@services/live-service/users'
-import { Pages } from '@services/live-service/pages'
 import { validateUserSession } from '@services/auth/auth'
+import { getFeedbackClient } from '@services/feedback/feedback-client'
 
 export async function GET(request: NextRequest): Promise<Response> {
     const pageToGetEventsFor = request.nextUrl.searchParams.get('page')
@@ -14,10 +13,10 @@ export async function GET(request: NextRequest): Promise<Response> {
     const encoder = new TextEncoder()
 
     let closed = false
-    let closeLiveService: () => void
+    let cleanSub: () => void
 
     const stream = new ReadableStream<Uint8Array>({
-        start(controller) {
+        async start(controller) {
             const send = (data: string): void => {
                 if (closed) return
                 try {
@@ -27,13 +26,18 @@ export async function GET(request: NextRequest): Promise<Response> {
                 }
             }
 
-            closeLiveService = liveService.seeUsersOnPage(pageToGetEventsFor as Pages, (users) => {
-                send(JSON.stringify(users))
+            const [, pubsub] = getFeedbackClient()
+            cleanSub = await pubsub.sub({
+                activity: async (activity) => {
+                    if (activity.page !== pageToGetEventsFor) return
+
+                    send(JSON.stringify(activity))
+                },
             })
         },
 
         cancel() {
-            closeLiveService()
+            cleanSub()
             closed = true
         },
     })

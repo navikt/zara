@@ -11,16 +11,8 @@ import { cn } from '@lib/tw'
 import { bundledEnv } from '@lib/env'
 import { User } from '@services/auth/user'
 import Avatar from '@components/live-view/Avatar'
-import { Pages } from '@services/live-service/pages'
+import { Pages, UserActivity } from '@services/feedback/pages'
 import { meActive } from '@components/live-view/live-actions'
-
-type ActiveUsers = Record<
-    string,
-    {
-        name: string
-        seen: number
-    }
->
 
 type Props = {
     page: Pages
@@ -101,7 +93,18 @@ function useMyActivity(page: Pages): () => void {
     return pingMe
 }
 
-function useActiveUsers(pingMe: () => void): { users: ActiveUsers; registerUser: (user: User) => void } {
+type ActiveUsers = Record<
+    string,
+    {
+        name: string
+        seen: number
+    }
+>
+
+function useActiveUsers(pingMe: () => void): {
+    users: ActiveUsers
+    registerUser: (user: Omit<UserActivity, 'page'>) => void
+} {
     const [activeUsers, setActiveUsers] = useState<ActiveUsers>(() => ({}))
 
     // Clean up inactive users every now and then
@@ -112,7 +115,7 @@ function useActiveUsers(pingMe: () => void): { users: ActiveUsers; registerUser:
     }, 5000)
 
     const registerUser = useCallback(
-        (user: User) => {
+        (user: Omit<UserActivity, 'page'>) => {
             setActiveUsers((prev) => ({
                 ...prev,
                 [user.oid]: {
@@ -130,13 +133,13 @@ function useActiveUsers(pingMe: () => void): { users: ActiveUsers; registerUser:
     return { users: activeUsers, registerUser: registerUser }
 }
 
-function useOthersActivity(myOid: string, page: Pages, registerUser: (user: User) => void): void {
+function useOthersActivity(myOid: string, page: Pages, registerUser: (user: UserActivity) => void): void {
     useEffect(() => {
         const es = new EventSource(`/api/events?page=${page}`)
 
         es.onmessage = (e) => {
-            const payload = JSON.parse(e.data)
-            // Skip me!
+            const payload: UserActivity = JSON.parse(e.data)
+            // Skip meself! Yarr!
             if (payload.oid === myOid) return
 
             registerUser(payload)
@@ -171,14 +174,13 @@ function removeStaleUsers(now: number) {
     }
 }
 
-function useLocalDevUsers(registerUser: (user: User) => void): void {
+function useLocalDevUsers(registerUser: (user: Omit<UserActivity, 'page'>) => void): void {
     useInterval(() => {
         if (bundledEnv.runtimeEnv !== 'local') return
 
         registerUser({
             oid: crypto.randomUUID(),
             name: faker.person.fullName(),
-            userId: faker.internet.email(),
         })
     }, 13337)
 }
