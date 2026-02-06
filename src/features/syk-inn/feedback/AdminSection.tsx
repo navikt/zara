@@ -20,7 +20,7 @@ function AdminSection({
             ) : (
                 heading
             )}
-            {children}
+            <div className="mt-1">{children}</div>
         </div>
     )
 }

@@ -17,7 +17,7 @@ function DangerAdminSection({ feedback }: Props): ReactElement {
     const [isPending, startTransition] = useTransition()
 
     return (
-        <div>
+        <div className="mt-2">
             <div className="bg-ax-bg-sunken p-3 rounded-md">
                 <Detail spacing>Noe feil? Du kan slette tilbakemeldingen. Denne handlingen kan ikke reverseres.</Detail>
                 <Button size="small" variant="danger" icon={<TrashIcon />} onClick={() => ref.current?.showModal()}>

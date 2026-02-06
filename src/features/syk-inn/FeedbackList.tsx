@@ -49,7 +49,7 @@ function FeedbackChunked({ feedback }: Props): ReactElement {
     return (
         <>
             <FeedbackToday today={today} />
-            <Heading id="all-feedback-heading" level="4" size="small" spacing className="mt-6 ml-3">
+            <Heading id="all-feedback-heading" level="4" size="small" spacing className="mt-10 ml-3">
                 Tidligere ({older.length})
             </Heading>
             <div className="gap-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
