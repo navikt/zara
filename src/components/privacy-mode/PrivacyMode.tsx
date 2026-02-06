@@ -4,6 +4,7 @@ import React, { ReactElement, useRef, useState, useTransition } from 'react'
 import { Button, Detail, Heading } from '@navikt/ds-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { ArrowRightIcon } from '@navikt/aksel-icons'
+import Image from 'next/image'
 
 import { Feedback } from '@services/feedback/feedback-schema'
 import { AutoUpdatingDistance } from '@components/AutoUpdatingDistance'
@@ -12,16 +13,13 @@ import { cn } from '@lib/tw'
 import { AkselNextLink } from '@components/AkselNextLink'
 
 import { setFeedbackVerified } from '../../features/syk-inn/feedback/message/feedback-actions'
+import { zaraImages } from '../../images/zaras'
 
 import styles from './PrivacyMode.module.css'
 
 function PrivacyMode({ feedback }: { feedback: Feedback[] }): ReactElement | null {
     const stableList = useRef(feedback)
     const [currentCard, setCurrentCard] = useState(0)
-
-    if (currentCard >= stableList.current.length) {
-        return null
-    }
 
     return (
         <div className={cn(styles.root, 'flex items-center justify-center')}>
@@ -40,10 +38,23 @@ function PrivacyMode({ feedback }: { feedback: Feedback[] }): ReactElement | nul
                         style={{ position: 'absolute' }}
                         className="h-full w-full"
                     >
-                        <DeciderCard
-                            feedback={stableList.current[currentCard]}
-                            onDecided={() => setCurrentCard((it) => it + 1)}
-                        />
+                        {currentCard < stableList.current.length ? (
+                            <DeciderCard
+                                feedback={stableList.current[currentCard]}
+                                onDecided={() => setCurrentCard((it) => it + 1)}
+                            />
+                        ) : (
+                            <div className="w-full flex flex-col items-center justify-center min-h-96">
+                                <Image src={zaraImages.happy.src} width={256} height={256} alt="Zara!" />
+                                <Heading level="3" size="medium" spacing className="font-normal text-4xl mt-4">
+                                    Du har gått gjennom hele lista!
+                                </Heading>
+                                <Detail spacing>Det er {feedback.length} uverifiserte tilbakemeldinger igjen.</Detail>
+                                <Button variant="tertiary" size="xsmall" onClick={() => setCurrentCard(0)}>
+                                    Begynn på nytt
+                                </Button>
+                            </div>
+                        )}
                     </motion.div>
                 </AnimatePresence>
             </div>
