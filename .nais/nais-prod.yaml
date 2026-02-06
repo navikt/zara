@@ -12,6 +12,7 @@ spec:
     max: 2
   ingresses:
     - 'https://zara.intern.nav.no'
+    - 'https://zara.ansatt.nav.no'
   azure:
     application:
       enabled: true
