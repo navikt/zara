@@ -20,6 +20,8 @@ type Props = {
 }
 
 function FeedbackList({ feedback }: Props): ReactElement {
+    const feedbackToBeVerified = R.filter(feedback, (it) => it.verifiedContentAt == null).length
+
     return (
         <section aria-labelledby="all-feedback-heading">
             <div className="flex justify-between items-start">
@@ -33,7 +35,7 @@ function FeedbackList({ feedback }: Props): ReactElement {
                     as={Link}
                     href="/syk-inn/tilbakemeldinger/personvernsmodus"
                 >
-                    Gå i personvernmodus!
+                    {`Gå i personvernmodus!${feedbackToBeVerified > 0 ? ` (${feedbackToBeVerified})` : ''}`}
                 </Button>
             </div>
             <FeedbackChunked feedback={feedback} />
