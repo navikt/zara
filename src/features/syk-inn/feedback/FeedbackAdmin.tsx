@@ -14,6 +14,7 @@ import RedactableUserFeedback from './redaction/RedactableUserFeedback'
 import AdminSection from './AdminSection'
 import ActivityLog from './ActivityLog'
 import DangerAdminSection from './danger/DangerAdminSection'
+import LiveChanges from './live-changes/LiveChanges'
 
 type Props = {
     feedback: Feedback
@@ -73,11 +74,12 @@ function FeedbackAdmin({ feedback }: Props): ReactElement {
 }
 
 function StatusBar({
+    id,
     contactedAt,
     contactedBy,
     verifiedContentAt,
     verifiedContentBy,
-}: Pick<Feedback, 'contactedAt' | 'contactedBy' | 'verifiedContentBy' | 'verifiedContentAt'>): ReactElement {
+}: Pick<Feedback, 'id' | 'contactedAt' | 'contactedBy' | 'verifiedContentBy' | 'verifiedContentAt'>): ReactElement {
     return (
         <div className="flex gap-3 pt-2">
             <StatusItem
@@ -87,6 +89,7 @@ function StatusBar({
                 by={verifiedContentBy}
             />
             <StatusItem Icon={EnvelopeClosedIcon} label="Kontaktet bruker" at={contactedAt} by={contactedBy} />
+            <LiveChanges id={id} />
         </div>
     )
 }
