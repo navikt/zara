@@ -10,10 +10,18 @@ import { bundledEnv } from '@lib/env'
 import Providers from './providers'
 
 export const metadata: Metadata = {
-    title:
-        bundledEnv.runtimeEnv !== 'local'
-            ? 'Zara - Verktøy for Team Symfoni'
-            : 'Zara (Local) - Verktøy for Team Symfoni',
+    title: titlePerEnv(),
+}
+
+function titlePerEnv(): string {
+    switch (bundledEnv.runtimeEnv) {
+        case 'prod-gcp':
+            return 'Zara - Verktøy for Team Symfoni'
+        case 'dev-gcp':
+            return 'Zara (Dev) - Verktøy for Team Symfoni'
+        case 'local':
+            return 'Zara (Local) - Verktøy for Team Symfoni'
+    }
 }
 
 export default function StandaloneLayout({ children }: LayoutProps<'/'>): ReactElement {
