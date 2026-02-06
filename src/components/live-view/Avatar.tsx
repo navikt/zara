@@ -25,10 +25,18 @@ function Avatar({ id, name }: Props): ReactElement {
                 />
             )}
             <div className="h-full w-full flex items-center justify-center font-bold text-xl z-20">
-                {name.slice(0, 1)}
+                {singleCharacter(name)}
             </div>
         </div>
     )
+}
+
+function singleCharacter(name: string): string {
+    if (name.startsWith('F_')) {
+        return name.slice(-1).toUpperCase()
+    }
+
+    return name.slice(0, 1)
 }
 
 export default Avatar
