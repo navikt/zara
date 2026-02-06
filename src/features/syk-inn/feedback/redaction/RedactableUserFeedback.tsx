@@ -68,6 +68,12 @@ function RedactableUserFeedback({ feedback, onRedactionDone }: Props): ReactElem
                     size="small"
                     loading={isPending}
                     onClick={() => {
+                        // No changes, just close redact mode
+                        if (R.keys(redactedWords).length === 0) {
+                            onRedactionDone()
+                            return
+                        }
+
                         startTransition(async () => {
                             try {
                                 await redactFeedbackContent(feedback.id, R.values(redactedWords))
