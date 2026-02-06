@@ -9,7 +9,7 @@ export async function GET(request: NextRequest): Promise<Response> {
         return new Response('Missing page parameter', { status: 400 })
     }
 
-    await validateUserSession()
+    const user = await validateUserSession()
     const encoder = new TextEncoder()
 
     let closed = false
@@ -30,6 +30,7 @@ export async function GET(request: NextRequest): Promise<Response> {
             cleanSub = await pubsub.sub({
                 activity: async (activity) => {
                     if (activity.page !== pageToGetEventsFor) return
+                    if (user.oid === activity.oid) return
 
                     send(JSON.stringify(activity))
                 },
