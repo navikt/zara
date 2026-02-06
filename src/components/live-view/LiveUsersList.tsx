@@ -21,9 +21,8 @@ type Props = {
 
 function LiveUsersList({ page, me }: Props): ReactElement {
     const now = useNow()
-    const pingMe = useMyActivity(page)
-    const { users, registerUser } = useActiveUsers(pingMe)
-
+    const { users, registerUser } = useActiveUsers()
+    useMyActivity(page)
     useOthersActivity(me.oid, page, registerUser)
     useLocalDevUsers(registerUser)
 
@@ -101,7 +100,7 @@ type ActiveUsers = Record<
     }
 >
 
-function useActiveUsers(pingMe: () => void): {
+function useActiveUsers(): {
     users: ActiveUsers
     registerUser: (user: Omit<UserActivity, 'page'>) => void
 } {
@@ -114,21 +113,15 @@ function useActiveUsers(pingMe: () => void): {
         setActiveUsers(removeStaleUsers(now))
     }, 5000)
 
-    const registerUser = useCallback(
-        (user: Omit<UserActivity, 'page'>) => {
-            setActiveUsers((prev) => ({
-                ...prev,
-                [user.oid]: {
-                    name: user.name,
-                    seen: Date.now(),
-                },
-            }))
-
-            // When a new user joins, ping ourselves to make sure we're visible for them
-            pingMe()
-        },
-        [pingMe],
-    )
+    const registerUser = useCallback((user: Omit<UserActivity, 'page'>) => {
+        setActiveUsers((prev) => ({
+            ...prev,
+            [user.oid]: {
+                name: user.name,
+                seen: Date.now(),
+            },
+        }))
+    }, [])
 
     return { users: activeUsers, registerUser: registerUser }
 }
