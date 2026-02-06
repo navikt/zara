@@ -29,9 +29,9 @@ type Props = {
 
 function LiveUsersList({ page, me }: Props): ReactElement {
     const now = useNow()
-    const { users, registerUser } = useActiveUsers()
+    const pingMe = useMyActivity(page)
+    const { users, registerUser } = useActiveUsers(pingMe)
 
-    useMyActivity(page)
     useOthersActivity(me.oid, page, registerUser)
     useLocalDevUsers(registerUser)
 
@@ -83,22 +83,25 @@ function LiveUsersList({ page, me }: Props): ReactElement {
 /**
  * Keeps you active and visible for other users
  */
-function useMyActivity(page: Pages): void {
-    // Register me as active on mount
-    useEffect(() => {
+function useMyActivity(page: Pages): () => void {
+    const pingMe = useCallback(() => {
         meActive(page)
     }, [page])
 
+    // Register me as active on mount
+    useEffect(() => {
+        pingMe()
+    }, [pingMe])
+
     // Register our own activity every 5 seconds
     useInterval(() => {
-        meActive(page)
+        pingMe()
     }, 5000)
+
+    return pingMe
 }
 
-function useActiveUsers(): {
-    users: ActiveUsers
-    registerUser: (user: User) => void
-} {
+function useActiveUsers(pingMe: () => void): { users: ActiveUsers; registerUser: (user: User) => void } {
     const [activeUsers, setActiveUsers] = useState<ActiveUsers>(() => ({}))
 
     // Clean up inactive users every now and then
@@ -108,15 +111,21 @@ function useActiveUsers(): {
         setActiveUsers(removeStaleUsers(now))
     }, 5000)
 
-    const registerUser = useCallback((user: User) => {
-        setActiveUsers((prev) => ({
-            ...prev,
-            [user.oid]: {
-                name: user.name,
-                seen: Date.now(),
-            },
-        }))
-    }, [])
+    const registerUser = useCallback(
+        (user: User) => {
+            setActiveUsers((prev) => ({
+                ...prev,
+                [user.oid]: {
+                    name: user.name,
+                    seen: Date.now(),
+                },
+            }))
+
+            // When a new user joins, ping ourselves to make sure we're visible for them
+            pingMe()
+        },
+        [pingMe],
+    )
 
     return { users: activeUsers, registerUser: registerUser }
 }
