@@ -42,6 +42,11 @@ export async function GET(_: Request, { params }: RouteContext<'/api/avatar/[upn
             headers: { Authorization: `Bearer ${clientCredentials.token}` },
         })
 
+        if (avatarResponse.status === 404) {
+            // Don't log on 404, its gonna happen a lot
+            return new Response(undefined, { status: 404 })
+        }
+
         /**
          * Mask any MS Graph API errors as 404
          */
