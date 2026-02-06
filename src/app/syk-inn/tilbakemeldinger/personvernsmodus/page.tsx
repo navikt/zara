@@ -15,7 +15,7 @@ import { zaraImages } from '../../../../images/zaras'
 
 async function Page(): Promise<ReactElement> {
     const user = await validateUserSession()
-    const client = getFeedbackClient()
+    const [client] = getFeedbackClient()
     const feedback = await client.all()
     const relevant = R.pipe(
         feedback,

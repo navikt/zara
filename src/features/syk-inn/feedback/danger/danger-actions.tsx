@@ -9,7 +9,7 @@ import { getFeedbackClient } from '@services/feedback/feedback-client'
 
 export async function deleteFeedbackPermanently(id: string): Promise<never> {
     const user = await validateUserSession()
-    const client = getFeedbackClient()
+    const [client] = getFeedbackClient()
 
     const feedback = await client.byId(id)
     if (!feedback) unauthorized()

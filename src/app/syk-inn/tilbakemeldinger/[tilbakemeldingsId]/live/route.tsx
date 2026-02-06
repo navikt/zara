@@ -1,12 +1,16 @@
 import { validateUserSession } from '@services/auth/auth'
 import { getFeedbackClient } from '@services/feedback/feedback-client'
 
-export async function GET(): Promise<Response> {
+export async function GET(
+    _: Request,
+    { params }: RouteContext<'/syk-inn/tilbakemeldinger/[tilbakemeldingsId]/live'>,
+): Promise<Response> {
+    const { tilbakemeldingsId } = await params
     await validateUserSession()
     const encoder = new TextEncoder()
 
     let closed = false
-    let cleanSub: () => void
+    let cleanSub: () => Promise<void>
 
     const stream = new ReadableStream<Uint8Array>({
         async start(controller) {
@@ -21,12 +25,15 @@ export async function GET(): Promise<Response> {
 
             const [, pubsub] = getFeedbackClient()
             cleanSub = await pubsub.sub({
-                new: async (id) => {
-                    const [client] = getFeedbackClient()
-                    const newFeedback = await client.byId(id)
-                    if (!newFeedback) return
+                deleted: async (id) => {
+                    if (id !== tilbakemeldingsId) return
 
-                    send(JSON.stringify(newFeedback))
+                    send(JSON.stringify({ type: 'deleted', id: id }))
+                },
+                updated: async (id) => {
+                    if (id !== tilbakemeldingsId) return
+
+                    send(JSON.stringify({ type: 'updated', id: id }))
                 },
             })
         },

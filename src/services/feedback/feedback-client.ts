@@ -3,9 +3,9 @@ import * as R from 'remeda'
 import { FEEDBACK_KEY_PREFIX, feedbackValkeyKey } from '@navikt/syk-zara'
 
 import { raise } from '@lib/ts'
+import { valkeyClient, subscriberValkeyClient } from '@services/valkey/production-valkey'
 
-import { getValkey } from '../valkey/valkey'
-
+import { createFeedbackPubSubClient, FeedbackPubsubClient } from './feedback-pubsub-client'
 import { Feedback, FeedbackSchema } from './feedback-schema'
 
 export type FeedbackClient = {
@@ -18,25 +18,8 @@ export type FeedbackClient = {
     markContacted: (id: string, by: string) => Promise<void>
 }
 
-function createFeedbackClient(valkey: Valkey): FeedbackClient {
+function createFeedbackClient(valkey: Valkey, pubsub: FeedbackPubsubClient): FeedbackClient {
     return {
-        create: async (id, feedback) => {
-            const key = feedbackValkeyKey(id)
-
-            await valkey.hset(key, {
-                id: id,
-                ...feedback,
-                redactionLog: JSON.stringify([]),
-            } satisfies Record<keyof Feedback, unknown>)
-        },
-        delete: async (id) => {
-            const key = feedbackValkeyKey(id)
-
-            const exists = await valkey.exists(key)
-            if (exists !== 1) return
-
-            await valkey.del(key)
-        },
         all: async () => {
             const allkeys = await valkey.keys(`${FEEDBACK_KEY_PREFIX}*`)
             const feedback = await Promise.all(
@@ -51,12 +34,34 @@ function createFeedbackClient(valkey: Valkey): FeedbackClient {
         },
         byId: async (id) => {
             const key = feedbackValkeyKey(id)
+
             const data = await valkey.hgetall(key)
             if (Object.keys(data).length === 0) {
                 return null
             }
 
             return FeedbackSchema.parse(data)
+        },
+        create: async (id, feedback) => {
+            const key = feedbackValkeyKey(id)
+
+            await valkey.hset(key, {
+                id: id,
+                ...feedback,
+                redactionLog: JSON.stringify([]),
+            } satisfies Record<keyof Feedback, unknown>)
+
+            pubsub.pub.new(id)
+        },
+        delete: async (id) => {
+            const key = feedbackValkeyKey(id)
+
+            const exists = await valkey.exists(key)
+            if (exists !== 1) return
+
+            await valkey.del(key)
+
+            pubsub.pub.deleted(id)
         },
         updateFeedback: async (id, message, whom) => {
             const key = feedbackValkeyKey(id)
@@ -72,6 +77,8 @@ function createFeedbackClient(valkey: Valkey): FeedbackClient {
                 message,
                 redactionLog: JSON.stringify(redactionLog),
             })
+
+            pubsub.pub.update(id)
         },
         markVerified: async (id, by) => {
             const key = feedbackValkeyKey(id)
@@ -84,6 +91,8 @@ function createFeedbackClient(valkey: Valkey): FeedbackClient {
                 verifiedContentAt: new Date().toISOString(),
                 verifiedContentBy: by,
             })
+
+            pubsub.pub.update(id)
         },
         markContacted: async (id, by) => {
             const key = feedbackValkeyKey(id)
@@ -96,12 +105,18 @@ function createFeedbackClient(valkey: Valkey): FeedbackClient {
                 contactedAt: new Date().toISOString(),
                 contactedBy: by,
             })
+
+            pubsub.pub.update(id)
         },
     }
 }
 
-export function getFeedbackClient(valkey?: Valkey): FeedbackClient {
-    const feedbackClient = createFeedbackClient(valkey ?? getValkey())
+export function getFeedbackClient(): [FeedbackClient, FeedbackPubsubClient] {
+    const valkey = valkeyClient()
+    const subValkey = subscriberValkeyClient()
 
-    return feedbackClient
+    const pubSubClient = createFeedbackPubSubClient(valkey, subValkey)
+    const feedbackClient = createFeedbackClient(valkey, pubSubClient)
+
+    return [feedbackClient, pubSubClient]
 }

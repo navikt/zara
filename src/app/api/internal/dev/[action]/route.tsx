@@ -6,7 +6,7 @@ import { createContactDetails } from '@dev/test-data'
 import { clearDevelopmentFeedback, seedDevelopmentFeedback } from '@dev/seed-valkey'
 import { bundledEnv } from '@lib/env'
 import { getFeedbackClient } from '@services/feedback/feedback-client'
-import { getValkey } from '@services/valkey/valkey'
+import { valkeyClient } from '@services/valkey/production-valkey'
 
 export async function POST(_: Request, { params }: RouteContext<'/api/internal/dev/[action]'>): Promise<Response> {
     // ⚠️ Dev only endpoint (allow dev-gcp for now)
@@ -18,17 +18,15 @@ export async function POST(_: Request, { params }: RouteContext<'/api/internal/d
 
     switch (action) {
         case 're-seed': {
-            const valkey = getValkey()
-            await clearDevelopmentFeedback(valkey)
+            await clearDevelopmentFeedback(valkeyClient())
 
-            const feedback = getFeedbackClient(valkey)
-            await seedDevelopmentFeedback(feedback)
+            const [client] = getFeedbackClient()
+            await seedDevelopmentFeedback(client)
 
             return Response.json({ message: `Re-seeded!` }, { status: 201 })
         }
         case 'new-feedback': {
-            const valkey = getValkey()
-            const client = getFeedbackClient(valkey)
+            const [client] = getFeedbackClient()
 
             const newId = crypto.randomUUID()
             await client.create(newId, {
@@ -41,8 +39,6 @@ export async function POST(_: Request, { params }: RouteContext<'/api/internal/d
                 verifiedContentAt: null,
                 verifiedContentBy: null,
             })
-
-            valkey.publish('channel:new-feedback', newId)
 
             return Response.json({ message: `Random feedback added!` }, { status: 201 })
         }

@@ -8,7 +8,7 @@ import { getFeedbackClient } from '@services/feedback/feedback-client'
 
 export async function setUserContacted(id: string): Promise<{ ok: boolean }> {
     const user = await validateUserSession()
-    const client = getFeedbackClient()
+    const [client] = getFeedbackClient()
 
     const feedback = await client.byId(id)
     if (!feedback) unauthorized()

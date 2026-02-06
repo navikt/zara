@@ -13,7 +13,7 @@ import FeedbackList from '../../../features/syk-inn/FeedbackList'
 export const dynamic = 'force-dynamic'
 
 async function Page(): Promise<ReactElement> {
-    const client = getFeedbackClient()
+    const [client] = getFeedbackClient()
     if (bundledEnv.runtimeEnv === 'local' && (await client.all()).length === 0) {
         await seedDevelopmentFeedback(client)
     }
