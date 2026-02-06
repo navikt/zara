@@ -12,6 +12,7 @@ spec:
     max: 2
   ingresses:
     - 'https://zara.intern.dev.nav.no'
+    - 'https://zara.ansatt.dev.nav.no'
   azure:
     application:
       allowAllUsers: true
