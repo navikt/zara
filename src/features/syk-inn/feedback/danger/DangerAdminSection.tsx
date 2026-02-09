@@ -1,8 +1,8 @@
 import React, { ReactElement, useRef, useTransition } from 'react'
 import { Button, Detail, Modal } from '@navikt/ds-react'
 import { ExclamationmarkTriangleIcon, TrashIcon } from '@navikt/aksel-icons'
+import { Feedback } from '@navikt/syk-zara'
 
-import { Feedback } from '@services/feedback/feedback-schema'
 import { MultilineUserFeedback } from '@components/feedback/MultilineUserFeedback'
 import { toReadableDateTime } from '@lib/date'
 

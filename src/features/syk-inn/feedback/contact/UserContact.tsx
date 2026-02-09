@@ -7,8 +7,8 @@ import {
     PhoneIcon,
 } from '@navikt/aksel-icons'
 import { BodyShort, Button, CopyButton, Detail } from '@navikt/ds-react'
+import { Feedback } from '@navikt/syk-zara'
 
-import { Feedback } from '@services/feedback/feedback-schema'
 import { toReadableDateTime } from '@lib/date'
 
 import { setUserContacted } from './contact-actions'

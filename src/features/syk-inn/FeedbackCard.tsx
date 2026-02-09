@@ -9,12 +9,13 @@ import {
     PhoneIcon,
 } from '@navikt/aksel-icons'
 import Link from 'next/link'
+import { Feedback } from '@navikt/syk-zara'
 
-import { Feedback } from '@services/feedback/feedback-schema'
 import { MultilineUserFeedback } from '@components/feedback/MultilineUserFeedback'
 import { cn } from '@lib/tw'
 import { toReadableDateTime } from '@lib/date'
 import { AutoUpdatingDistance } from '@components/AutoUpdatingDistance'
+import SentimentIcon from '@components/feedback/SentimentIcon'
 
 export function FeedbackCard({ feedback, fresh }: { feedback: Feedback; fresh: boolean }): ReactElement {
     return (
@@ -28,7 +29,9 @@ export function FeedbackCard({ feedback, fresh }: { feedback: Feedback; fresh: b
                 href={`/syk-inn/tilbakemeldinger/${feedback.id}`}
                 className="group px-3 py-2 flex justify-between hover:bg-ax-bg-meta-purple-moderate-hover"
             >
+                {feedback.sentiment && <SentimentIcon className="mr-2" sentiment={feedback.sentiment} />}
                 <Heading size="xsmall">Tilbakemelding fra {feedback.name}</Heading>
+                <div className="grow" />
                 <ArrowRightIcon
                     className="size-6 transition-transform duration-200 group-hover:translate-x-1"
                     aria-hidden

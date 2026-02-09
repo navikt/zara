@@ -1,5 +1,7 @@
+import { subscribeToFeedbackChannels } from '@navikt/syk-zara/admin'
+
 import { validateUserSession } from '@services/auth/auth'
-import { getFeedbackClient } from '@services/feedback/feedback-client'
+import { subscriberValkeyClient } from '@services/valkey/production-valkey'
 
 export async function GET(
     _: Request,
@@ -23,8 +25,8 @@ export async function GET(
                 }
             }
 
-            const [, pubsub] = getFeedbackClient()
-            cleanSub = await pubsub.sub({
+            const subValkey = subscriberValkeyClient()
+            cleanSub = await subscribeToFeedbackChannels(subValkey, {
                 deleted: async (id) => {
                     if (id !== tilbakemeldingsId) return
 

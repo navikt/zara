@@ -3,15 +3,14 @@ import { logger } from '@navikt/next-logger'
 import Valkey from 'iovalkey'
 import { faker } from '@faker-js/faker'
 import { subDays } from 'date-fns'
-import { FEEDBACK_KEY_PREFIX } from '@navikt/syk-zara'
+import { AdminFeedbackClient } from '@navikt/syk-zara/admin'
 
-import { FeedbackClient } from '@services/feedback/feedback-client'
 import { bundledEnv } from '@lib/env'
 import { raise } from '@lib/ts'
 
 import { createContactDetails, createContactedInfo, createVerifiedContentInfo } from './test-data'
 
-export async function seedDevelopmentFeedback(client: FeedbackClient): Promise<void> {
+export async function seedDevelopmentFeedback(client: AdminFeedbackClient): Promise<void> {
     if (bundledEnv.runtimeEnv !== 'local') {
         raise("What the hell are you doing?! Don't seed any cloud environments! :angst:")
     }
@@ -26,10 +25,16 @@ export async function seedDevelopmentFeedback(client: FeedbackClient): Promise<v
                 : faker.date.between({ from: subDays(new Date(), 60), to: Date.now() }).toISOString()
         const contactDetails = createContactDetails()
 
-        await client.create(id, {
+        await client.insert(id, {
             name: faker.person.fullName(),
             message: faker.lorem.lines({ min: 1, max: 5 }),
+            sentiment: faker.number.int({ min: 1, max: 5 }),
+            category: faker.helpers.arrayElement(['FEIL', 'FORSLAG', 'ANNET']),
             timestamp: timestamp,
+            redactionLog: [],
+            metaTags: [],
+            metaSource: 'syk-inn',
+            metaLocation: 'feedback root',
             ...contactDetails,
             ...createContactedInfo(contactDetails.contactType),
             ...createVerifiedContentInfo(),
@@ -43,7 +48,7 @@ export async function clearDevelopmentFeedback(valkey: Valkey): Promise<void> {
         raise('⚠️☠️🚨 You are trying to clear feedback in a non-development environment! 🚨☠️⚠️')
     }
 
-    const feedbackKeys = await valkey.keys(`${FEEDBACK_KEY_PREFIX}*`)
+    const feedbackKeys = await valkey.keys(`feedback:*`)
     logger.warn(`Deleting all feedback entries (${feedbackKeys.length}) in Valkey...`)
     feedbackKeys.forEach((key) => valkey.del(key))
 }

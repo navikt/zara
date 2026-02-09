@@ -11,7 +11,7 @@ import { cn } from '@lib/tw'
 import { bundledEnv } from '@lib/env'
 import { User } from '@services/auth/user'
 import Avatar from '@components/live-view/Avatar'
-import { Pages, UserActivity } from '@services/feedback/pages'
+import { Pages, UserActivity } from '@services/live-service/pages'
 import { meActive } from '@components/live-view/live-actions'
 
 type Props = {

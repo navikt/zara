@@ -3,8 +3,8 @@
 import React, { ReactElement, useState } from 'react'
 import { CheckmarkHeavyIcon, EnvelopeClosedIcon, PersonGavelIcon, ScissorsIcon } from '@navikt/aksel-icons'
 import { Button, Detail, Heading, Tooltip } from '@navikt/ds-react'
+import { Feedback } from '@navikt/syk-zara'
 
-import { Feedback } from '@services/feedback/feedback-schema'
 import { cn } from '@lib/tw'
 import { toReadableDateTime } from '@lib/date'
 

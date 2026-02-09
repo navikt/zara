@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 
 import { validateUserSession } from '@services/auth/auth'
-import { getFeedbackClient } from '@services/feedback/feedback-client'
+import { createUserActivityClient } from '@services/live-service/user-activity-pubsub-client'
 
 export async function GET(request: NextRequest): Promise<Response> {
     const pageToGetEventsFor = request.nextUrl.searchParams.get('page')
@@ -26,9 +26,9 @@ export async function GET(request: NextRequest): Promise<Response> {
                 }
             }
 
-            const [, pubsub] = getFeedbackClient()
+            const pubsub = createUserActivityClient()
             cleanSub = await pubsub.sub({
-                activity: async (activity) => {
+                onActivity: async (activity) => {
                     if (activity.page !== pageToGetEventsFor) return
                     if (user.oid === activity.oid) return
 

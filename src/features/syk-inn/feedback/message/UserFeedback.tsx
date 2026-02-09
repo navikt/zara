@@ -1,9 +1,9 @@
 import React, { ReactElement, useTransition } from 'react'
 import { BodyShort, Button, Detail } from '@navikt/ds-react'
 import { CheckmarkHeavyIcon } from '@navikt/aksel-icons'
+import { Feedback } from '@navikt/syk-zara'
 
 import { MultilineUserFeedback } from '@components/feedback/MultilineUserFeedback'
-import { Feedback } from '@services/feedback/feedback-schema'
 import { toReadableDateTime } from '@lib/date'
 
 import { setFeedbackVerified } from './feedback-actions'

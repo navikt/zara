@@ -2,8 +2,8 @@ import { Process } from '@navikt/ds-react'
 import React, { ReactElement } from 'react'
 import * as R from 'remeda'
 import { EyeWithPupilIcon, InboxDownIcon, PersonGavelIcon, ScissorsIcon, TasklistSendIcon } from '@navikt/aksel-icons'
+import { Feedback } from '@navikt/syk-zara'
 
-import { Feedback } from '@services/feedback/feedback-schema'
 import { toReadableDateTime } from '@lib/date'
 
 type Props = {
