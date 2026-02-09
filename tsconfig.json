@@ -17,7 +17,9 @@
             "@components/*": ["./src/components/*"],
             "@lib/*": ["./src/lib/*"],
             "@services/*": ["./src/services/*"],
-            "@dev/*": ["./src/dev/*"]
+            "@features/*": ["./src/features/*"],
+            "@dev/*": ["./src/dev/*"],
+            "@images/*": ["./src/images/*"]
         },
         "target": "ES2017"
     },

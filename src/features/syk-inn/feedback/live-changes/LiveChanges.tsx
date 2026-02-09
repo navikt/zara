@@ -33,7 +33,9 @@ function LiveChanges({ id }: Props): ReactElement {
                     width="medium"
                 >
                     <Modal.Body>
-                        <BodyShort>Noen andre (eller deg i en annen tab!) har slettet denne sykmeldingen.</BodyShort>
+                        <BodyShort>
+                            Noen andre (eller deg i en annen tab!) har slettet denne tilbakemeldingen.
+                        </BodyShort>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button type="button" as={Link} href="/syk-inn/tilbakemeldinger">

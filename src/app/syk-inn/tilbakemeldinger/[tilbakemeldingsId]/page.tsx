@@ -4,13 +4,12 @@ import { PageBlock } from '@navikt/ds-react/Page'
 import { ArrowLeftIcon } from '@navikt/aksel-icons'
 import Image from 'next/image'
 
+import { FeedbackAdmin } from '@features/syk-inn/feedback/FeedbackAdmin'
+import { zaraImages } from '@images/zaras'
 import { AkselNextLink } from '@components/AkselNextLink'
 import { validateUserSession } from '@services/auth/auth'
 import LiveUsersList from '@components/live-view/LiveUsersList'
-
-import { getFeedbackClient } from '../../../../services/feedback/feedback-client'
-import { zaraImages } from '../../../../images/zaras'
-import FeedbackAdmin from '../../../../features/syk-inn/feedback/FeedbackAdmin'
+import { getFeedbackClient } from '@services/feedback/feedback-client'
 
 async function Page({ params }: PageProps<'/syk-inn/tilbakemeldinger/[tilbakemeldingsId]'>): Promise<ReactElement> {
     const { tilbakemeldingsId } = await params
