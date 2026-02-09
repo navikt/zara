@@ -26,7 +26,7 @@ export async function redactFeedbackContent(
         )
         .join('\n')
 
-    await client.updateFeedback(id, rebuilt, { name: user.name, count: redactLocations.length })
+    await client.redactFeedback(id, rebuilt, { name: user.name, count: redactLocations.length })
     revalidatePath(`/syk-inn/tilbakemeldinger/${id}`)
 
     logger.info(`Updated feedback ${id} by redacting ${redactLocations.length} words`)

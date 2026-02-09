@@ -13,9 +13,11 @@ export type FeedbackClient = {
     delete: (id: string) => Promise<void>
     all: () => Promise<Feedback[]>
     byId: (id: string) => Promise<Feedback | null>
-    updateFeedback: (id: string, message: string, whom: { name: string; count: number }) => Promise<void>
-    markVerified: (id: string, by: string) => Promise<void>
-    markContacted: (id: string, by: string) => Promise<void>
+    redactFeedback: (id: string, message: string, whom: { name: string; count: number }) => Promise<void>
+    mark: {
+        verified: (id: string, by: string) => Promise<void>
+        contacted: (id: string, by: string) => Promise<void>
+    }
 }
 
 function createFeedbackClient(valkey: Valkey, pubsub: FeedbackPubsubClient): FeedbackClient {
@@ -63,7 +65,7 @@ function createFeedbackClient(valkey: Valkey, pubsub: FeedbackPubsubClient): Fee
 
             pubsub.pub.deleted(id)
         },
-        updateFeedback: async (id, message, whom) => {
+        redactFeedback: async (id, message, whom) => {
             const key = feedbackValkeyKey(id)
             const existingRedactionLog = await valkey.hget(key, 'redactionLog')
             const redactionLog = existingRedactionLog ? JSON.parse(existingRedactionLog) : []
@@ -80,33 +82,35 @@ function createFeedbackClient(valkey: Valkey, pubsub: FeedbackPubsubClient): Fee
 
             pubsub.pub.update(id)
         },
-        markVerified: async (id, by) => {
-            const key = feedbackValkeyKey(id)
-            const existingAt = await valkey.hget(key, 'verifiedContentAt')
-            if (existingAt) {
-                raise(`Unable to mark feedback as verified, it was already verified at ${existingAt}`)
-            }
+        mark: {
+            verified: async (id, by) => {
+                const key = feedbackValkeyKey(id)
+                const existingAt = await valkey.hget(key, 'verifiedContentAt')
+                if (existingAt) {
+                    raise(`Unable to mark feedback as verified, it was already verified at ${existingAt}`)
+                }
 
-            await valkey.hset(key, {
-                verifiedContentAt: new Date().toISOString(),
-                verifiedContentBy: by,
-            })
+                await valkey.hset(key, {
+                    verifiedContentAt: new Date().toISOString(),
+                    verifiedContentBy: by,
+                })
 
-            pubsub.pub.update(id)
-        },
-        markContacted: async (id, by) => {
-            const key = feedbackValkeyKey(id)
-            const existingAt = await valkey.hget(key, 'contactedAt')
-            if (existingAt) {
-                raise(`Unable to mark feedback as contacted, it was already contacted at ${existingAt}`)
-            }
+                pubsub.pub.update(id)
+            },
+            contacted: async (id, by) => {
+                const key = feedbackValkeyKey(id)
+                const existingAt = await valkey.hget(key, 'contactedAt')
+                if (existingAt) {
+                    raise(`Unable to mark feedback as contacted, it was already contacted at ${existingAt}`)
+                }
 
-            await valkey.hset(key, {
-                contactedAt: new Date().toISOString(),
-                contactedBy: by,
-            })
+                await valkey.hset(key, {
+                    contactedAt: new Date().toISOString(),
+                    contactedBy: by,
+                })
 
-            pubsub.pub.update(id)
+                pubsub.pub.update(id)
+            },
         },
     }
 }

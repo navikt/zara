@@ -13,7 +13,7 @@ export async function setFeedbackVerified(id: string): Promise<{ ok: boolean }> 
     const feedback = await client.byId(id)
     if (!feedback) unauthorized()
 
-    await client.markVerified(id, user.name)
+    await client.mark.verified(id, user.name)
 
     revalidatePath(`/syk-inn/tilbakemeldinger/${id}`)
 

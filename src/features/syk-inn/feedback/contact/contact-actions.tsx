@@ -13,7 +13,7 @@ export async function setUserContacted(id: string): Promise<{ ok: boolean }> {
     const feedback = await client.byId(id)
     if (!feedback) unauthorized()
 
-    await client.markContacted(id, user.name)
+    await client.mark.contacted(id, user.name)
 
     revalidatePath(`/syk-inn/tilbakemeldinger/${id}`)
 
