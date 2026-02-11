@@ -13,6 +13,7 @@
         "jsx": "react-jsx",
         "incremental": true,
         "plugins": [{ "name": "next" }],
+        "types": ["@navikt/ds-react/types/theme"],
         "paths": {
             "@components/*": ["./src/components/*"],
             "@lib/*": ["./src/lib/*"],

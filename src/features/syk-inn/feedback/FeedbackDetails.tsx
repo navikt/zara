@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react'
 import { Feedback } from '@navikt/syk-zara'
-import { BodyShort, Detail, Tooltip } from '@navikt/ds-react'
-import { FaceCryIcon, FaceFrownIcon, FaceIcon, FaceLaughIcon, FaceSmileIcon } from '@navikt/aksel-icons'
+import { BodyShort, Detail, ExpansionCard, Tag, Tooltip } from '@navikt/ds-react'
+import { CodeIcon, FaceCryIcon, FaceFrownIcon, FaceIcon, FaceLaughIcon, FaceSmileIcon } from '@navikt/aksel-icons'
 import { motion } from 'motion/react'
 
 import { cn } from '@lib/tw'
@@ -37,6 +37,43 @@ function FeedbackDetails({ feedback }: Props): ReactElement {
                 <BodyShort className="italic" size="small">
                     Bruker registrerte ikke noe sentiment for denne tilbakemeldingen
                 </BodyShort>
+            )}
+            <Detail className="mt-6 mb-1">Hvor (path)</Detail>
+            <pre className="break-all whitespace-pre-wrap text-xs bg-ax-bg-sunken p-3 rounded-md ">
+                {feedback.metaLocation}
+            </pre>
+            <Detail className="mt-6 mb-1">Tags</Detail>
+            <div>
+                {feedback.metaTags.length === 0 && (
+                    <Tag variant="moderate" data-color="neutral">
+                        Ingen tags
+                    </Tag>
+                )}
+                {feedback.metaTags.map((tag) => (
+                    <Tag key={tag} variant="outline" data-color="accent">
+                        {tag}
+                    </Tag>
+                ))}
+            </div>
+            {Object.keys(feedback.metaDev).length > 0 && (
+                <>
+                    <Detail className="mt-6 mb-1">Metadata</Detail>
+                    <ExpansionCard size="small" aria-labelledby="meta-dev-header">
+                        <ExpansionCard.Header>
+                            <div className="flex gap-3">
+                                <CodeIcon aria-hidden fontSize="2rem" />
+                                <ExpansionCard.Title id="meta-dev-header" size="small">
+                                    Teknisk metadata
+                                </ExpansionCard.Title>
+                            </div>
+                        </ExpansionCard.Header>
+                        <ExpansionCard.Content>
+                            <pre className="text-xs bg-ax-bg-sunken p-3 rounded-md overflow-x-auto">
+                                {JSON.stringify(feedback.metaDev, null, 2)}
+                            </pre>
+                        </ExpansionCard.Content>
+                    </ExpansionCard>
+                </>
             )}
         </div>
     )

@@ -44,6 +44,9 @@ export async function POST(_: Request, { params }: RouteContext<'/api/internal/d
                 metaLocation: 'feedback root',
                 metaTags: [],
                 redactionLog: [],
+                metaDev: {
+                    sykmeldingsId: crypto.randomUUID(),
+                },
             })
 
             return Response.json({ message: `Random feedback added!` }, { status: 201 })

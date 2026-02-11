@@ -35,6 +35,7 @@ export async function seedDevelopmentFeedback(client: AdminFeedbackClient): Prom
             metaTags: [],
             metaSource: 'syk-inn',
             metaLocation: 'feedback root',
+            metaDev: {},
             ...contactDetails,
             ...createContactedInfo(contactDetails.contactType),
             ...createVerifiedContentInfo(),
