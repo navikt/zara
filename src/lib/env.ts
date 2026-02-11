@@ -47,6 +47,8 @@ type ServerEnv = z.infer<typeof ServerEnvSchema>
 const ServerEnvSchema = z.object({
     useSykInnValkey: z.boolean().default(false),
     valkeyConfig: ValkeyConfigSchema.nullish(),
+    zaraSlackBotToken: z.string(),
+    zaraSlackChannelId: z.string(),
 })
 
 /**
@@ -63,8 +65,8 @@ export function getServerEnv(): ServerEnv {
         runtimeEnv: process.env.NEXT_PUBLIC_RUNTIME_ENV,
         username: process.env.VALKEY_USERNAME_SYK_INN,
         password: process.env.VALKEY_PASSWORD_SYK_INN,
+        host: useLocalSykInn ? 'localhost' : process.env.VALKEY_HOST_SYK_INN,
         // Local
-        host: process.env.VALKEY_HOST_SYK_INN,
         port: useLocalSykInn ? undefined : process.env.VALKEY_PORT_SYK_INN,
         // Cloud
         tls: {
@@ -76,6 +78,8 @@ export function getServerEnv(): ServerEnv {
     const parsedEnv = ServerEnvSchema.parse({
         useSykInnValkey: useLocalSykInn,
         valkeyConfig: valkeyConfig,
+        zaraSlackBotToken: process.env.ZARA_SLACK_BOT_TOKEN,
+        zaraSlackChannelId: process.env.ZARA_SLACK_CHANNEL_ID,
     } satisfies Record<keyof ServerEnv, unknown | undefined>)
 
     if (bundledEnv.runtimeEnv !== 'local' && parsedEnv.useSykInnValkey) {

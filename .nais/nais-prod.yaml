@@ -64,3 +64,5 @@ spec:
     requests:
       cpu: 50m
       memory: 200Mi
+  env:
+    - secret: tsm-zara-secrets
