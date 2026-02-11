@@ -7,16 +7,12 @@ import { validateUserSession } from '@services/auth/auth'
 import { getFeedbackClient } from '@services/feedback/feedback-client'
 import LiveUsersList from '@components/live-view/LiveUsersList'
 
-import { seedDevelopmentFeedback } from '../../../dev/seed-valkey'
 import FeedbackList from '../../../features/syk-inn/FeedbackList'
 
 export const dynamic = 'force-dynamic'
 
 async function Page(): Promise<ReactElement> {
     const client = getFeedbackClient()
-    if (bundledEnv.runtimeEnv === 'local' && (await client.all()).length === 0) {
-        await seedDevelopmentFeedback(client)
-    }
 
     /**
      * No fanciness or pagination for now.
@@ -33,6 +29,7 @@ async function Page(): Promise<ReactElement> {
                 <LiveUsersList page="/syk-inn/tilbakemeldinger" me={user} />
             </div>
             <FeedbackList feedback={feedback} />
+            {bundledEnv.runtimeEnv === 'local' && feedback.length === 0 && <div>heeeloo!</div>}
         </PageBlock>
     )
 }

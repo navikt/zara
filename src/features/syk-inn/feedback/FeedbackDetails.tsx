@@ -14,50 +14,66 @@ function FeedbackDetails({ feedback }: Props): ReactElement {
     const sentiment = feedback.sentiment
 
     return (
-        <div>
-            <Detail>Sentiment</Detail>
-            {sentiment ? (
-                <Tooltip
-                    content={`Bruker ga denne vurderingen en opplevelse av ${sentiment}/5 (i smilefjes) ved innsending.`}
-                    placement="bottom"
-                >
-                    <div className="p-3">
-                        <div className="group rounded-lg bg-linear-to-r from-ax-text-danger-decoration via-[#ffcb6f] to-ax-bg-success-strong-pressed border-2 border-ax-border-neutral-subtle">
-                            <div className="h-8 flex justify-between items-center">
-                                <SentimentIcon level={1} sentiment={sentiment} Icon={FaceCryIcon} />
-                                <SentimentIcon level={2} sentiment={sentiment} Icon={FaceFrownIcon} />
-                                <SentimentIcon level={3} sentiment={sentiment} Icon={FaceIcon} />
-                                <SentimentIcon level={4} sentiment={sentiment} Icon={FaceSmileIcon} />
-                                <SentimentIcon level={5} sentiment={sentiment} Icon={FaceLaughIcon} />
+        <div className="flex flex-col gap-4">
+            <div>
+                <Detail>Innsender</Detail>
+                <BodyShort>
+                    {feedback.name} ({feedback.uid})
+                </BodyShort>
+            </div>
+            <div>
+                <Detail>System (EPJ)</Detail>
+                <BodyShort>{feedback.metaSystem}</BodyShort>
+            </div>
+            <div>
+                <Detail>Sentiment</Detail>
+                {sentiment ? (
+                    <Tooltip
+                        content={`Bruker ga denne vurderingen en opplevelse av ${sentiment}/5 (i smilefjes) ved innsending.`}
+                        placement="bottom"
+                    >
+                        <div className="p-3">
+                            <div className="group rounded-lg bg-linear-to-r from-ax-text-danger-decoration via-[#ffcb6f] to-ax-bg-success-strong-pressed border-2 border-ax-border-neutral-subtle">
+                                <div className="h-8 flex justify-between items-center">
+                                    <SentimentIcon level={1} sentiment={sentiment} Icon={FaceCryIcon} />
+                                    <SentimentIcon level={2} sentiment={sentiment} Icon={FaceFrownIcon} />
+                                    <SentimentIcon level={3} sentiment={sentiment} Icon={FaceIcon} />
+                                    <SentimentIcon level={4} sentiment={sentiment} Icon={FaceSmileIcon} />
+                                    <SentimentIcon level={5} sentiment={sentiment} Icon={FaceLaughIcon} />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </Tooltip>
-            ) : (
-                <BodyShort className="italic" size="small">
-                    Bruker registrerte ikke noe sentiment for denne tilbakemeldingen
-                </BodyShort>
-            )}
-            <Detail className="mt-6 mb-1">Hvor (path)</Detail>
-            <pre className="break-all whitespace-pre-wrap text-xs bg-ax-bg-sunken p-3 rounded-md ">
-                {feedback.metaLocation}
-            </pre>
-            <Detail className="mt-6 mb-1">Tags</Detail>
-            <div>
-                {feedback.metaTags.length === 0 && (
-                    <Tag variant="moderate" data-color="neutral">
-                        Ingen tags
-                    </Tag>
+                    </Tooltip>
+                ) : (
+                    <BodyShort className="italic" size="small">
+                        Bruker registrerte ikke noe sentiment for denne tilbakemeldingen
+                    </BodyShort>
                 )}
-                {feedback.metaTags.map((tag) => (
-                    <Tag key={tag} variant="outline" data-color="accent">
-                        {tag}
-                    </Tag>
-                ))}
+            </div>
+            <div>
+                <Detail>Hvor (path)</Detail>
+                <pre className="break-all whitespace-pre-wrap text-xs bg-ax-bg-sunken p-3 rounded-md ">
+                    {feedback.metaLocation}
+                </pre>
+            </div>
+            <div>
+                <Detail>Tags</Detail>
+                <div>
+                    {feedback.metaTags.length === 0 && (
+                        <Tag variant="moderate" data-color="neutral">
+                            Ingen tags
+                        </Tag>
+                    )}
+                    {feedback.metaTags.map((tag) => (
+                        <Tag key={tag} variant="outline" data-color="accent">
+                            {tag}
+                        </Tag>
+                    ))}
+                </div>
             </div>
             {Object.keys(feedback.metaDev).length > 0 && (
-                <>
-                    <Detail className="mt-6 mb-1">Metadata</Detail>
+                <div>
+                    <Detail>Metadata</Detail>
                     <ExpansionCard size="small" aria-labelledby="meta-dev-header">
                         <ExpansionCard.Header>
                             <div className="flex gap-3">
@@ -73,7 +89,7 @@ function FeedbackDetails({ feedback }: Props): ReactElement {
                             </pre>
                         </ExpansionCard.Content>
                     </ExpansionCard>
-                </>
+                </div>
             )}
         </div>
     )

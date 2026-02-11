@@ -31,6 +31,7 @@ export async function POST(_: Request, { params }: RouteContext<'/api/internal/d
             const newId = crypto.randomUUID()
             await client.insert(newId, {
                 name: faker.person.fullName(),
+                uid: crypto.randomUUID(),
                 message: faker.lorem.lines({ min: 2, max: 5 }),
                 timestamp: new Date().toISOString(),
                 sentiment: faker.number.int({ min: 1, max: 5 }),
@@ -41,7 +42,8 @@ export async function POST(_: Request, { params }: RouteContext<'/api/internal/d
                 verifiedContentAt: null,
                 verifiedContentBy: null,
                 metaSource: 'syk-inn',
-                metaLocation: 'feedback root',
+                metaLocation: '/dev/foo/bar/baz',
+                metaSystem: 'FakeMedDoc',
                 metaTags: [],
                 redactionLog: [],
                 metaDev: {

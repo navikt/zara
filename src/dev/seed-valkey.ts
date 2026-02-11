@@ -27,6 +27,7 @@ export async function seedDevelopmentFeedback(client: AdminFeedbackClient): Prom
 
         await client.insert(id, {
             name: faker.person.fullName(),
+            uid: crypto.randomUUID(),
             message: faker.lorem.lines({ min: 1, max: 5 }),
             sentiment: faker.number.int({ min: 1, max: 5 }),
             category: faker.helpers.arrayElement(['FEIL', 'FORSLAG', 'ANNET']),
@@ -35,6 +36,7 @@ export async function seedDevelopmentFeedback(client: AdminFeedbackClient): Prom
             metaTags: [],
             metaSource: 'syk-inn',
             metaLocation: 'feedback root',
+            metaSystem: 'FakeMedDoc',
             metaDev: {},
             ...contactDetails,
             ...createContactedInfo(contactDetails.contactType),
