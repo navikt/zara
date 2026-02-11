@@ -57,6 +57,7 @@ spec:
     outbound:
       external:
         - host: cdn.nav.no
+        - host: api.slack.com
       rules:
         - application: logging
           namespace: nais-system
