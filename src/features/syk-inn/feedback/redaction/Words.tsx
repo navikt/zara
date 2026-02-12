@@ -2,7 +2,7 @@ import React, { ReactElement } from 'react'
 
 import { cn } from '@lib/tw'
 
-const sladdet = ['[sladdet]', '[borte]', '[fjernet helt]']
+const sladdet = ['█████████', '███████', '██████████████']
 
 export function RedactedWord({
     seed,
