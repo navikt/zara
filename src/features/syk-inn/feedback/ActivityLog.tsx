@@ -1,8 +1,9 @@
-import { Process } from '@navikt/ds-react'
-import React, { ReactElement } from 'react'
+import { BodyShort, Process } from '@navikt/ds-react'
+import React, { ReactElement, ReactNode } from 'react'
 import * as R from 'remeda'
 import { EyeWithPupilIcon, InboxDownIcon, PersonGavelIcon, ScissorsIcon, TasklistSendIcon } from '@navikt/aksel-icons'
 import { Feedback } from '@navikt/syk-zara'
+import { Link as AkselLink } from '@navikt/ds-react/Link'
 
 import { toReadableDateTime } from '@lib/date'
 
@@ -13,7 +14,7 @@ type Props = {
 function ActivityLog({ feedback }: Props): ReactElement {
     const events: {
         title: string
-        body: string
+        body: string | ReactNode
         timestamp: string | null
         bullet: React.ReactNode
     }[] = []
@@ -33,6 +34,24 @@ function ActivityLog({ feedback }: Props): ReactElement {
             body: `Kontaktet av ${feedback.contactedBy}`,
             timestamp: feedback.contactedAt,
             bullet: <TasklistSendIcon aria-hidden />,
+        })
+    }
+
+    if (feedback.sharedAt != null) {
+        events.push({
+            title: `Delt på Slack`,
+            body: (
+                <BodyShort>
+                    Delt av {feedback.sharedBy},{' '}
+                    {feedback.sharedLink && (
+                        <AkselLink href={feedback.sharedLink} target="_blank" rel="noopener noreferrer">
+                            se på slack
+                        </AkselLink>
+                    )}
+                </BodyShort>
+            ),
+            timestamp: feedback.sharedAt,
+            bullet: <InboxDownIcon aria-hidden />,
         })
     }
 
