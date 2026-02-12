@@ -3,7 +3,7 @@ import { Feedback } from '@navikt/syk-zara'
 import { getServerEnv } from '@lib/env'
 import { spanServerAsync, squelchTracing } from '@lib/otel/server'
 import { User } from '@services/auth/user'
-import { getFeedbackUrl, slackChatPostMessage } from '@services/slack/utils'
+import { createPermalink, getFeedbackUrl, slackChatPostMessage } from '@services/slack/utils'
 
 export async function notifySlack(feedback: Feedback, byWho: User): Promise<{ postLink: string }> {
     const { zaraSlackBotToken, zaraSlackChannelId } = getServerEnv()
@@ -11,6 +11,7 @@ export async function notifySlack(feedback: Feedback, byWho: User): Promise<{ po
     const ansattUrl = getFeedbackUrl(feedback.id, 'ansatt')
 
     const sentimentText = feedback.sentiment ? ` - ${feedback.sentiment}/5 ⭐` : ''
+    const redactedMessage = redactMessageForSlack(feedback.message)
 
     const data = await spanServerAsync('Slack API (fetch)', () =>
         squelchTracing(() =>
@@ -28,7 +29,7 @@ export async function notifySlack(feedback: Feedback, byWho: User): Promise<{ po
                     },
                     {
                         type: 'section',
-                        text: { type: 'mrkdwn', text: `*📝 Melding:*\n> ${feedback.message}` },
+                        text: { type: 'mrkdwn', text: `*📝 Melding:*\n> ${redactedMessage}` },
                     },
                     { type: 'divider' },
                     {
@@ -75,10 +76,18 @@ const categoryEmoji = {
     ANNET: '💬',
 }
 
-export function createPermalink(channelId: string, ts: string): string {
-    return `${createChannelPermalink(channelId)}/p${ts.replace('.', '')}`
-}
+const redactedVariants = ['█████████', '███████', '██████████████']
 
-export function createChannelPermalink(channelId: string): string {
-    return `https://nav-it.slack.com/archives/${channelId}`
+function redactMessageForSlack(message: string): string {
+    const lines = message.split('\n')
+    return lines
+        .map((line, lineIndex) =>
+            line
+                .split(' ')
+                .map((word, wordIndex) =>
+                    word === '<redacted>' ? redactedVariants[(lineIndex + wordIndex) % redactedVariants.length] : word,
+                )
+                .join(' '),
+        )
+        .join('\n')
 }
