@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react'
-import { Detail, Heading, Tooltip } from '@navikt/ds-react'
+import { Detail, Heading, Tag, Tooltip } from '@navikt/ds-react'
 import {
     ArrowRightIcon,
     CheckmarkHeavyIcon,
@@ -9,7 +9,7 @@ import {
     PhoneIcon,
 } from '@navikt/aksel-icons'
 import Link from 'next/link'
-import { Feedback } from '@navikt/syk-zara'
+import { Feedback, ContactableUserFeedback, InSituFeedback } from '@navikt/syk-zara'
 
 import { MultilineUserFeedback } from '@components/feedback/MultilineUserFeedback'
 import { cn } from '@lib/tw'
@@ -37,49 +37,81 @@ export function FeedbackCard({ feedback, fresh }: { feedback: Feedback; fresh: b
                     aria-hidden
                 />
             </Link>
-            <div className="p-3 pt-0">
-                <div className="mb-3">
-                    <UserContact contactType={feedback.contactType} />
-                </div>
-                <div className="relative flex flex-col items-start bg-ax-bg-neutral-soft rounded-sm p-2 min-h-32 max-h-32 overflow-hidden">
-                    <MultilineUserFeedback message={feedback.message} />
-                    <div className="absolute left-0 bottom-0 w-full pointer-events-none h-12 bg-linear-to-b from-transparent to-ax-bg-neutral-soft" />
-                </div>
+            {feedback.type === 'CONTACTABLE' && <ContactableFeedbackContent feedback={feedback} />}
+            {feedback.type === 'IN_SITU' && <InSituFeedbackContent feedback={feedback} />}
+            <FeedbackCardFooter feedback={feedback} />
+        </div>
+    )
+}
+
+function ContactableFeedbackContent({ feedback }: { feedback: ContactableUserFeedback }): ReactElement {
+    return (
+        <div className="p-3 pt-0">
+            <div className="mb-2 flex items-center gap-2">
+                <Tag size="small" variant="moderate" data-color="brand-blue">
+                    Knapp
+                </Tag>
+                <UserContact contactType={feedback.contactType} />
             </div>
-            <div className="p-1 px-2 flex justify-between items-center">
-                <AutoUpdatingDistance prefix="Skrevet " time={feedback.timestamp} />
-                <div className="flex gap-2 -mt-2">
-                    <Tooltip
-                        content={
-                            feedback.verifiedContentAt
-                                ? `Verifisert av ${feedback.verifiedContentBy}, ${toReadableDateTime(feedback.verifiedContentAt)}`
-                                : `Innhold ikke verifisert`
-                        }
-                    >
-                        <div>
-                            <StatusIcon Icon={PersonGavelIcon} done={!!feedback.verifiedContentAt} />
-                        </div>
-                    </Tooltip>
-                    {feedback.contactType !== 'NONE' && (
-                        <Tooltip
-                            content={
-                                feedback.contactedAt
-                                    ? `Bruker kontaktet av ${feedback.contactedBy}, ${toReadableDateTime(feedback.contactedAt)}`
-                                    : `Bruker ikke kontaktet`
-                            }
-                        >
-                            <div>
-                                <StatusIcon Icon={EnvelopeClosedIcon} done={!!feedback.contactedAt} />
-                            </div>
-                        </Tooltip>
-                    )}
-                </div>
+            <div className="relative flex flex-col items-start bg-ax-bg-neutral-soft rounded-sm p-2 min-h-32 max-h-32 overflow-hidden">
+                <MultilineUserFeedback message={feedback.message} />
+                <div className="absolute left-0 bottom-0 w-full pointer-events-none h-12 bg-linear-to-b from-transparent to-ax-bg-neutral-soft" />
             </div>
         </div>
     )
 }
 
-function UserContact({ contactType }: Pick<Feedback, 'contactType'>): ReactElement {
+function InSituFeedbackContent({ feedback }: { feedback: InSituFeedback }): ReactElement {
+    return (
+        <div className="p-3 pt-0">
+            <div className="mb-2">
+                <Tag size="small" variant="moderate" data-color="brand-magenta">
+                    {feedback.variant}
+                </Tag>
+            </div>
+            <div className="relative flex flex-col items-start bg-ax-bg-neutral-soft rounded-sm p-2 min-h-32 max-h-32 overflow-hidden">
+                <MultilineUserFeedback message={feedback.message} />
+                <div className="absolute left-0 bottom-0 w-full pointer-events-none h-12 bg-linear-to-b from-transparent to-ax-bg-neutral-soft" />
+            </div>
+        </div>
+    )
+}
+
+function FeedbackCardFooter({ feedback }: { feedback: Feedback }): ReactElement {
+    return (
+        <div className="p-1 px-2 flex justify-between items-center">
+            <AutoUpdatingDistance prefix="Skrevet " time={feedback.timestamp} />
+            <div className="flex gap-2 -mt-2">
+                <Tooltip
+                    content={
+                        feedback.verifiedContentAt
+                            ? `Verifisert av ${feedback.verifiedContentBy}, ${toReadableDateTime(feedback.verifiedContentAt)}`
+                            : `Innhold ikke verifisert`
+                    }
+                >
+                    <div>
+                        <StatusIcon Icon={PersonGavelIcon} done={!!feedback.verifiedContentAt} />
+                    </div>
+                </Tooltip>
+                {feedback.type === 'CONTACTABLE' && feedback.contactType !== 'NONE' && (
+                    <Tooltip
+                        content={
+                            feedback.contactedAt
+                                ? `Bruker kontaktet av ${feedback.contactedBy}, ${toReadableDateTime(feedback.contactedAt)}`
+                                : `Bruker ikke kontaktet`
+                        }
+                    >
+                        <div>
+                            <StatusIcon Icon={EnvelopeClosedIcon} done={!!feedback.contactedAt} />
+                        </div>
+                    </Tooltip>
+                )}
+            </div>
+        </div>
+    )
+}
+
+function UserContact({ contactType }: Pick<ContactableUserFeedback, 'contactType'>): ReactElement {
     switch (contactType) {
         case 'NONE': {
             return (

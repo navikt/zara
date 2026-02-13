@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { logger } from '@navikt/next-logger'
 import { faker } from '@faker-js/faker'
+import { ContactableUserFeedback, InSituFeedback } from '@navikt/syk-zara'
 
 import { createContactDetails } from '@dev/test-data'
 import { clearDevelopmentFeedback, seedDevelopmentFeedback } from '@dev/seed-valkey'
@@ -29,7 +30,8 @@ export async function POST(_: Request, { params }: RouteContext<'/api/internal/d
             const client = getFeedbackClient()
 
             const newId = crypto.randomUUID()
-            await client.insert(newId, {
+            const feedback: Omit<ContactableUserFeedback, 'id'> = {
+                type: 'CONTACTABLE',
                 name: faker.person.fullName(),
                 uid: crypto.randomUUID(),
                 message: faker.lorem.lines({ min: 2, max: 5 }),
@@ -49,11 +51,38 @@ export async function POST(_: Request, { params }: RouteContext<'/api/internal/d
                 metaSystem: 'FakeMedDoc',
                 metaTags: [],
                 redactionLog: [],
-                metaDev: {
-                    sykmeldingsId: crypto.randomUUID(),
-                },
-            })
+                metaDev: { sykmeldingsId: crypto.randomUUID() },
+            }
 
+            await client.insert(newId, feedback)
+            return Response.json({ message: `Random feedback added!` }, { status: 201 })
+        }
+        case 'new-in-situ': {
+            const client = getFeedbackClient()
+
+            const newId = crypto.randomUUID()
+            const feedback: Omit<InSituFeedback, 'id'> = {
+                type: 'IN_SITU',
+                variant: 'Kvittering',
+                name: faker.person.fullName(),
+                uid: crypto.randomUUID(),
+                message: faker.lorem.lines({ min: 2, max: 5 }),
+                timestamp: new Date().toISOString(),
+                sentiment: faker.number.int({ min: 1, max: 5 }),
+                verifiedContentAt: null,
+                verifiedContentBy: null,
+                sharedAt: null,
+                sharedBy: null,
+                sharedLink: null,
+                metaSource: 'syk-inn',
+                metaLocation: '/dev/foo/bar/baz',
+                metaSystem: 'FakeMedDoc',
+                metaTags: [],
+                redactionLog: [],
+                metaDev: { sykmeldingsId: crypto.randomUUID() },
+            }
+
+            await client.insert(newId, feedback)
             return Response.json({ message: `Random feedback added!` }, { status: 201 })
         }
         default:

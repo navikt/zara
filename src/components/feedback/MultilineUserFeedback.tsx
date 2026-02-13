@@ -1,8 +1,8 @@
 import React, { Fragment, ReactElement } from 'react'
 import { BodyShort } from '@navikt/ds-react'
 
-import { feedbackToWordsByLines } from '../../features/syk-inn/feedback/utils'
-import { RedactedWord } from '../../features/syk-inn/feedback/redaction/Words'
+import { feedbackToWordsByLines } from '@features/syk-inn/feedback/utils'
+import { RedactedWord } from '@features/syk-inn/feedback/redaction/Words'
 
 export function MultilineUserFeedback({ message }: { message: string }): ReactElement {
     const wordsByLines = feedbackToWordsByLines(message)

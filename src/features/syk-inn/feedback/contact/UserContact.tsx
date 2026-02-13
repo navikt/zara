@@ -7,14 +7,14 @@ import {
     PhoneIcon,
 } from '@navikt/aksel-icons'
 import { BodyShort, Button, CopyButton, Detail } from '@navikt/ds-react'
-import { Feedback } from '@navikt/syk-zara'
+import { ContactableUserFeedback } from '@navikt/syk-zara'
 
 import { toReadableDateTime } from '@lib/date'
 
 import { setUserContacted } from './contact-actions'
 
 type Props = {
-    feedback: Feedback
+    feedback: ContactableUserFeedback
 }
 
 export function UserContact({ feedback }: Props): ReactElement {
@@ -62,7 +62,10 @@ export function UserContact({ feedback }: Props): ReactElement {
     }
 }
 
-function UserContactStatus({ contactedAt, contactedBy }: Pick<Feedback, 'contactedAt' | 'contactedBy'>): ReactElement {
+function UserContactStatus({
+    contactedAt,
+    contactedBy,
+}: Pick<ContactableUserFeedback, 'contactedAt' | 'contactedBy'>): ReactElement {
     return (
         <div className="mb-2">
             <Detail className="flex gap-1 items-center font-bold">

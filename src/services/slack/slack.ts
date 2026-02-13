@@ -4,13 +4,13 @@ import { getServerEnv } from '@lib/env'
 import { spanServerAsync, squelchTracing } from '@lib/otel/server'
 import { User } from '@services/auth/user'
 import { createPermalink, getFeedbackUrl, slackChatPostMessage } from '@services/slack/utils'
+import { createFeedbackHeader } from '@services/slack/blocks'
 
 export async function notifySlack(feedback: Feedback, byWho: User): Promise<{ postLink: string }> {
     const { zaraSlackBotToken, zaraSlackChannelId } = getServerEnv()
     const internalUrl = getFeedbackUrl(feedback.id, 'internal')
     const ansattUrl = getFeedbackUrl(feedback.id, 'ansatt')
 
-    const sentimentText = feedback.sentiment ? ` - ${feedback.sentiment}/5 ⭐` : ''
     const redactedMessage = redactMessageForSlack(feedback.message)
 
     const data = await spanServerAsync('Slack API (fetch)', () =>
@@ -19,14 +19,7 @@ export async function notifySlack(feedback: Feedback, byWho: User): Promise<{ po
                 channel: zaraSlackChannelId,
                 text: `Ny tilbakemelding delt av ${byWho.name}`,
                 blocks: [
-                    {
-                        type: 'header',
-                        text: {
-                            type: 'plain_text',
-                            text: `${categoryEmoji[feedback.category]} ${feedback.category}${sentimentText}`,
-                            emoji: true,
-                        },
-                    },
+                    createFeedbackHeader(feedback),
                     {
                         type: 'section',
                         text: { type: 'mrkdwn', text: `*📝 Melding:*\n> ${redactedMessage}` },
@@ -68,12 +61,6 @@ export async function notifySlack(feedback: Feedback, byWho: User): Promise<{ po
     return {
         postLink: createPermalink(data.channel, data.ts),
     }
-}
-
-const categoryEmoji = {
-    FEIL: '🐛',
-    FORSLAG: '💡',
-    ANNET: '💬',
 }
 
 const redactedVariants = ['█████████', '███████', '██████████████']

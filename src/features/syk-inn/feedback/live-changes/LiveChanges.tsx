@@ -8,13 +8,14 @@ import { feedbackUpdated } from './live-actions'
 
 type Props = {
     id: string
+    className?: string
 }
 
-function LiveChanges({ id }: Props): ReactElement {
+function LiveChanges({ id, className }: Props): ReactElement {
     const { loading, hasBeenDeleted } = useLiveChanges(id)
 
     return (
-        <>
+        <div className={className}>
             {hasBeenDeleted && (
                 <Modal
                     header={{
@@ -53,7 +54,7 @@ function LiveChanges({ id }: Props): ReactElement {
                     </div>
                 </div>
             )}
-        </>
+        </div>
     )
 }
 

@@ -28,7 +28,7 @@ function ActivityLog({ feedback }: Props): ReactElement {
         })
     }
 
-    if (feedback.contactedAt != null) {
+    if (feedback.type === 'CONTACTABLE' && feedback.contactedAt != null) {
         events.push({
             title: `Bruker kontaktet`,
             body: `Kontaktet av ${feedback.contactedBy}`,

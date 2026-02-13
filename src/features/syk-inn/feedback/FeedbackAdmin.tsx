@@ -23,7 +23,7 @@ export function FeedbackAdmin({ feedback }: Props): ReactElement {
 
     return (
         <div className="flex flex-col gap-4">
-            <StatusBar {...feedback} />
+            <StatusBar feedback={feedback} />
             <AdminSection
                 className="max-w-prose"
                 heading={
@@ -62,9 +62,11 @@ export function FeedbackAdmin({ feedback }: Props): ReactElement {
                 <FeedbackDetails feedback={feedback} />
             </AdminSection>
 
-            <AdminSection className="max-w-prose" heading="Kontakt">
-                <UserContact feedback={feedback} />
-            </AdminSection>
+            {feedback.type === 'CONTACTABLE' && (
+                <AdminSection className="max-w-prose" heading="Kontakt">
+                    <UserContact feedback={feedback} />
+                </AdminSection>
+            )}
             <AdminSection className="max-w-prose" heading="Hendelseslogg">
                 <ActivityLog feedback={feedback} />
             </AdminSection>
