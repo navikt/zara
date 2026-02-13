@@ -8,7 +8,7 @@ import { createFeedbackHeader } from '@services/slack/blocks'
 
 export async function notifySlack(feedback: Feedback, byWho: User): Promise<{ postLink: string }> {
     const { zaraSlackBotToken, zaraSlackChannelId } = getServerEnv()
-    const internalUrl = getFeedbackUrl(feedback.id, 'internal')
+    const internalUrl = getFeedbackUrl(feedback.id, 'intern')
     const ansattUrl = getFeedbackUrl(feedback.id, 'ansatt')
 
     const redactedMessage = redactMessageForSlack(feedback.message)

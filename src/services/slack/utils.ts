@@ -24,7 +24,7 @@ export async function slackChatPostMessage(botToken: string, payload: SlackMessa
     throw new Error(`Slack API error: ${data.error || 'Unknown error'}`)
 }
 
-export function getFeedbackUrl(feedbackId: string, type: 'ansatt' | 'internal'): string {
+export function getFeedbackUrl(feedbackId: string, type: 'ansatt' | 'intern'): string {
     switch (bundledEnv.runtimeEnv) {
         case 'local':
             return `http://localhost:3005/syk-inn/tilbakemeldinger/${feedbackId}`
