@@ -35,6 +35,7 @@ jobs:
           app: ${{ env.APP }}
           env: dev
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          server-actions-encryption-key: ${{ secrets.NEXT_SERVER_ACTIONS_ENCRYPTION_KEY }}
           salsa: false
     outputs:
       image: ${{ steps.next-build.outputs.image }}
@@ -51,6 +52,7 @@ jobs:
           app: ${{ env.APP }}
           env: prod
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          server-actions-encryption-key: ${{ secrets.NEXT_SERVER_ACTIONS_ENCRYPTION_KEY }}
           salsa: false
     outputs:
       image: ${{ steps.next-build.outputs.image }}
