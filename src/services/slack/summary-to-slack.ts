@@ -3,7 +3,7 @@ import { ContactableUserFeedback } from '@navikt/syk-zara/feedback'
 import { logger } from '@navikt/next-logger'
 import { isAfter, startOfYesterday } from 'date-fns'
 
-import { getServerEnv } from '@lib/env'
+import { bundledEnv, getServerEnv } from '@lib/env'
 import { spanServerAsync, squelchTracing } from '@lib/otel/server'
 import { createPermalink, slackChatPostMessage } from '@services/slack/utils'
 import { getFeedbackClient } from '@services/feedback/feedback-client'
@@ -14,6 +14,8 @@ export async function postDailySummary(): Promise<{ postLink: string | null }> {
     return spanServerAsync('Post daily summary to Slack', async () => {
         const { zaraSlackBotToken, zaraSlackChannelId } = getServerEnv()
         const { unverifiedCount, unrespondedCount, totalCount, yesterdayCount } = await getDailySummaryStats()
+        const internalUrl = getZaraUrl('intern')
+        const ansattUrl = getZaraUrl('ansatt')
 
         if (unrespondedCount === 0 && unverifiedCount === 0) {
             logger.info('Skipping daily summary, everything is clear!')
@@ -41,6 +43,13 @@ export async function postDailySummary(): Promise<{ postLink: string | null }> {
                     type: 'image',
                     image_url: angryZaraPublicUrl,
                     alt_text: 'Sint Zara',
+                },
+            },
+            {
+                type: 'section',
+                text: {
+                    type: 'mrkdwn',
+                    text: `<${internalUrl}|Zara (internal) →> | <${ansattUrl}|Zara (ansatt) →>`,
                 },
             },
             {
@@ -90,4 +99,15 @@ async function getDailySummaryStats(): Promise<{
     const yesterdayCount: number = all.filter((it) => isAfter(it.timestamp, yesterday)).length
 
     return { unverifiedCount, unrespondedCount, yesterdayCount, totalCount: all.length }
+}
+
+export function getZaraUrl(type: 'ansatt' | 'intern'): string {
+    switch (bundledEnv.runtimeEnv) {
+        case 'local':
+            return `http://localhost:3005/syk-inn/tilbakemeldinger`
+        case 'prod-gcp':
+            return `https://zara.${type}.nav.no/syk-inn/tilbakemeldinger`
+        case 'dev-gcp':
+            return `https://zara.${type}.dev.nav.no/syk-inn/tilbakemeldinger`
+    }
 }
