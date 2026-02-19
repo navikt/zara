@@ -1,14 +1,11 @@
 import React, { ReactElement } from 'react'
-import { Heading } from '@navikt/ds-react'
 import { PageBlock } from '@navikt/ds-react/Page'
+import { Heading } from '@navikt/ds-react'
 
 import { validateUserSession } from '@services/auth/auth'
-import { getFeedbackClient } from '@services/feedback/feedback-client'
 import LiveUsersList from '@components/live-view/LiveUsersList'
-
-import FeedbackList from '../../../features/syk-inn/FeedbackList'
-
-export const dynamic = 'force-dynamic'
+import { getBruksvilkarClient } from '@services/bruksvilkar/bruksvilkar-client'
+import BruksvilkarTable from '@features/syk-inn/bruksvilkar/BruksvilkarTable'
 
 async function Page(): Promise<ReactElement> {
     /**
@@ -16,18 +13,18 @@ async function Page(): Promise<ReactElement> {
      */
     const user = await validateUserSession()
 
-    const client = getFeedbackClient()
-    const feedback = await client.all()
+    const client = getBruksvilkarClient()
+    const bruksvilkar = await client.all()
 
     return (
         <PageBlock as="main" width="2xl" gutters>
             <div className="flex justify-between items-start">
                 <Heading level="2" size="large" spacing>
-                    Tilbakemelding fra brukere i syk-inn
+                    Bruksvilkår for brukere i syk-inn
                 </Heading>
-                <LiveUsersList page="/syk-inn/tilbakemeldinger" me={user} />
+                <LiveUsersList page="/syk-inn/bruksvilkar" me={user} />
             </div>
-            <FeedbackList feedback={feedback} />
+            <BruksvilkarTable bruksvilkar={bruksvilkar} />
         </PageBlock>
     )
 }

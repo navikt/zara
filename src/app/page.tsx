@@ -31,22 +31,16 @@ function Page(): ReactElement {
                             Oversikt over tilbakemeldinger fra brukere i syk-inn-applikasjonen.
                         </LinkCard.Description>
                     </LinkCard>
-                    <LinkCard aria-disabled className="opacity-70 cursor-default relative">
-                        <div className="absolute top-5 -right-10 rotate-45 text-2xl text-ax-text-danger animate-bounce bg-ax-bg-default p-2 rounded-md z-50">
-                            Kommer snart!
-                        </div>
+                    <LinkCard>
                         <LinkCard.Icon>
                             <GavelSoundBlockIcon fontSize="2rem" aria-hidden />
                         </LinkCard.Icon>
                         <LinkCard.Title>
-                            Bruksvilkår
-                            {/*<LinkCard.Anchor asChild aria-disabled>
+                            <LinkCard.Anchor asChild aria-disabled>
                                 <Link href="/syk-inn/bruksvilkar">Bruksvilkår</Link>
-                            </LinkCard.Anchor>*/}
+                            </LinkCard.Anchor>
                         </LinkCard.Title>
-                        <LinkCard.Description>
-                            Administrer og oppdater bruksvilkårene for syk-inn-applikasjonen.
-                        </LinkCard.Description>
+                        <LinkCard.Description>Se hvilke pilotbrukere som har signert bruksvilkår.</LinkCard.Description>
                     </LinkCard>
                 </div>
             </div>
