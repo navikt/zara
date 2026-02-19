@@ -26,5 +26,7 @@ export const setupDailySummaryCron = lazyNextleton('daily-summary-cron', () => {
         }
     })
 
+    logger.info(`Daily summary cron configured, will run at ${job.nextRun()?.toISOString()}`)
+
     return job
 })
