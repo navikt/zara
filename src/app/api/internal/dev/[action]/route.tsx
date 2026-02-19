@@ -8,6 +8,7 @@ import { clearDevelopmentFeedback, seedDevelopmentFeedback } from '@dev/seed-val
 import { bundledEnv } from '@lib/env'
 import { getFeedbackClient } from '@services/feedback/feedback-client'
 import { valkeyClient } from '@services/valkey/production-valkey'
+import { postDailySummary } from '@services/slack/summary-to-slack'
 
 export async function POST(_: Request, { params }: RouteContext<'/api/internal/dev/[action]'>): Promise<Response> {
     // ⚠️ Dev only endpoint (allow dev-gcp for now)
@@ -18,6 +19,10 @@ export async function POST(_: Request, { params }: RouteContext<'/api/internal/d
     logger.info(`🚨 Dev action: "${action}" invoked 🚨`)
 
     switch (action) {
+        case 'debug-cron': {
+            const { postLink } = await postDailySummary()
+            return Response.json({ message: `Daily summary cron executed!`, link: postLink }, { status: 201 })
+        }
         case 're-seed': {
             await clearDevelopmentFeedback(valkeyClient())
 

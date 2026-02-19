@@ -1938,6 +1938,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"croner@npm:^10.0.1":
+  version: 10.0.1
+  resolution: "croner@npm:10.0.1"
+  checksum: 10c0/b1a022f8c786b19799e662e0f11686937e97133e386efa2859e316ba64b7a9c2ecd0d1500cdbe3157625ff7e9af8584c7d6e41c9a17db892c731f83be464bc92
+  languageName: node
+  linkType: hard
+
 "cross-spawn@npm:^7.0.6":
   version: 7.0.6
   resolution: "cross-spawn@npm:7.0.6"
@@ -5601,6 +5608,7 @@ __metadata:
     "@types/react": "npm:19.2.14"
     "@types/react-dom": "npm:19.2.3"
     clsx: "npm:^2.1.1"
+    croner: "npm:^10.0.1"
     date-fns: "npm:^4.1.0"
     eslint: "npm:^9.39.2"
     eslint-config-next: "npm:^16.1.6"

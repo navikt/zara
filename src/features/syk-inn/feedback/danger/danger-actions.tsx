@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache'
 import { validateUserSession } from '@services/auth/auth'
 import { getFeedbackClient } from '@services/feedback/feedback-client'
 import { raise } from '@lib/ts'
-import { notifySlack } from '@services/slack/slack'
+import { notifySlack } from '@services/slack/feedback-to-slack'
 
 export async function deleteFeedbackPermanently(id: string): Promise<never> {
     const user = await validateUserSession()
