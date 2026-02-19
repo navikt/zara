@@ -1,4 +1,4 @@
-import { subscribeToFeedbackChannels } from '@navikt/syk-zara/admin'
+import { subscribeToFeedbackChannels } from '@navikt/syk-zara/feedback/admin'
 
 import { validateUserSession } from '@services/auth/auth'
 import { subscriberValkeyClient } from '@services/valkey/production-valkey'

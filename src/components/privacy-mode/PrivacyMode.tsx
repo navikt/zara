@@ -5,7 +5,7 @@ import { Button, Detail, Heading } from '@navikt/ds-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { ArrowRightIcon } from '@navikt/aksel-icons'
 import Image from 'next/image'
-import { Feedback } from '@navikt/syk-zara'
+import { Feedback } from '@navikt/syk-zara/feedback'
 
 import { AutoUpdatingDistance } from '@components/AutoUpdatingDistance'
 import { MultilineUserFeedback } from '@components/feedback/MultilineUserFeedback'

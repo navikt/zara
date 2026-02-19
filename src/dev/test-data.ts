@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { subDays } from 'date-fns'
-import { ContactableUserFeedback, Feedback } from '@navikt/syk-zara'
+import { ContactableUserFeedback, Feedback } from '@navikt/syk-zara/feedback'
 
 export function createContactDetails(): Pick<ContactableUserFeedback, 'contactType' | 'contactDetails'> {
     const contactType = faker.helpers.arrayElement(['PHONE', 'EMAIL', 'NONE'])

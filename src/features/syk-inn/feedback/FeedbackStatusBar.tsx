@@ -1,7 +1,7 @@
 import { CheckmarkHeavyIcon, EnvelopeClosedIcon, PersonGavelIcon } from '@navikt/aksel-icons'
 import React, { ReactElement } from 'react'
 import { Detail, Tag, Tooltip } from '@navikt/ds-react'
-import { Feedback } from '@navikt/syk-zara'
+import { Feedback } from '@navikt/syk-zara/feedback'
 
 import { toReadableDateTime } from '@lib/date'
 import { cn } from '@lib/tw'

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { logger } from '@navikt/next-logger'
 import { faker } from '@faker-js/faker'
-import { ContactableUserFeedback, InSituFeedback } from '@navikt/syk-zara'
+import { ContactableUserFeedback, InSituFeedback } from '@navikt/syk-zara/feedback'
 
 import { createContactDetails } from '@dev/test-data'
 import { clearDevelopmentFeedback, seedDevelopmentFeedback } from '@dev/seed-valkey'

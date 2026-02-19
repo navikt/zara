@@ -1,4 +1,4 @@
-import { AdminFeedbackClient, createAdminFeedbackClient } from '@navikt/syk-zara/admin'
+import { AdminFeedbackClient, createAdminFeedbackClient } from '@navikt/syk-zara/feedback/admin'
 
 import { valkeyClient } from '@services/valkey/production-valkey'
 

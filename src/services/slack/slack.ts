@@ -1,4 +1,4 @@
-import { Feedback } from '@navikt/syk-zara'
+import { Feedback } from '@navikt/syk-zara/feedback'
 
 import { getServerEnv } from '@lib/env'
 import { spanServerAsync, squelchTracing } from '@lib/otel/server'

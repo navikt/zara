@@ -3,7 +3,7 @@
 import React, { ReactElement, useState } from 'react'
 import { ScissorsIcon } from '@navikt/aksel-icons'
 import { Button, Detail, Heading, Tooltip } from '@navikt/ds-react'
-import { Feedback } from '@navikt/syk-zara'
+import { Feedback } from '@navikt/syk-zara/feedback'
 
 import { UserContact } from './contact/UserContact'
 import { UserFeedback } from './message/UserFeedback'

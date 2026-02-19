@@ -1,7 +1,7 @@
 import React, { ReactElement, useRef, useTransition } from 'react'
 import { BodyShort, Button, Detail, Link as AkselLink, LocalAlert, Modal } from '@navikt/ds-react'
 import { ExclamationmarkTriangleIcon, TrashIcon } from '@navikt/aksel-icons'
-import { Feedback } from '@navikt/syk-zara'
+import { Feedback } from '@navikt/syk-zara/feedback'
 import { toast } from 'sonner'
 
 import { MultilineUserFeedback } from '@components/feedback/MultilineUserFeedback'

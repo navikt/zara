@@ -9,7 +9,7 @@ import {
     PhoneIcon,
 } from '@navikt/aksel-icons'
 import Link from 'next/link'
-import { Feedback, ContactableUserFeedback, InSituFeedback } from '@navikt/syk-zara'
+import { Feedback, ContactableUserFeedback, InSituFeedback } from '@navikt/syk-zara/feedback'
 
 import { MultilineUserFeedback } from '@components/feedback/MultilineUserFeedback'
 import { cn } from '@lib/tw'

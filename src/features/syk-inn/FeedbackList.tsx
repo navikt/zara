@@ -7,7 +7,7 @@ import * as R from 'remeda'
 import { isToday } from 'date-fns'
 import { GavelFillIcon } from '@navikt/aksel-icons'
 import Link from 'next/link'
-import { Feedback } from '@navikt/syk-zara'
+import { Feedback } from '@navikt/syk-zara/feedback'
 
 import { zaraImages } from '../../images/zaras'
 

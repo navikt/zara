@@ -1,4 +1,4 @@
-import { Feedback } from '@navikt/syk-zara'
+import { Feedback } from '@navikt/syk-zara/feedback'
 
 type PlainHeaderBlock = {
     type: 'header'

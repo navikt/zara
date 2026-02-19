@@ -4,7 +4,7 @@ import React, { ReactElement, useCallback, useEffect, useState } from 'react'
 import { BodyShort, Heading, Switch, Tooltip } from '@navikt/ds-react'
 import Image from 'next/image'
 import { AnimatePresence, motion } from 'motion/react'
-import { Feedback } from '@navikt/syk-zara'
+import { Feedback } from '@navikt/syk-zara/feedback'
 
 import { zaraImages } from '../../images/zaras'
 

@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react'
-import { Feedback } from '@navikt/syk-zara'
+import { Feedback } from '@navikt/syk-zara/feedback'
 import { BodyShort, Detail, ExpansionCard, Tag, Tooltip } from '@navikt/ds-react'
 import { CodeIcon, FaceCryIcon, FaceFrownIcon, FaceIcon, FaceLaughIcon, FaceSmileIcon } from '@navikt/aksel-icons'
 import { motion } from 'motion/react'
