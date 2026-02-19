@@ -1,23 +1,21 @@
 'use client'
 
 import * as R from 'remeda'
-import { AdminBruksvilkarClient } from '@navikt/syk-zara/bruksvilkar/admin'
+import { type Bruksvilkar } from '@navikt/syk-zara/bruksvilkar'
 import React, { ReactElement, useState } from 'react'
 import { SortState, Table, Link, Heading } from '@navikt/ds-react'
 
 import { toReadableDateTime } from '@lib/date'
 
 type Props = {
-    bruksvilkar: Awaited<ReturnType<AdminBruksvilkarClient['all']>>[0][]
+    bruksvilkar: Bruksvilkar[]
 }
 
-interface ScopedSortState extends SortState {
-    orderBy: keyof Props['bruksvilkar'][0]
-}
+type SortableKeys = keyof Pick<Bruksvilkar, 'acceptedAt' | 'name' | 'org' | 'version' | 'system'>
 
 function BruksvilkarTable({ bruksvilkar }: Props): ReactElement {
-    const [sort, setSort] = useState<ScopedSortState | null>()
-    const handleSort = (sortKey: ScopedSortState['orderBy']): void => {
+    const [sort, setSort] = useState<(SortState & { orderBy: SortableKeys }) | null>()
+    const handleSort = (sortKey: SortableKeys): void => {
         setSort(
             sort && sortKey === sort.orderBy && sort.direction === 'descending'
                 ? undefined
@@ -40,26 +38,23 @@ function BruksvilkarTable({ bruksvilkar }: Props): ReactElement {
             <Heading size="medium" className="ml-3">
                 Tabell over alle brukere som har godtatt bruksvilkår ({bruksvilkar.length})
             </Heading>
-            <Table
-                sort={sort ?? undefined}
-                onSortChange={(sortKey) => handleSort(sortKey as ScopedSortState['orderBy'])}
-            >
+            <Table sort={sort ?? undefined} onSortChange={(sortKey) => handleSort(sortKey as SortableKeys)}>
                 <Table.Header>
                     <Table.Row>
-                        <Table.ColumnHeader sortKey="acceptedAt" sortable>
+                        <Table.ColumnHeader sortKey={'acceptedAt' satisfies SortableKeys} sortable>
                             Tidspunkt
                         </Table.ColumnHeader>
-                        <Table.ColumnHeader sortKey="name" sortable>
+                        <Table.ColumnHeader sortKey={'name' satisfies SortableKeys} sortable>
                             Navn
                         </Table.ColumnHeader>
                         <Table.ColumnHeader>HPR</Table.ColumnHeader>
-                        <Table.ColumnHeader sortKey="org" sortable>
+                        <Table.ColumnHeader sortKey={'org' satisfies SortableKeys} sortable>
                             Orgnummer
                         </Table.ColumnHeader>
-                        <Table.ColumnHeader sortKey="version" sortable>
+                        <Table.ColumnHeader sortKey={'version' satisfies SortableKeys} sortable>
                             Versjon
                         </Table.ColumnHeader>
-                        <Table.ColumnHeader sortKey="system" sortable>
+                        <Table.ColumnHeader sortKey={'system' satisfies SortableKeys} sortable>
                             EPJ
                         </Table.ColumnHeader>
                         <Table.ColumnHeader>Hash</Table.ColumnHeader>
