@@ -31,7 +31,7 @@ spec:
         - /favicon.ico
   valkey:
     - instance: syk-inn
-      access: read
+      access: readwrite
   observability:
     autoInstrumentation:
       enabled: true
