@@ -13,6 +13,7 @@ spec:
   ingresses:
     - 'https://zara.intern.dev.nav.no'
     - 'https://zara.ansatt.dev.nav.no'
+  leaderElection: true
   azure:
     application:
       allowAllUsers: true
