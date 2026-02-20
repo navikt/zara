@@ -8,7 +8,7 @@ import { zaraImages } from '@images/zaras'
 import SelfRegisterButtons from '@features/team/kontor/SelfRegisterButtons'
 import { toReadableDate } from '@lib/date'
 import WeekToggleView from '@features/team/kontor/WeekToggleView'
-import { KontorUser } from '@services/team-office/types'
+import { OfficeUser } from '@services/team-office/types'
 import { EntireTeamView } from '@features/team/kontor/EntireTeamView'
 
 async function KontorOversikt(): Promise<ReactElement> {
@@ -51,7 +51,7 @@ async function KontorOversikt(): Promise<ReactElement> {
     )
 }
 
-async function MyWeekView({ week, me }: { week: number; me: KontorUser }): Promise<ReactElement> {
+async function MyWeekView({ week, me }: { week: number; me: OfficeUser }): Promise<ReactElement> {
     const myWeek = await getMyWeek(week)
     const firstWeekDate = startOfWeek(setISOWeek(new Date(), week))
     const currentWeek = getISOWeek(new Date())

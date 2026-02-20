@@ -2,10 +2,12 @@
 
 import { getISOWeekYear } from 'date-fns'
 import { revalidatePath } from 'next/cache'
+import { after } from 'next/server'
 
 import { pgClient } from '@services/db/postgres/production-pg'
 import { validateUserSession } from '@services/auth/auth'
 import { raise } from '@lib/ts'
+import { updateTodaysOfficeSummaryIfNeeded } from '@services/slack/office-to-slack'
 
 export async function registerKontor(defaultLoc: 'office' | 'remote'): Promise<void> {
     const user = await validateUserSession()
@@ -51,6 +53,10 @@ export async function toggleWeekDay(week: number, daysOn: string[]): Promise<voi
          DO UPDATE SET mon = EXCLUDED.mon, tue = EXCLUDED.tue, wed = EXCLUDED.wed, thu = EXCLUDED.thu, fri = EXCLUDED.fri`,
         [userId, week, weekYear, ...values],
     )
+
+    after(() => {
+        updateTodaysOfficeSummaryIfNeeded()
+    })
 
     revalidatePath('/team/kontor')
 }

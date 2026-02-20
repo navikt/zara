@@ -2,49 +2,44 @@ import { getISOWeek, getISOWeekYear, getISODay } from 'date-fns'
 import { logger } from '@navikt/next-logger'
 
 import { bundledEnv, getServerEnv } from '@lib/env'
-import { spanServerAsync, squelchTracing } from '@lib/otel/server'
-import { createPermalink, slackChatPostMessage } from '@services/slack/utils'
+import { createPermalink, slackChatPostMessage, updateSlackMessage } from '@services/slack/utils'
 import {
-    getOfficeTodaySnapshot,
-    hasPostedToday,
+    getOfficeSnapshot,
+    existingCronPost,
     insertDailyPost,
     isTodayOfficeDay,
 } from '@services/team-office/team-office-service'
-import { KontorUser } from '@services/team-office/types'
 import { toReadableFullDate } from '@lib/date'
+import { OfficeUser } from '@services/team-office/types'
 
 export async function postDailyOfficeSummary(): Promise<{
     postLink: string | null
 }> {
-    const { zaraSlackBotToken, zaraSlackChannelId } = getServerEnv()
+    const { zaraSlackChannelId } = getServerEnv()
 
     const now = new Date()
     const currentYear = getISOWeekYear(now)
     const currentWeek = getISOWeek(now)
     const day = getISODay(now) - 1
 
-    const { office } = await getOfficeTodaySnapshot(currentYear, currentWeek, day)
+    const { office } = await getOfficeSnapshot(currentYear, currentWeek, day)
 
     if (!isTodayOfficeDay(day) && office.length === 0) {
         logger.info("Not a office day and nobody is coming, don't post anything")
         return { postLink: null }
     }
 
-    const hasAlreadyPostedToday = await hasPostedToday(currentWeek, currentYear, day)
+    const hasAlreadyPostedToday = await existingCronPost(currentWeek, currentYear, day)
     if (hasAlreadyPostedToday) {
-        logger.info('Already posted office summary for today, skipping...')
+        logger.warn('Already posted office summary for today, skipping...')
         return { postLink: null }
     }
 
-    const data = await spanServerAsync('Slack API (fetch)', () =>
-        squelchTracing(() =>
-            slackChatPostMessage(zaraSlackBotToken, {
-                channel: zaraSlackChannelId,
-                text: `Hvem skal på FA1 i dag? 🏢`,
-                blocks: buildOfficeBlocks(office),
-            }),
-        ),
-    )
+    const data = await slackChatPostMessage({
+        channel: zaraSlackChannelId,
+        text: `Hvem skal på FA1 i dag? 🏢`,
+        blocks: buildOfficeBlocks(office),
+    })
 
     await insertDailyPost(currentWeek, currentYear, day, data.channel, data.ts)
 
@@ -53,7 +48,27 @@ export async function postDailyOfficeSummary(): Promise<{
     }
 }
 
-function buildOfficeBlocks(office: KontorUser[]): unknown[] {
+export async function updateTodaysOfficeSummaryIfNeeded(): Promise<void> {
+    const now = new Date()
+    const currentYear = getISOWeekYear(now)
+    const currentWeek = getISOWeek(now)
+    const day = getISODay(now) - 1
+
+    const exists = await existingCronPost(currentWeek, currentYear, day)
+    if (!exists) {
+        logger.info("Today's office summary post does not exist, skipping update.")
+        return
+    }
+
+    const { office } = await getOfficeSnapshot(currentYear, currentWeek, day)
+
+    await updateSlackMessage(exists.channel_id, exists.message_ts, {
+        text: `Hvem skal på FA1 i dag? 🏢`,
+        blocks: buildOfficeBlocks(office),
+    })
+}
+
+function buildOfficeBlocks(office: OfficeUser[]): unknown[] {
     const dateLabel = toReadableFullDate(new Date())
     const internalUrl = getKontorUrl('intern')
     const ansattUrl = getKontorUrl('ansatt')

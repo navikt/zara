@@ -1,24 +1,60 @@
-import { bundledEnv } from '@lib/env'
-import { SlackMessagePayload, Types } from '@services/slack/types'
+import { bundledEnv, getServerEnv } from '@lib/env'
+import { SlackPostMessagePayload, SlackResponsePayload, SlackUpdateMessagePayload } from '@services/slack/types'
+import { spanServerAsync, squelchTracing } from '@lib/otel/server'
 
 const SLACK_API = 'https://api.slack.com/api'
 
-export async function slackChatPostMessage(botToken: string, payload: SlackMessagePayload): Promise<Types> {
-    const response = await fetch(`${SLACK_API}/chat.postMessage`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${botToken}`,
-        },
-        body: JSON.stringify(payload),
-    })
+export async function slackChatPostMessage(payload: SlackPostMessagePayload): Promise<SlackResponsePayload> {
+    const { zaraSlackBotToken } = getServerEnv()
+    const response = await spanServerAsync('Slack API (postMessage)', () =>
+        squelchTracing(() =>
+            fetch(`${SLACK_API}/chat.postMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${zaraSlackBotToken}`,
+                },
+                body: JSON.stringify(payload),
+            }),
+        ),
+    )
 
     if (!response.ok) {
         const errorText = await response.text()
         throw new Error(`Failed to send message to Slack: ${response.statusText}: ${errorText}`)
     }
 
-    const data: Types = await response.json()
+    const data: SlackResponsePayload = await response.json()
+    if (data.ok) return data
+
+    throw new Error(`Slack API error: ${data.error || 'Unknown error'}`)
+}
+
+export async function updateSlackMessage(
+    channel: string,
+    ts: string,
+    payload: SlackUpdateMessagePayload,
+): Promise<SlackResponsePayload> {
+    const { zaraSlackBotToken } = getServerEnv()
+    const response = await spanServerAsync('Slack API (update)', () =>
+        squelchTracing(() =>
+            fetch(`${SLACK_API}/chat.update`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${zaraSlackBotToken}`,
+                },
+                body: JSON.stringify({ ...payload, channel, ts }),
+            }),
+        ),
+    )
+
+    if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Failed to send message to Slack: ${response.statusText}: ${errorText}`)
+    }
+
+    const data: SlackResponsePayload = await response.json()
     if (data.ok) return data
 
     throw new Error(`Slack API error: ${data.error || 'Unknown error'}`)

@@ -4,12 +4,12 @@ import React, { ReactElement, useTransition } from 'react'
 import * as R from 'remeda'
 import { Button, Heading } from '@navikt/ds-react'
 
-import { KontorUser } from '@services/team-office/types'
+import { OfficeUser } from '@services/team-office/types'
 import { registerKontor } from '@features/team/kontor/kontor-actions'
 
 type Props = {
-    me: KontorUser
-    team: KontorUser[]
+    me: OfficeUser
+    team: OfficeUser[]
 }
 
 export function EntireTeamView({ me, team }: Props): ReactElement {

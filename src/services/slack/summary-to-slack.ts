@@ -4,7 +4,7 @@ import { logger } from '@navikt/next-logger'
 import { isAfter, startOfYesterday } from 'date-fns'
 
 import { bundledEnv, getServerEnv } from '@lib/env'
-import { spanServerAsync, squelchTracing } from '@lib/otel/server'
+import { spanServerAsync } from '@lib/otel/server'
 import { createPermalink, slackChatPostMessage } from '@services/slack/utils'
 import { getFeedbackClient } from '@services/feedback/feedback-client'
 
@@ -12,7 +12,7 @@ const angryZaraPublicUrl = 'https://cdn.nav.no/tsm/zara/_next/static/media/sara-
 
 export async function postDailySummary(): Promise<{ postLink: string | null }> {
     return spanServerAsync('Post daily summary to Slack', async () => {
-        const { zaraSlackBotToken, zaraSlackChannelId } = getServerEnv()
+        const { zaraSlackChannelId } = getServerEnv()
         const { unverifiedCount, unrespondedCount, totalCount, yesterdayCount } = await getDailySummaryStats()
         const internalUrl = getZaraUrl('intern')
         const ansattUrl = getZaraUrl('ansatt')
@@ -63,15 +63,11 @@ export async function postDailySummary(): Promise<{ postLink: string | null }> {
             },
         ]
 
-        const data = await spanServerAsync('Slack API (fetch)', () =>
-            squelchTracing(() =>
-                slackChatPostMessage(zaraSlackBotToken, {
-                    channel: zaraSlackChannelId,
-                    text: `Daglig oppsummering av tilbakemeldinger`,
-                    blocks,
-                }),
-            ),
-        )
+        const data = await slackChatPostMessage({
+            channel: zaraSlackChannelId,
+            text: `Daglig oppsummering av tilbakemeldinger`,
+            blocks,
+        })
 
         return { postLink: createPermalink(data.channel, data.ts) }
     })

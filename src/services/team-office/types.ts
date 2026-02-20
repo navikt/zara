@@ -8,7 +8,16 @@ export type WeekSchedule = {
 
 export type Location = 'office' | 'remote'
 
-export type KontorUser = {
+export type CronPost = {
+    id: string
+    week_number: number
+    week_year: number
+    day: number
+    channel_id: string
+    message_ts: string
+}
+
+export type OfficeUser = {
     id: string
     user_id: string
     name: string

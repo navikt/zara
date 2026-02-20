@@ -1,12 +1,12 @@
 import { pgClient } from '@services/db/postgres/production-pg'
 import { validateUserSession } from '@services/auth/auth'
-import { KontorUser, WeekSchedule } from '@services/team-office/types'
+import { CronPost, OfficeUser, WeekSchedule } from '@services/team-office/types'
 
-export async function getMyself(): Promise<{ unregistered: true } | KontorUser> {
+export async function getMyself(): Promise<{ unregistered: true } | OfficeUser> {
     const session = await validateUserSession()
     const client = await pgClient()
 
-    const result = await client.query<KontorUser>('SELECT * FROM users WHERE user_id = $1', [session.userId])
+    const result = await client.query<OfficeUser>('SELECT * FROM users WHERE user_id = $1', [session.userId])
 
     if (result.rows.length === 0) {
         return { unregistered: true }
@@ -32,11 +32,11 @@ export async function getMyWeek(week: number): Promise<WeekSchedule | null> {
     return result.rows[0] ?? null
 }
 
-export async function getTeam(): Promise<KontorUser[]> {
+export async function getTeam(): Promise<OfficeUser[]> {
     await validateUserSession()
     const client = await pgClient()
 
-    const result = await client.query<KontorUser>('SELECT * FROM users')
+    const result = await client.query<OfficeUser>('SELECT * FROM users')
 
     return result.rows
 }
@@ -44,20 +44,16 @@ export async function getTeam(): Promise<KontorUser[]> {
 const DEFAULT_OFFICE_DAYS = [1, 2]
 const DAY_COLS = ['mon', 'tue', 'wed', 'thu', 'fri'] as const
 
-export async function getOfficeTodaySnapshot(
-    year: number,
-    week: number,
-    day: number,
-): Promise<{ office: KontorUser[]; remote: KontorUser[] }> {
+export async function getOfficeSnapshot(year: number, week: number, day: number): Promise<{ office: OfficeUser[] }> {
     if (day < 0) throw new Error('Day cannot be negative')
 
-    /// Saturday and sunday
-    if (day > 4) return { office: [], remote: [] }
+    // Saturday and sunday
+    if (day > 4) return { office: [] }
 
     const client = await pgClient()
     const dayCol = DAY_COLS[day]
 
-    const result = await client.query<KontorUser & { day_override: boolean | null }>(
+    const result = await client.query<OfficeUser & { day_override: boolean | null }>(
         `SELECT u.*, ws.${dayCol} AS day_override
          FROM users u
          LEFT JOIN week_schedule ws ON ws.user_id = u.id
@@ -66,14 +62,13 @@ export async function getOfficeTodaySnapshot(
         [week, year],
     )
 
-    const isInOffice = (r: KontorUser & { day_override: boolean | null }): boolean => {
+    const isInOffice = (r: OfficeUser & { day_override: boolean | null }): boolean => {
         if (r.day_override !== null) return r.day_override
         return r.default_loc === 'office' && DEFAULT_OFFICE_DAYS.includes(day)
     }
 
     return {
         office: result.rows.filter(isInOffice),
-        remote: result.rows.filter((r) => !isInOffice(r)),
     }
 }
 
@@ -92,13 +87,13 @@ export async function insertDailyPost(
     )
 }
 
-export async function hasPostedToday(week: number, year: number, day: number): Promise<boolean> {
+export async function existingCronPost(week: number, year: number, day: number): Promise<CronPost | null> {
     const client = await pgClient()
-    const result = await client.query(
-        `SELECT 1 FROM slack_cron_posts WHERE week_number = $1 AND week_year = $2 AND day = $3 LIMIT 1`,
+    const result = await client.query<CronPost>(
+        `SELECT * FROM slack_cron_posts WHERE week_number = $1 AND week_year = $2 AND day = $3 LIMIT 1`,
         [week, year, day],
     )
-    return result.rows.length > 0
+    return result.rows[0] ?? null
 }
 
 export function isTodayOfficeDay(day: number): boolean {

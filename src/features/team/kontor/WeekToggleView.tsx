@@ -5,12 +5,12 @@ import { Checkbox, CheckboxGroup, InlineMessage } from '@navikt/ds-react'
 import React, { ReactElement, useTransition } from 'react'
 import { getISOWeek, getISODay } from 'date-fns'
 
-import { KontorUser, Location, WeekSchedule } from '@services/team-office/types'
+import { OfficeUser, Location, WeekSchedule } from '@services/team-office/types'
 import { toggleWeekDay } from '@features/team/kontor/kontor-actions'
 
 type Props = {
     week: number
-    me: KontorUser
+    me: OfficeUser
     myWeek: WeekSchedule | null
 }
 
