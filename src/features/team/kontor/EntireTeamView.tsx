@@ -17,7 +17,7 @@ export function EntireTeamView({ me, team }: Props): ReactElement {
     const [isPending, startTransition] = useTransition()
 
     return (
-        <div className="bg-ax-bg-sunken border border-ax-border-neutral-subtle p-3 rounded-md absolute w-64 right-0 top-0">
+        <div className="bg-ax-bg-sunken border border-ax-border-neutral-subtle p-3 rounded-md max-w-prose mt-4 lg:absolute lg:w-64 right-0 top-0">
             <Heading level="4" size="small" spacing>
                 FA1
             </Heading>

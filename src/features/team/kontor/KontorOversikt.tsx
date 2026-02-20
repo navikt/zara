@@ -71,7 +71,7 @@ async function MyWeekView({ week, me }: { week: number; me: OfficeUser }): Promi
     const weekTitleText = isCurrentWeek ? ' (denne uka)' : week === currentWeek + 1 ? ' (neste uke)' : ''
 
     return (
-        <div className="border border-ax-border-neutral-subtle bg-ax-bg-raised p-4 rounded-md w-150 max-w-prose">
+        <div className="border border-ax-border-neutral-subtle bg-ax-bg-raised p-4 rounded-md grow max-w-prose">
             <Heading level="3" size="medium">
                 Din uke {week}
                 {weekTitleText}

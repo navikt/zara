@@ -33,7 +33,7 @@ function WeekToggleView({ week, me, myWeek }: Props): ReactElement {
                     <div className="flex gap-1 items-center">Hvilke dager på kontoret skal du være i uke {week}?</div>
                 }
                 onChange={handleChange}
-                className="[&>.aksel-checkboxes]:flex [&>.aksel-checkboxes]:gap-4"
+                className="[&>.aksel-checkboxes]:flex [&>.aksel-checkboxes]:gap-4 [&>.aksel-checkboxes]:flex-wrap [&>.aksel-checkboxes]:grow"
                 value={days}
                 disabled={isPending}
             >
