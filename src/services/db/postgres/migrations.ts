@@ -1,4 +1,4 @@
-import { Client } from 'pg'
+import { Pool } from 'pg'
 import { logger } from '@navikt/next-logger'
 
 import { bundledEnv } from '@lib/env'
@@ -17,7 +17,7 @@ export async function runMigrations(): Promise<void> {
     }
 }
 
-async function getCurrentVersion(client: Client): Promise<number> {
+async function getCurrentVersion(client: Pool): Promise<number> {
     await client.query(`
         CREATE TABLE IF NOT EXISTS migrations (
             version INTEGER NOT NULL
@@ -28,7 +28,7 @@ async function getCurrentVersion(client: Client): Promise<number> {
     return result.rows[0]?.version ?? 0
 }
 
-async function initial_v1(client: Client): Promise<void> {
+async function initial_v1(client: Pool): Promise<void> {
     logger.info('Running initial_v1 migration...')
     await client.query(`
         CREATE TABLE users (
@@ -55,7 +55,7 @@ async function initial_v1(client: Client): Promise<void> {
     await client.query('INSERT INTO migrations (version) VALUES (1)')
 }
 
-export function developmentOnlyResetPostgres(client: Client): Promise<void> {
+export function developmentOnlyResetPostgres(client: Pool): Promise<void> {
     if (bundledEnv.runtimeEnv !== 'local') raise('What the HELL are you doing?')
 
     return client

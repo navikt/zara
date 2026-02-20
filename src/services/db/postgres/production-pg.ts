@@ -1,17 +1,21 @@
 import { lazyNextleton } from 'nextleton'
-import { Client } from 'pg'
+import { Pool } from 'pg'
 import { logger } from '@navikt/next-logger'
 
-import { getServerEnv } from '@lib/env'
+import { bundledEnv, getServerEnv } from '@lib/env'
 
 export const pgClient = lazyNextleton('valkey-client', () => initializePostgres())
 
-async function initializePostgres(): Promise<Client> {
+async function initializePostgres(): Promise<Pool> {
     const postgresConfig = getServerEnv().postgresConfig
-    const client = new Client({ ...postgresConfig })
+
+    const pool = new Pool({
+        ...postgresConfig,
+        ssl: bundledEnv.runtimeEnv !== 'local' ? { rejectUnauthorized: false } : false,
+    })
 
     logger.info('Connecting to Postgres (zalando) database...')
-    await client.connect()
+    await pool.connect()
 
-    return client
+    return pool
 }

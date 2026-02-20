@@ -1,5 +1,5 @@
 import { logger } from '@navikt/next-logger'
-import { Client } from 'pg'
+import { Pool } from 'pg'
 import { subWeeks, addWeeks, getISOWeek, getISOWeekYear } from 'date-fns'
 
 import { bundledEnv } from '@lib/env'
@@ -13,7 +13,7 @@ const TEAM_MEMBERS = [
     { user_id: 'E567890', name: 'Erik F.', default_loc: 'office' },
 ]
 
-export async function seedDevelopmentPostgres(client: Client): Promise<void> {
+export async function seedDevelopmentPostgres(client: Pool): Promise<void> {
     if (bundledEnv.runtimeEnv !== 'local') {
         raise("What the hell are you doing?! Don't seed any cloud environments! :angst:")
     }
@@ -31,7 +31,7 @@ export async function seedDevelopmentPostgres(client: Client): Promise<void> {
     logger.info('Seeding postgres done!')
 }
 
-async function seedWeekSchedules(client: Client): Promise<void> {
+async function seedWeekSchedules(client: Pool): Promise<void> {
     const now = new Date()
     const weeks = [subWeeks(now, 1), now, addWeeks(now, 1)].map((d) => ({
         week_number: getISOWeek(d),
