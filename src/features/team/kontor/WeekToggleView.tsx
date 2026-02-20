@@ -1,7 +1,7 @@
 'use client'
 
 import * as R from 'remeda'
-import { Checkbox, CheckboxGroup, InlineMessage, Loader } from '@navikt/ds-react'
+import { Checkbox, CheckboxGroup, InlineMessage } from '@navikt/ds-react'
 import React, { ReactElement, useTransition } from 'react'
 import { getISOWeek, getISODay } from 'date-fns'
 
@@ -30,10 +30,7 @@ function WeekToggleView({ week, me, myWeek }: Props): ReactElement {
         <div>
             <CheckboxGroup
                 legend={
-                    <div className="flex gap-1 items-center">
-                        På kontoret{isCurrentWeek ? ' denne uka' : ''}?{' '}
-                        {isPending && <Loader size="small" className="inline" />}
-                    </div>
+                    <div className="flex gap-1 items-center">Hvilke dager på kontoret skal du være i uke {week}?</div>
                 }
                 onChange={handleChange}
                 className="[&>.aksel-checkboxes]:flex [&>.aksel-checkboxes]:gap-4"

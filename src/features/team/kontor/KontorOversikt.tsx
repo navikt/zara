@@ -39,9 +39,10 @@ async function KontorOversikt(): Promise<ReactElement> {
             <Detail className="-mt-4 mb-4">
                 Hei {me.name}! Du er registrert som {location}-ansatt. {`<3`}
             </Detail>
-            <div className="flex flex-col gap-12">
+            <div className="flex flex-col gap-6">
                 <MyWeekView week={currentWeek} me={me} />
                 <MyWeekView week={currentWeek + 1} me={me} />
+                <MyWeekView week={currentWeek + 2} me={me} />
             </div>
             <div>
                 <EntireTeamView me={me} team={team} />
@@ -53,11 +54,16 @@ async function KontorOversikt(): Promise<ReactElement> {
 async function MyWeekView({ week, me }: { week: number; me: KontorUser }): Promise<ReactElement> {
     const myWeek = await getMyWeek(week)
     const firstWeekDate = startOfWeek(setISOWeek(new Date(), week))
+    const currentWeek = getISOWeek(new Date())
+    const isCurrentWeek = currentWeek === week
+
+    const weekTitleText = isCurrentWeek ? ' (denne uka)' : week === currentWeek + 1 ? ' (neste uke)' : ''
 
     return (
-        <div className="">
-            <Heading level="3" size="small">
+        <div className="border border-ax-border-neutral-subtle bg-ax-bg-raised p-4 rounded-md w-150 max-w-prose">
+            <Heading level="3" size="medium">
                 Din uke {week}
+                {weekTitleText}
             </Heading>
             <Detail spacing>Denne uken begynner mandag {toReadableDate(firstWeekDate)}</Detail>
             <WeekToggleView week={week} me={me} myWeek={myWeek} />
