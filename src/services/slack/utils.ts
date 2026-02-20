@@ -14,7 +14,11 @@ export async function slackChatPostMessage(payload: SlackPostMessagePayload): Pr
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${zaraSlackBotToken}`,
                 },
-                body: JSON.stringify(payload),
+                body: JSON.stringify({
+                    username: 'TSM Zara',
+                    icon_url: 'https://cdn.nav.no/tsm/zara/_next/static/media/sara-normal.8e05102a.webp',
+                    ...payload,
+                }),
             }),
         ),
     )
