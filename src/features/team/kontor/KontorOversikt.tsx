@@ -48,9 +48,7 @@ async function KontorOversikt(): Promise<ReactElement> {
             <div className="flex flex-col gap-6">
                 {isFriday && isAfterTimeOnFriday && (
                     <div className="max-w-prose">
-                        <BodyShort>
-                            Det er fredag i dag! Husk å si om det er noen dager du ikke kan komme neste uke!
-                        </BodyShort>
+                        <BodyShort>Det er fredag i dag! Oppdater neste ukesplan allerede nå. :)</BodyShort>
                     </div>
                 )}
                 {!isAfterTimeOnFriday && <MyWeekView week={currentWeek} me={me} />}
