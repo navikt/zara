@@ -3,6 +3,7 @@
 import * as R from 'remeda'
 import { Checkbox, CheckboxGroup, InlineMessage, Loader } from '@navikt/ds-react'
 import React, { ReactElement, useTransition } from 'react'
+import { getISOWeek, getISODay } from 'date-fns'
 
 import { KontorUser, Location, WeekSchedule } from '@services/team-office/types'
 import { toggleWeekDay } from '@features/team/kontor/kontor-actions'
@@ -14,6 +15,8 @@ type Props = {
 }
 
 function WeekToggleView({ week, me, myWeek }: Props): ReactElement {
+    const currentWeekDay = getISODay(new Date()) - 1
+    const isCurrentWeek = getISOWeek(new Date()) === week
     const [isPending, startTransition] = useTransition()
     const [days, setDays] = React.useState<string[]>(() => createInitialToggles(me.default_loc, myWeek))
     const handleChange = (values: string[]): void => {
@@ -28,7 +31,8 @@ function WeekToggleView({ week, me, myWeek }: Props): ReactElement {
             <CheckboxGroup
                 legend={
                     <div className="flex gap-1 items-center">
-                        På kontoret? {isPending && <Loader size="small" className="inline" />}
+                        På kontoret{isCurrentWeek ? ' denne uka' : ''}?{' '}
+                        {isPending && <Loader size="small" className="inline" />}
                     </div>
                 }
                 onChange={handleChange}
@@ -36,19 +40,39 @@ function WeekToggleView({ week, me, myWeek }: Props): ReactElement {
                 value={days}
                 disabled={isPending}
             >
-                <Checkbox value="0" className="flex flex-col gap-3 items-center justify-center">
+                <Checkbox
+                    value="0"
+                    className="flex flex-col gap-3 items-center justify-center"
+                    disabled={isCurrentWeek && currentWeekDay > 0}
+                >
                     Mandag
                 </Checkbox>
-                <Checkbox value="1" className="flex flex-col gap-3 items-center justify-center">
+                <Checkbox
+                    value="1"
+                    className="flex flex-col gap-3 items-center justify-center"
+                    disabled={isCurrentWeek && currentWeekDay > 1}
+                >
                     Tirsdag
                 </Checkbox>
-                <Checkbox value="2" className="flex flex-col gap-3 items-center justify-center">
+                <Checkbox
+                    value="2"
+                    className="flex flex-col gap-3 items-center justify-center"
+                    disabled={isCurrentWeek && currentWeekDay > 2}
+                >
                     Onsdag
                 </Checkbox>
-                <Checkbox value="3" className="flex flex-col gap-3 items-center justify-center">
+                <Checkbox
+                    value="3"
+                    className="flex flex-col gap-3 items-center justify-center"
+                    disabled={isCurrentWeek && currentWeekDay > 3}
+                >
                     Torsdag
                 </Checkbox>
-                <Checkbox value="4" className="flex flex-col gap-3 items-center justify-center">
+                <Checkbox
+                    value="4"
+                    className="flex flex-col gap-3 items-center justify-center"
+                    disabled={isCurrentWeek && currentWeekDay > 4}
+                >
                     Fredag
                 </Checkbox>
             </CheckboxGroup>

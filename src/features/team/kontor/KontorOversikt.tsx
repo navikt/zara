@@ -55,9 +55,10 @@ async function MyWeekView({ week, me }: { week: number; me: KontorUser }): Promi
 
     return (
         <div className="">
-            <Heading level="3" size="small" spacing>
-                Din uke {week} - {toReadableDate(firstWeekDate)}
+            <Heading level="3" size="small">
+                Din uke {week}
             </Heading>
+            <Detail spacing>Denne uken begynner mandag {toReadableDate(firstWeekDate)}</Detail>
             <WeekToggleView week={week} me={me} myWeek={myWeek} />
         </div>
     )
