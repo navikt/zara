@@ -4,7 +4,12 @@ import { logger } from '@navikt/next-logger'
 import { bundledEnv, getServerEnv } from '@lib/env'
 import { spanServerAsync, squelchTracing } from '@lib/otel/server'
 import { createPermalink, slackChatPostMessage } from '@services/slack/utils'
-import { getOfficeTodaySnapshot, isTodayOfficeDay } from '@services/team-office/team-office-service'
+import {
+    getOfficeTodaySnapshot,
+    hasPostedToday,
+    insertDailyPost,
+    isTodayOfficeDay,
+} from '@services/team-office/team-office-service'
 import { KontorUser } from '@services/team-office/types'
 import { toReadableFullDate } from '@lib/date'
 
@@ -25,6 +30,12 @@ export async function postDailyOfficeSummary(): Promise<{
         return { postLink: null }
     }
 
+    const hasAlreadyPostedToday = await hasPostedToday(currentWeek, currentYear, day)
+    if (hasAlreadyPostedToday) {
+        logger.info('Already posted office summary for today, skipping...')
+        return { postLink: null }
+    }
+
     const data = await spanServerAsync('Slack API (fetch)', () =>
         squelchTracing(() =>
             slackChatPostMessage(zaraSlackBotToken, {
@@ -34,6 +45,8 @@ export async function postDailyOfficeSummary(): Promise<{
             }),
         ),
     )
+
+    await insertDailyPost(currentWeek, currentYear, day, data.channel, data.ts)
 
     return {
         postLink: createPermalink(data.channel, data.ts),

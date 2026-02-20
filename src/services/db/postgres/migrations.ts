@@ -14,6 +14,8 @@ export async function runMigrations(): Promise<void> {
     switch (version) {
         case 0:
             await initial_v1(client)
+        case 1:
+            await office_cron_job_v2(client)
     }
 }
 
@@ -55,12 +57,29 @@ async function initial_v1(client: Pool): Promise<void> {
     await client.query('INSERT INTO migrations (version) VALUES (1)')
 }
 
+async function office_cron_job_v2(client: Pool): Promise<void> {
+    logger.info('Running office_cron_job_v2 migration...')
+    await client.query(`
+        CREATE TABLE slack_cron_posts (
+            id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            week_number INTEGER NOT NULL,
+            week_year   INTEGER NOT NULL,
+            day         INTEGER NOT NULL,
+            channel_id  TEXT NOT NULL,
+            message_ts  TEXT NOT NULL,
+            UNIQUE (week_number, week_year, day)
+        )
+    `)
+    await client.query('UPDATE migrations SET version = 2')
+}
+
 export function developmentOnlyResetPostgres(client: Pool): Promise<void> {
     if (bundledEnv.runtimeEnv !== 'local') raise('What the HELL are you doing?')
 
     return client
         .query(
             `
+        DROP TABLE IF EXISTS slack_cron_posts;
         DROP TABLE IF EXISTS week_schedule;
         DROP TABLE IF EXISTS users;
         DROP TABLE IF EXISTS migrations;

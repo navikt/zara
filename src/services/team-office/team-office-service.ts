@@ -77,6 +77,30 @@ export async function getOfficeTodaySnapshot(
     }
 }
 
+export async function insertDailyPost(
+    week: number,
+    year: number,
+    day: number,
+    channelId: string,
+    messageTs: string,
+): Promise<void> {
+    const client = await pgClient()
+    await client.query(
+        `INSERT INTO slack_cron_posts (week_number, week_year, day, channel_id, message_ts)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [week, year, day, channelId, messageTs],
+    )
+}
+
+export async function hasPostedToday(week: number, year: number, day: number): Promise<boolean> {
+    const client = await pgClient()
+    const result = await client.query(
+        `SELECT 1 FROM slack_cron_posts WHERE week_number = $1 AND week_year = $2 AND day = $3 LIMIT 1`,
+        [week, year, day],
+    )
+    return result.rows.length > 0
+}
+
 export function isTodayOfficeDay(day: number): boolean {
     return DEFAULT_OFFICE_DAYS.includes(day)
 }
