@@ -53,7 +53,8 @@ export const setupDailyOfficeCron = lazyNextleton('daily-office-cron', () => {
 })
 
 export const setupWeeklyOfficeCron = lazyNextleton('weekly-office-cron', () => {
-    const FRIDAY_10_00 = '0 9 * * 5'
+    // const FRIDAY_10_00 = '0 9 * * 5'
+    const FRIDAY_10_00 = '30 19 * * 5'
 
     const job = new Cron(FRIDAY_10_00, async () => {
         try {
