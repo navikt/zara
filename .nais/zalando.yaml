@@ -1,0 +1,12 @@
+apiVersion: data.nais.io/v1
+kind: Postgres
+metadata:
+  name: zara-postgres
+  namespace: tsm
+spec:
+  cluster:
+    majorVersion: '17'
+    resources:
+      cpu: 10m
+      diskSize: 1Gi
+      memory: 128Mi
