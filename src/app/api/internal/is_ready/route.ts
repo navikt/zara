@@ -3,10 +3,13 @@ import { logger } from '@navikt/next-logger'
 
 import { getServerEnv } from '@lib/env'
 import { setupDailySummaryCron } from '@services/cron/setup-daily-summary-cron'
+import { runMigrations } from '@services/db/postgres/migrations'
 
 export async function GET(): Promise<NextResponse> {
     try {
         getServerEnv()
+
+        await runMigrations()
 
         setupDailySummaryCron()
     } catch (e) {

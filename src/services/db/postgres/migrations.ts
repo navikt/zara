@@ -3,8 +3,10 @@ import { logger } from '@navikt/next-logger'
 
 import { bundledEnv } from '@lib/env'
 import { raise } from '@lib/ts'
+import { pgClient } from '@services/db/postgres/production-pg'
 
-export async function runMigrations(client: Client): Promise<void> {
+export async function runMigrations(): Promise<void> {
+    const client = await pgClient()
     const version = await getCurrentVersion(client)
 
     logger.info(`Current postgres schema version: ${version}`)

@@ -29,7 +29,9 @@ export async function POST(_: Request, { params }: RouteContext<'/api/internal/d
         case 'pg-reset': {
             const client = await pgClient()
             await developmentOnlyResetPostgres(client)
-            await runMigrations(client)
+
+            await runMigrations()
+
             await seedDevelopmentPostgres(client)
 
             return Response.json({ message: `Postgres reset!` }, { status: 201 })
