@@ -17,7 +17,7 @@ function SelfRegisterButtons(): ReactElement {
                 loading={isPending}
                 onClick={() => startTransition(async () => registerKontor('remote'))}
             >
-                Registrer meg som remote!
+                Jeg er ansatt som remote!
             </Button>
             <Button
                 data-color="brand-blue"
@@ -25,7 +25,7 @@ function SelfRegisterButtons(): ReactElement {
                 loading={isPending}
                 onClick={() => startTransition(async () => registerKontor('office'))}
             >
-                Registrer meg som Oslo!
+                Jeg er ansatt i Oslo!
             </Button>
         </div>
     )
