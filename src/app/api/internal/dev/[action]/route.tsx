@@ -12,7 +12,7 @@ import { valkeyClient } from '@services/db/valkey/production-valkey'
 import { postDailySummary } from '@services/slack/summary-to-slack'
 import { developmentOnlyResetPostgres, runMigrations } from '@services/db/postgres/migrations'
 import { pgClient } from '@services/db/postgres/production-pg'
-import { postDailyOfficeSummary } from '@services/slack/office-to-slack'
+import { postDailyOfficeSummary, postWeeklyRememberToUpdatePost } from '@services/slack/office-to-slack'
 
 export async function POST(_: Request, { params }: RouteContext<'/api/internal/dev/[action]'>): Promise<Response> {
     // ⚠️ Dev only endpoint (allow dev-gcp for now)
@@ -30,6 +30,10 @@ export async function POST(_: Request, { params }: RouteContext<'/api/internal/d
         case 'debug-cron-office': {
             const { postLink } = await postDailyOfficeSummary()
             return Response.json({ message: `Daily office cron executed!`, link: postLink }, { status: 201 })
+        }
+        case 'debug-cron-office-weekly': {
+            const { postLink } = await postWeeklyRememberToUpdatePost()
+            return Response.json({ message: `Weekly office cron executed!`, link: postLink }, { status: 201 })
         }
         case 'pg-reset': {
             const client = await pgClient()

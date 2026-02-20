@@ -68,6 +68,34 @@ export async function updateTodaysOfficeSummaryIfNeeded(): Promise<void> {
     })
 }
 
+export async function postWeeklyRememberToUpdatePost(): Promise<{ postLink: string }> {
+    const { zaraSlackChannelId } = getServerEnv()
+
+    const data = await slackChatPostMessage({
+        channel: zaraSlackChannelId,
+        text: `Husk å oppdatere kontorplanen for neste uke! 🏢`,
+        blocks: [
+            {
+                type: 'header',
+                text: {
+                    type: 'plain_text',
+                    text: `:zara-happy: Snart helg! :zara-happy:`,
+                    emoji: true,
+                },
+            },
+            {
+                type: 'section',
+                text: {
+                    type: 'mrkdwn',
+                    text: `Er du remote ansatt og kommer til Oslo neste uke? Eller kontor-ansatt som ikke kan komme på kontoret tirsdag eller onsdag, eller skal andre dager?\n\nHusk å oppdatere kontorplanen din i Zara!\n\n<${getKontorUrl('ansatt')}|Gå til Zara (ansatt) →> | <${getKontorUrl('intern')}|Gå til Zara (internal) →>`,
+                },
+            },
+        ],
+    })
+
+    return { postLink: createPermalink(data.channel, data.ts) }
+}
+
 function buildOfficeBlocks(office: OfficeUser[]): unknown[] {
     const dateLabel = toReadableFullDate(new Date())
     const internalUrl = getKontorUrl('intern')

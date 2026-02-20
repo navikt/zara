@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { logger } from '@navikt/next-logger'
 
 import { getServerEnv } from '@lib/env'
-import { setupDailyOfficeCron, setupDailySummaryCron } from '@services/cron/setup-daily-summary-cron'
+import { setupDailyOfficeCron, setupDailySummaryCron, setupWeeklyOfficeCron } from '@services/cron/setup-cron'
 import { runMigrations } from '@services/db/postgres/migrations'
 
 export async function GET(): Promise<NextResponse> {
@@ -13,6 +13,7 @@ export async function GET(): Promise<NextResponse> {
 
         setupDailySummaryCron()
         setupDailyOfficeCron()
+        setupWeeklyOfficeCron()
     } catch (e) {
         logger.error(e)
         return NextResponse.json({ message: 'I am not ready :(' }, { status: 500 })
