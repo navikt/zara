@@ -15,7 +15,7 @@ import { OfficeUser } from '@services/team-office/types'
 export async function postDailyOfficeSummary(): Promise<{
     postLink: string | null
 }> {
-    const { zaraSlackChannelId } = getServerEnv()
+    const { tsmAwaySlackChannelId } = getServerEnv()
 
     const now = new Date()
     const currentYear = getISOWeekYear(now)
@@ -36,7 +36,7 @@ export async function postDailyOfficeSummary(): Promise<{
     }
 
     const data = await slackChatPostMessage({
-        channel: zaraSlackChannelId,
+        channel: tsmAwaySlackChannelId,
         text: `Hvem skal på FA1 i dag? 🏢`,
         blocks: buildOfficeBlocks(office),
     })
@@ -69,10 +69,10 @@ export async function updateTodaysOfficeSummaryIfNeeded(): Promise<void> {
 }
 
 export async function postWeeklyRememberToUpdatePost(): Promise<{ postLink: string }> {
-    const { zaraSlackChannelId } = getServerEnv()
+    const { tsmAwaySlackChannelId } = getServerEnv()
 
     const data = await slackChatPostMessage({
-        channel: zaraSlackChannelId,
+        channel: tsmAwaySlackChannelId,
         text: `Husk å oppdatere kontorplanen for neste uke! 🏢`,
         blocks: [
             {
