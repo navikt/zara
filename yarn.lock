@@ -194,6 +194,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@date-fns/tz@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "@date-fns/tz@npm:1.4.1"
+  checksum: 10c0/9033fdc4682fe3d4d147625ce04fa88a8792653594e2de8d5a438c8f3bfc0990ee28fe773f91cac6810b06d818b5b281ae0608752ba8337257d0279ded3f019a
+  languageName: node
+  linkType: hard
+
 "@emnapi/core@npm:^1.4.3, @emnapi/core@npm:^1.7.1":
   version: 1.7.1
   resolution: "@emnapi/core@npm:1.7.1"
@@ -5728,6 +5735,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "zara@workspace:."
   dependencies:
+    "@date-fns/tz": "npm:^1.4.1"
     "@faker-js/faker": "npm:^10.3.0"
     "@navikt/aksel-icons": "npm:^8.5.2"
     "@navikt/ds-css": "npm:^8.5.2"

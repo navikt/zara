@@ -1,7 +1,8 @@
 import React, { ReactElement } from 'react'
-import { Detail, Heading } from '@navikt/ds-react'
+import { BodyShort, Detail, Heading } from '@navikt/ds-react'
 import Image from 'next/image'
-import { getISOWeek, setISOWeek, startOfWeek } from 'date-fns'
+import { getISOWeek, setISODay, setISOWeek, startOfWeek, set, isAfter, isSameDay } from 'date-fns'
+import { TZDate } from '@date-fns/tz'
 
 import { getMyself, getMyWeek, getTeam } from '@services/team-office/team-office-service'
 import { zaraImages } from '@images/zaras'
@@ -34,13 +35,25 @@ async function KontorOversikt(): Promise<ReactElement> {
     const currentWeek = getISOWeek(new Date())
     const location = me.default_loc === 'office' ? 'FA1' : 'remote'
 
+    const norwayNow = TZDate.tz('Europe/Oslo')
+    const friday = set(setISODay(norwayNow, 5), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 })
+    const isAfterTimeOnFriday = isAfter(norwayNow, friday)
+    const isFriday = isSameDay(norwayNow, friday)
+
     return (
         <div className="relative">
             <Detail className="-mt-4 mb-4">
                 Hei {me.name}! Du er registrert som {location}-ansatt. {`<3`}
             </Detail>
             <div className="flex flex-col gap-6">
-                <MyWeekView week={currentWeek} me={me} />
+                {isFriday && isAfterTimeOnFriday && (
+                    <div className="max-w-prose">
+                        <BodyShort>
+                            Det er fredag i dag! Husk å si om det er noen dager du ikke kan komme neste uke!
+                        </BodyShort>
+                    </div>
+                )}
+                {!isAfterTimeOnFriday && <MyWeekView week={currentWeek} me={me} />}
                 <MyWeekView week={currentWeek + 1} me={me} />
                 <MyWeekView week={currentWeek + 2} me={me} />
             </div>

@@ -14,6 +14,7 @@
         "postinstall": "husky"
     },
     "dependencies": {
+        "@date-fns/tz": "^1.4.1",
         "@navikt/aksel-icons": "^8.5.2",
         "@navikt/ds-css": "^8.5.2",
         "@navikt/ds-react": "^8.5.2",
