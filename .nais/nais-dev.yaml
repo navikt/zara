@@ -28,6 +28,8 @@ spec:
   valkey:
     - instance: syk-inn
       access: readwrite
+  postgres:
+    clusterName: zara-postgres
   observability:
     autoInstrumentation:
       enabled: true
