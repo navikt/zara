@@ -3,7 +3,7 @@ import * as R from 'remeda'
 import { logger } from '@navikt/next-logger'
 
 import { UserActivity } from '@services/live-service/pages'
-import { subscriberValkeyClient, valkeyClient } from '@services/valkey/production-valkey'
+import { subscriberValkeyClient, valkeyClient } from '@services/db/valkey/production-valkey'
 
 const CHANNELS = {
     ACTIVITY: 'channel:user-activity',

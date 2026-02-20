@@ -4,3 +4,12 @@ services:
     container_name: zara-dev-valkey
     ports:
       - '6380:6379'
+  postgres:
+    image: postgres:17
+    container_name: zara-dev-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: zara
+    ports:
+      - '5432:5432'

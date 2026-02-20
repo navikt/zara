@@ -5,10 +5,13 @@ import { ContactableUserFeedback, InSituFeedback } from '@navikt/syk-zara/feedba
 
 import { createContactDetails } from '@dev/test-data'
 import { clearDevelopmentFeedback, seedDevelopmentFeedback } from '@dev/seed-valkey'
+import { seedDevelopmentPostgres } from '@dev/seed-postgres'
 import { bundledEnv } from '@lib/env'
 import { getFeedbackClient } from '@services/feedback/feedback-client'
-import { valkeyClient } from '@services/valkey/production-valkey'
+import { valkeyClient } from '@services/db/valkey/production-valkey'
 import { postDailySummary } from '@services/slack/summary-to-slack'
+import { developmentOnlyResetPostgres, runMigrations } from '@services/db/postgres/migrations'
+import { pgClient } from '@services/db/postgres/production-pg'
 
 export async function POST(_: Request, { params }: RouteContext<'/api/internal/dev/[action]'>): Promise<Response> {
     // ⚠️ Dev only endpoint (allow dev-gcp for now)
@@ -22,6 +25,14 @@ export async function POST(_: Request, { params }: RouteContext<'/api/internal/d
         case 'debug-cron': {
             const { postLink } = await postDailySummary()
             return Response.json({ message: `Daily summary cron executed!`, link: postLink }, { status: 201 })
+        }
+        case 'pg-reset': {
+            const client = await pgClient()
+            await developmentOnlyResetPostgres(client)
+            await runMigrations(client)
+            await seedDevelopmentPostgres(client)
+
+            return Response.json({ message: `Postgres reset!` }, { status: 201 })
         }
         case 're-seed': {
             await clearDevelopmentFeedback(valkeyClient())

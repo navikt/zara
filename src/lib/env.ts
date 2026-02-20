@@ -21,6 +21,15 @@ export const bundledEnv = BundledEnvSchema.parse({
     NEXT_PUBLIC_BUILD_TIME: process.env.NEXT_PUBLIC_BUILD_TIME,
 } satisfies Record<keyof BundledEnv, unknown>)
 
+type PostgresConfig = z.infer<typeof PostgresConfigSchema>
+const PostgresConfigSchema = z.object({
+    host: z.string(),
+    port: z.coerce.number(),
+    username: z.string(),
+    password: z.string(),
+    database: z.string(),
+})
+
 type ValkeyConfig = z.infer<typeof ValkeyConfigSchema>
 const ValkeyConfigSchema = z.union([
     /**
@@ -46,7 +55,8 @@ const ValkeyConfigSchema = z.union([
 type ServerEnv = z.infer<typeof ServerEnvSchema>
 const ServerEnvSchema = z.object({
     useSykInnValkey: z.boolean().default(false),
-    valkeyConfig: ValkeyConfigSchema.nullish(),
+    valkeyConfig: ValkeyConfigSchema,
+    postgresConfig: PostgresConfigSchema,
     zaraSlackBotToken: z.string(),
     zaraSlackChannelId: z.string(),
 })
@@ -65,9 +75,9 @@ export function getServerEnv(): ServerEnv {
         runtimeEnv: process.env.NEXT_PUBLIC_RUNTIME_ENV,
         username: process.env.VALKEY_USERNAME_SYK_INN,
         password: process.env.VALKEY_PASSWORD_SYK_INN,
-        host: useLocalSykInn ? 'localhost' : process.env.VALKEY_HOST_SYK_INN,
+        host: process.env.VALKEY_HOST_SYK_INN,
         // Local
-        port: useLocalSykInn ? undefined : process.env.VALKEY_PORT_SYK_INN,
+        port: useLocalSykInn ? 6379 : process.env.VALKEY_PORT_SYK_INN,
         // Cloud
         tls: {
             host: process.env.VALKEY_HOST_SYK_INN,
@@ -75,9 +85,18 @@ export function getServerEnv(): ServerEnv {
         },
     } satisfies Record<KeysOfUnion<ValkeyConfig>, unknown>
 
+    const postgresConfig = {
+        host: process.env.PGHOST,
+        port: process.env.PGPORT,
+        username: process.env.PGUSER,
+        password: process.env.PGPASSWORD,
+        database: process.env.PGDATABASE,
+    } satisfies Record<KeysOfUnion<PostgresConfig>, unknown>
+
     const parsedEnv = ServerEnvSchema.parse({
         useSykInnValkey: useLocalSykInn,
         valkeyConfig: valkeyConfig,
+        postgresConfig: postgresConfig,
         zaraSlackBotToken: process.env.ZARA_SLACK_BOT_TOKEN,
         zaraSlackChannelId: process.env.ZARA_SLACK_CHANNEL_ID,
     } satisfies Record<keyof ServerEnv, unknown | undefined>)
