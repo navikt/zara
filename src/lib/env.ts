@@ -59,6 +59,7 @@ const ServerEnvSchema = z.object({
     postgresConfig: PostgresConfigSchema,
     zaraSlackBotToken: z.string(),
     zaraSlackChannelId: z.string(),
+    tsmAwaySlackChannelId: z.string(),
 })
 
 /**
@@ -99,6 +100,7 @@ export function getServerEnv(): ServerEnv {
         postgresConfig: postgresConfig,
         zaraSlackBotToken: process.env.ZARA_SLACK_BOT_TOKEN,
         zaraSlackChannelId: process.env.ZARA_SLACK_CHANNEL_ID,
+        tsmAwaySlackChannelId: process.env.TSM_AWAY_SLACK_CHANNEL_ID,
     } satisfies Record<keyof ServerEnv, unknown | undefined>)
 
     if (bundledEnv.runtimeEnv !== 'local' && parsedEnv.useSykInnValkey) {
