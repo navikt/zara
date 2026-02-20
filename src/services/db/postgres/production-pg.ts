@@ -4,7 +4,7 @@ import { logger } from '@navikt/next-logger'
 
 import { bundledEnv, getServerEnv } from '@lib/env'
 
-export const pgClient = lazyNextleton('valkey-client', () => initializePostgres())
+export const pgClient = lazyNextleton('postgres-client', () => initializePostgres())
 
 async function initializePostgres(): Promise<Pool> {
     const postgresConfig = getServerEnv().postgresConfig
