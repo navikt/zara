@@ -12,7 +12,10 @@ export const setupDailySummaryCron = lazyNextleton('daily-summary-cron', () => {
     const job = new Cron(MORNING_9_00, async () => {
         try {
             const leader = await isLeader()
-            if (!leader) logger.info("I'm not the leader, skipping daily summary job")
+            if (!leader) {
+                logger.info("I'm not the leader, skipping daily summary job")
+                return
+            }
 
             logger.info('Running daily summary job')
             const result = await postDailySummary()
@@ -35,7 +38,10 @@ export const setupDailyOfficeCron = lazyNextleton('daily-office-cron', () => {
     const job = new Cron(MORNING_7_00, async () => {
         try {
             const leader = await isLeader()
-            if (!leader) logger.info("I'm not the leader, skipping daily office job")
+            if (!leader) {
+                logger.info("I'm not the leader, skipping daily office job")
+                return
+            }
 
             logger.info('Running daily office job')
             const result = await postDailyOfficeSummary()
@@ -58,7 +64,10 @@ export const setupWeeklyOfficeCron = lazyNextleton('weekly-office-cron', () => {
     const job = new Cron(FRIDAY_10_00, async () => {
         try {
             const leader = await isLeader()
-            if (!leader) logger.info("I'm not the leader, skipping weekly office job")
+            if (!leader) {
+                logger.info("I'm not the leader, skipping weekly office job")
+                return
+            }
 
             logger.info('Running weekly office job')
             const result = await postWeeklyRememberToUpdatePost()
