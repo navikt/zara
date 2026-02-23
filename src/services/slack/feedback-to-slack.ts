@@ -7,7 +7,6 @@ import { createFeedbackHeader } from '@services/slack/blocks'
 
 export async function notifySlack(feedback: Feedback, byWho: User): Promise<{ postLink: string }> {
     const { zaraSlackChannelId } = getServerEnv()
-    const internalUrl = getFeedbackUrl(feedback.id, 'intern')
     const ansattUrl = getFeedbackUrl(feedback.id, 'ansatt')
 
     const redactedMessage = redactMessageForSlack(feedback.message)
@@ -26,7 +25,7 @@ export async function notifySlack(feedback: Feedback, byWho: User): Promise<{ po
                 type: 'section',
                 text: {
                     type: 'mrkdwn',
-                    text: `👤 *Fra:* ${feedback.name}\n📤 *Delt av:* ${byWho.name}\n💻 *System:* ${feedback.metaSystem}\n\n<${internalUrl}|Åpne i Zara (internal) →> | <${ansattUrl}|Åpne i Zara (ansatt) →>`,
+                    text: `👤 *Fra:* ${feedback.name}\n📤 *Delt av:* ${byWho.name}\n💻 *System:* ${feedback.metaSystem}\n\n<${ansattUrl}|Se i Zara →>`,
                 },
             },
             { type: 'divider' },

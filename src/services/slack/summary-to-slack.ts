@@ -14,7 +14,6 @@ export async function postDailySummary(): Promise<{ postLink: string | null }> {
     return spanServerAsync('Post daily summary to Slack', async () => {
         const { zaraSlackChannelId } = getServerEnv()
         const { unverifiedCount, unrespondedCount, totalCount, yesterdayCount } = await getDailySummaryStats()
-        const internalUrl = getZaraUrl('intern')
         const ansattUrl = getZaraUrl('ansatt')
 
         if (unrespondedCount === 0 && unverifiedCount === 0) {
@@ -49,7 +48,7 @@ export async function postDailySummary(): Promise<{ postLink: string | null }> {
                 type: 'section',
                 text: {
                     type: 'mrkdwn',
-                    text: `<${internalUrl}|Zara (internal) →> | <${ansattUrl}|Zara (ansatt) →>`,
+                    text: `<${ansattUrl}|Zara →>`,
                 },
             },
             {

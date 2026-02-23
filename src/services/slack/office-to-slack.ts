@@ -87,7 +87,7 @@ export async function postWeeklyRememberToUpdatePost(): Promise<{ postLink: stri
                 type: 'section',
                 text: {
                     type: 'mrkdwn',
-                    text: `Er du remote ansatt og kommer til Oslo neste uke? Eller kontor-ansatt som ikke kan komme på kontoret tirsdag eller onsdag, eller skal andre dager?\n\nHusk å oppdatere kontorplanen din i Zara!\n\n<${getKontorUrl('ansatt')}|Gå til Zara (ansatt) →> | <${getKontorUrl('intern')}|Gå til Zara (internal) →>`,
+                    text: `Er du remote ansatt og kommer til Oslo neste uke? Eller kontor-ansatt som ikke kan komme på kontoret tirsdag eller onsdag, eller skal andre dager?\n\nHusk å oppdatere kontorplanen din i Zara!\n\n<${getKontorUrl('ansatt')}|Zara →>`,
                 },
             },
         ],
@@ -98,7 +98,6 @@ export async function postWeeklyRememberToUpdatePost(): Promise<{ postLink: stri
 
 function buildOfficeBlocks(office: OfficeUser[]): unknown[] {
     const dateLabel = toReadableFullDate(new Date())
-    const internalUrl = getKontorUrl('intern')
     const ansattUrl = getKontorUrl('ansatt')
     const officeList = office.length > 0 ? office.map((u) => `• ${u.name}`).join('\n') : null
 
@@ -122,7 +121,7 @@ function buildOfficeBlocks(office: OfficeUser[]): unknown[] {
             type: 'section',
             text: {
                 type: 'mrkdwn',
-                text: `Har planene endra seg?  <${ansattUrl}|Zara (ansatt) →> | <${internalUrl}|Zara (internal) →>`,
+                text: `Har planene endra seg?  <${ansattUrl}|Zara →>`,
             },
         },
     ]
