@@ -1,6 +1,10 @@
+import * as R from 'remeda'
+
 import { pgClient } from '@services/db/postgres/production-pg'
 import { validateUserSession } from '@services/auth/auth'
-import { CronPost, OfficeUser, WeekSchedule } from '@services/team-office/types'
+
+import { CronPost, DefaultWeekSchedule, Location, OfficeUser, TeamWeek, WeekSchedule } from './types'
+import { toDefaultSchedule } from './team-office-utils'
 
 export async function getMyself(): Promise<{ unregistered: true } | OfficeUser> {
     const session = await validateUserSession()
@@ -15,11 +19,14 @@ export async function getMyself(): Promise<{ unregistered: true } | OfficeUser> 
     return result.rows[0]
 }
 
-export async function getMyWeek(week: number): Promise<WeekSchedule | null> {
+/**
+ * Gets users week, with fallback default values if week has no entry.
+ */
+export async function getMyWeek(week: number, myLocation: Location): Promise<DefaultWeekSchedule> {
     const session = await validateUserSession()
     const client = await pgClient()
 
-    const result = await client.query<WeekSchedule>(
+    const result = await client.query<Omit<DefaultWeekSchedule, 'isDefault'>>(
         `SELECT mon, tue, wed, thu, fri
          FROM week_schedule ws
          JOIN users u ON u.id = ws.user_id
@@ -29,7 +36,29 @@ export async function getMyWeek(week: number): Promise<WeekSchedule | null> {
         [session.userId, week],
     )
 
-    return result.rows[0] ?? null
+    const schedule = result.rows[0] ?? null
+    if (schedule == null) return toDefaultSchedule(myLocation)
+
+    return { ...schedule, isDefault: false }
+}
+
+export async function getTeamWeek(week: number): Promise<TeamWeek> {
+    await validateUserSession()
+    const client = await pgClient()
+
+    const result = await client.query<OfficeUser & WeekSchedule>(
+        `SELECT u.*, ws.mon, ws.tue, ws.wed, ws.thu, ws.fri
+         FROM users u
+         LEFT JOIN week_schedule ws ON ws.user_id = u.id
+           AND ws.week_number = $1
+           AND ws.week_year = EXTRACT(ISOYEAR FROM CURRENT_DATE)`,
+        [week],
+    )
+
+    return result.rows.map((it) => ({
+        user: R.pick(it, ['id', 'user_id', 'name', 'default_loc']),
+        schedule: toDefaultSchedule(it.default_loc, it),
+    }))
 }
 
 export async function getTeam(): Promise<OfficeUser[]> {

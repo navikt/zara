@@ -3,13 +3,14 @@ import { BodyShort, Detail, Heading } from '@navikt/ds-react'
 import Image from 'next/image'
 import { getISOWeek, setISODay, setISOWeek, startOfWeek, set, isAfter, isSameDay } from 'date-fns'
 import { TZDate } from '@date-fns/tz'
+import * as R from 'remeda'
 
-import { getMyself, getMyWeek, getTeam } from '@services/team-office/team-office-service'
+import { getMyself, getMyWeek, getTeam, getTeamWeek } from '@services/team-office/team-office-service'
 import { zaraImages } from '@images/zaras'
 import SelfRegisterButtons from '@features/team/kontor/SelfRegisterButtons'
 import { toReadableDate } from '@lib/date'
 import WeekToggleView from '@features/team/kontor/WeekToggleView'
-import { OfficeUser } from '@services/team-office/types'
+import { OfficeUser, TeamWeek, WeekSchedule } from '@services/team-office/types'
 import { EntireTeamView } from '@features/team/kontor/EntireTeamView'
 
 async function KontorOversikt(): Promise<ReactElement> {
@@ -51,6 +52,7 @@ async function KontorOversikt(): Promise<ReactElement> {
                         <BodyShort>Det er fredag i dag! Oppdater neste ukesplan allerede nå. :)</BodyShort>
                     </div>
                 )}
+                {isAfterTimeOnFriday ? <WhoThisWeek week={currentWeek + 1} /> : <WhoThisWeek week={currentWeek} />}
                 {!isAfterTimeOnFriday && <MyWeekView week={currentWeek} me={me} />}
                 <MyWeekView week={currentWeek + 1} me={me} />
                 <MyWeekView week={currentWeek + 2} me={me} />
@@ -63,7 +65,7 @@ async function KontorOversikt(): Promise<ReactElement> {
 }
 
 async function MyWeekView({ week, me }: { week: number; me: OfficeUser }): Promise<ReactElement> {
-    const myWeek = await getMyWeek(week)
+    const myWeek = await getMyWeek(week, me.default_loc)
     const firstWeekDate = startOfWeek(setISOWeek(new Date(), week))
     const currentWeek = getISOWeek(new Date())
     const isCurrentWeek = currentWeek === week
@@ -77,7 +79,51 @@ async function MyWeekView({ week, me }: { week: number; me: OfficeUser }): Promi
                 {weekTitleText}
             </Heading>
             <Detail spacing>Denne uken begynner mandag {toReadableDate(firstWeekDate)}</Detail>
-            <WeekToggleView week={week} me={me} myWeek={myWeek} />
+            <WeekToggleView week={week} myWeek={myWeek} />
+        </div>
+    )
+}
+
+async function WhoThisWeek({ week }: { week: number }): Promise<ReactElement> {
+    const teamWeek = await getTeamWeek(week)
+
+    return (
+        <div className="border border-ax-border-neutral-subtle bg-ax-bg-raised p-4 rounded-md grow max-w-prose">
+            <Heading level="3" size="medium">
+                Kontoret denne uka
+            </Heading>
+            <div className="grid grid-cols-2 gap-3">
+                <Day teamWeek={teamWeek} short="mon" label="Mandag" />
+                <Day teamWeek={teamWeek} short="tue" label="Tirsdag" />
+                <Day teamWeek={teamWeek} short="wed" label="Onsdag" />
+                <Day teamWeek={teamWeek} short="thu" label="Torsdag" />
+                <Day teamWeek={teamWeek} short="fri" label="Fredag" />
+            </div>
+        </div>
+    )
+}
+
+function Day({
+    teamWeek,
+    short,
+    label,
+}: {
+    teamWeek: TeamWeek
+    short: keyof WeekSchedule
+    label: string
+}): ReactElement {
+    const onThisDay = R.pipe(
+        teamWeek,
+        R.filter((it) => it.schedule[short]),
+        R.map((it) => it.user.name),
+    )
+
+    return (
+        <div className="mt-4">
+            <Heading level="4" size="xsmall">
+                {label}
+            </Heading>
+            {onThisDay.length > 0 ? <Detail spacing>{onThisDay.join(', ')}</Detail> : <Detail spacing>Ingen..</Detail>}
         </div>
     )
 }

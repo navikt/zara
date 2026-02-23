@@ -7,6 +7,6 @@ spec:
   cluster:
     majorVersion: '17'
     resources:
-      cpu: 10m
-      diskSize: 2Gi
-      memory: 128Mi
+      cpu: 250m
+      diskSize: 3Gi
+      memory: 256Mi

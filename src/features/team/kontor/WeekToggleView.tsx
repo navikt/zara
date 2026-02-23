@@ -5,20 +5,19 @@ import { Checkbox, CheckboxGroup, InlineMessage } from '@navikt/ds-react'
 import React, { ReactElement, useTransition } from 'react'
 import { getISOWeek, getISODay } from 'date-fns'
 
-import { OfficeUser, Location, WeekSchedule } from '@services/team-office/types'
+import { DefaultWeekSchedule } from '@services/team-office/types'
 import { toggleWeekDay } from '@features/team/kontor/kontor-actions'
 
 type Props = {
     week: number
-    me: OfficeUser
-    myWeek: WeekSchedule | null
+    myWeek: DefaultWeekSchedule
 }
 
-function WeekToggleView({ week, me, myWeek }: Props): ReactElement {
+function WeekToggleView({ week, myWeek }: Props): ReactElement {
     const currentWeekDay = getISODay(new Date()) - 1
     const isCurrentWeek = getISOWeek(new Date()) === week
     const [isPending, startTransition] = useTransition()
-    const [days, setDays] = React.useState<string[]>(() => createInitialToggles(me.default_loc, myWeek))
+    const [days, setDays] = React.useState<string[]>(() => createInitialToggles(myWeek))
     const handleChange = (values: string[]): void => {
         setDays(values)
         startTransition(async () => {
@@ -73,7 +72,7 @@ function WeekToggleView({ week, me, myWeek }: Props): ReactElement {
                     Fredag
                 </Checkbox>
             </CheckboxGroup>
-            {myWeek == null ? (
+            {myWeek.isDefault ? (
                 <InlineMessage status="info" className="border border-ax-border-info w-fit p-2 rounded-md mt-4">
                     Dette er standarddagene. Du har ikke gjort noen endringer.
                 </InlineMessage>
@@ -86,23 +85,13 @@ function WeekToggleView({ week, me, myWeek }: Props): ReactElement {
     )
 }
 
-function createInitialToggles(location: Location, myWeek: WeekSchedule | null): string[] {
-    if (!myWeek) {
-        switch (location) {
-            case 'office':
-                // Tuesday and wednesday are default office days
-                return ['1', '2']
-            case 'remote':
-                return []
-        }
-    }
-
+function createInitialToggles(myWeek: DefaultWeekSchedule): string[] {
     return [
-        myWeek?.mon ? '0' : null,
-        myWeek?.tue ? '1' : null,
-        myWeek?.wed ? '2' : null,
-        myWeek?.thu ? '3' : null,
-        myWeek?.fri ? '4' : null,
+        myWeek.mon ? '0' : null,
+        myWeek.tue ? '1' : null,
+        myWeek.wed ? '2' : null,
+        myWeek.thu ? '3' : null,
+        myWeek.fri ? '4' : null,
     ].filter(R.isNonNull)
 }
 

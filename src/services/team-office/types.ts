@@ -1,4 +1,13 @@
 export type WeekSchedule = {
+    mon: null
+    tue: null
+    wed: null
+    thu: null
+    fri: null
+}
+
+export type DefaultWeekSchedule = {
+    isDefault: boolean
     mon: boolean
     tue: boolean
     wed: boolean
@@ -23,3 +32,8 @@ export type OfficeUser = {
     name: string
     default_loc: Location
 }
+
+export type TeamWeek = {
+    user: OfficeUser
+    schedule: DefaultWeekSchedule
+}[]
