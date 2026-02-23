@@ -8,5 +8,5 @@ spec:
     majorVersion: '17'
     resources:
       cpu: 10m
-      diskSize: 1Gi
+      diskSize: 2Gi
       memory: 128Mi
