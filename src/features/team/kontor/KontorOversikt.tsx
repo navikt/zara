@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react'
 import { BodyShort, Detail, Heading } from '@navikt/ds-react'
 import Image from 'next/image'
-import { getISOWeek, setISODay, setISOWeek, startOfWeek, set, isAfter, isSameDay } from 'date-fns'
+import { getISOWeek, setISODay, setISOWeek, startOfWeek, set, isAfter, isSameDay, getISODay } from 'date-fns'
 import { TZDate } from '@date-fns/tz'
 import * as R from 'remeda'
 
@@ -40,6 +40,7 @@ async function KontorOversikt(): Promise<ReactElement> {
     const friday = set(setISODay(norwayNow, 5), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 })
     const isAfterTimeOnFriday = isAfter(norwayNow, friday)
     const isFriday = isSameDay(norwayNow, friday)
+    const todaysDay = getISODay(norwayNow) - 1
 
     return (
         <div className="relative">
@@ -52,7 +53,11 @@ async function KontorOversikt(): Promise<ReactElement> {
                         <BodyShort>Det er fredag i dag! Oppdater neste ukesplan allerede nå. :)</BodyShort>
                     </div>
                 )}
-                {isAfterTimeOnFriday ? <WhoThisWeek week={currentWeek + 1} /> : <WhoThisWeek week={currentWeek} />}
+                {isAfterTimeOnFriday ? (
+                    <WhoThisWeek label="Kontoret neste uke" week={currentWeek + 1} day={0} />
+                ) : (
+                    <WhoThisWeek label="Kontoret denne uka" week={currentWeek} day={todaysDay} />
+                )}
                 {!isAfterTimeOnFriday && <MyWeekView week={currentWeek} me={me} />}
                 <MyWeekView week={currentWeek + 1} me={me} />
                 <MyWeekView week={currentWeek + 2} me={me} />
@@ -84,20 +89,20 @@ async function MyWeekView({ week, me }: { week: number; me: OfficeUser }): Promi
     )
 }
 
-async function WhoThisWeek({ week }: { week: number }): Promise<ReactElement> {
+async function WhoThisWeek({ day, week, label }: { day: number; week: number; label: string }): Promise<ReactElement> {
     const teamWeek = await getTeamWeek(week)
 
     return (
         <div className="border border-ax-border-neutral-subtle bg-ax-bg-raised p-4 rounded-md grow max-w-prose">
             <Heading level="3" size="medium">
-                Kontoret denne uka
+                {label}
             </Heading>
             <div className="grid grid-cols-2 gap-3">
-                <Day teamWeek={teamWeek} short="mon" label="Mandag" />
-                <Day teamWeek={teamWeek} short="tue" label="Tirsdag" />
-                <Day teamWeek={teamWeek} short="wed" label="Onsdag" />
-                <Day teamWeek={teamWeek} short="thu" label="Torsdag" />
-                <Day teamWeek={teamWeek} short="fri" label="Fredag" />
+                {day <= 0 && <Day teamWeek={teamWeek} short="mon" label="Mandag" />}
+                {day <= 1 && <Day teamWeek={teamWeek} short="tue" label="Tirsdag" />}
+                {day <= 2 && <Day teamWeek={teamWeek} short="wed" label="Onsdag" />}
+                {day <= 3 && <Day teamWeek={teamWeek} short="thu" label="Torsdag" />}
+                {day <= 4 && <Day teamWeek={teamWeek} short="fri" label="Fredag" />}
             </div>
         </div>
     )
