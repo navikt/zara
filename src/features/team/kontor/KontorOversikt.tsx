@@ -58,9 +58,9 @@ async function KontorOversikt(): Promise<ReactElement> {
                 ) : (
                     <WhoThisWeek label="Kontoret denne uka" week={currentWeek} day={todaysDay} />
                 )}
-                {!isAfterTimeOnFriday && <MyWeekView week={currentWeek} me={me} />}
-                <MyWeekView week={currentWeek + 1} me={me} />
-                <MyWeekView week={currentWeek + 2} me={me} />
+                {!isAfterTimeOnFriday && <MyWeekView key={`n-${me.default_loc}`} week={currentWeek} me={me} />}
+                <MyWeekView key={`n1-${me.default_loc}`} week={currentWeek + 1} me={me} />
+                <MyWeekView key={`n2-${me.default_loc}`} week={currentWeek + 2} me={me} />
             </div>
             <div>
                 <EntireTeamView me={me} team={team} />
