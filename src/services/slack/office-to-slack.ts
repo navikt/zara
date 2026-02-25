@@ -101,7 +101,12 @@ function buildOfficeBlocks(office: OfficeUser[]): unknown[] {
     const ansattUrl = getKontorUrl('ansatt')
     const officeList =
         office.length > 0
-            ? office.map((u) => `• ${u.name}${u.default_loc !== 'office' ? ' :sparkles:' : ''}`).join('\n')
+            ? office
+                  .map((u) => {
+                      const shouldSparkle = u.default_loc !== 'office'
+                      return `• ${shouldSparkle ? ':sparkles: ' : ''}${u.name}${shouldSparkle ? ' :sparkles:' : ''}`
+                  })
+                  .join('\n')
             : null
 
     return [
