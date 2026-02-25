@@ -128,7 +128,13 @@ function Day({
             <Heading level="4" size="xsmall">
                 {label}
             </Heading>
-            {onThisDay.length > 0 ? <Detail spacing>{onThisDay.join(', ')}</Detail> : <Detail spacing>Ingen..</Detail>}
+            {onThisDay.length > 0 ? (
+                <Detail spacing>{onThisDay.join(', ')}</Detail>
+            ) : (
+                <Detail spacing aria-label="Ingen">
+                    👻
+                </Detail>
+            )}
         </div>
     )
 }
