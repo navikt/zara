@@ -120,7 +120,7 @@ function Day({
     const onThisDay = R.pipe(
         teamWeek,
         R.filter((it) => it.schedule[short]),
-        R.map((it) => it.user.name),
+        R.map((it) => `${it.user.name}${it.user.default_loc !== 'office' ? ' ✨' : ''}`),
     )
 
     return (
