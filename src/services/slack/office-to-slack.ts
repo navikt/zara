@@ -99,7 +99,10 @@ export async function postWeeklyRememberToUpdatePost(): Promise<{ postLink: stri
 function buildOfficeBlocks(office: OfficeUser[]): unknown[] {
     const dateLabel = toReadableFullDate(new Date())
     const ansattUrl = getKontorUrl('ansatt')
-    const officeList = office.length > 0 ? office.map((u) => `• ${u.name}`).join('\n') : null
+    const officeList =
+        office.length > 0
+            ? office.map((u) => `• ${u.name}${u.default_loc !== 'office' ? ' :sparkles:' : ''}`).join('\n')
+            : null
 
     return [
         {
