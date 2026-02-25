@@ -5,12 +5,12 @@ import { ContactableUserFeedback, InSituFeedback } from '@navikt/syk-zara/feedba
 
 import { createContactDetails } from '@dev/test-data'
 import { clearDevelopmentFeedback, seedDevelopmentFeedback } from '@dev/seed-valkey'
-import { seedDevelopmentPostgres } from '@dev/seed-postgres'
+import { developmentOnlyResetPostgres, seedDevelopmentPostgres } from '@dev/seed-postgres'
 import { bundledEnv } from '@lib/env'
 import { getFeedbackClient } from '@services/feedback/feedback-client'
 import { valkeyClient } from '@services/db/valkey/production-valkey'
 import { postDailySummary } from '@services/slack/summary-to-slack'
-import { developmentOnlyResetPostgres, runMigrations } from '@services/db/postgres/migrations'
+import { runMigrations } from '@services/db/postgres/migrations'
 import { pgClient } from '@services/db/postgres/production-pg'
 import { postDailyOfficeSummary, postWeeklyRememberToUpdatePost } from '@services/slack/office-to-slack'
 
@@ -34,6 +34,11 @@ export async function POST(_: Request, { params }: RouteContext<'/api/internal/d
         case 'debug-cron-office-weekly': {
             const { postLink } = await postWeeklyRememberToUpdatePost()
             return Response.json({ message: `Weekly office cron executed!`, link: postLink }, { status: 201 })
+        }
+        case 'pg-migrations': {
+            await runMigrations()
+
+            return Response.json({ message: `Migrations executed!` }, { status: 201 })
         }
         case 'pg-reset': {
             const client = await pgClient()

@@ -8,8 +8,9 @@ import { pgClient } from '@services/db/postgres/production-pg'
 import { validateUserSession } from '@services/auth/auth'
 import { raise } from '@lib/ts'
 import { updateTodaysOfficeSummaryIfNeeded } from '@services/slack/office-to-slack'
+import { Location } from '@services/team-office/types'
 
-export async function registerKontor(defaultLoc: 'office' | 'remote'): Promise<void> {
+export async function registerKontor(newLocation: Location): Promise<void> {
     const user = await validateUserSession()
     const client = await pgClient()
 
@@ -17,7 +18,7 @@ export async function registerKontor(defaultLoc: 'office' | 'remote'): Promise<v
         `INSERT INTO users (user_id, name, default_loc)
          VALUES ($1, $2, $3)
          ON CONFLICT (user_id) DO UPDATE SET name = EXCLUDED.name, default_loc = EXCLUDED.default_loc`,
-        [user.userId, user.name, defaultLoc],
+        [user.userId, user.name, newLocation],
     )
 
     revalidatePath('/team/kontor')

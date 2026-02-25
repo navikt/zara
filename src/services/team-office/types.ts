@@ -15,7 +15,7 @@ export type DefaultWeekSchedule = {
     fri: boolean
 }
 
-export type Location = 'office' | 'remote'
+export type Location = 'office' | 'remote' | 'away'
 
 export type CronPost = {
     id: string

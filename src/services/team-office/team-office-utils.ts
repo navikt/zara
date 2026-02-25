@@ -22,6 +22,7 @@ function defaultSchedule(location: Location): DefaultWeekSchedule {
         case 'office':
             return { isDefault: true, mon: false, tue: true, wed: true, thu: false, fri: false }
         case 'remote':
+        case 'away':
             return { isDefault: true, mon: false, tue: false, wed: false, thu: false, fri: false }
     }
 }

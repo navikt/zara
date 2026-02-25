@@ -13,7 +13,7 @@ type Props = {
 }
 
 export function EntireTeamView({ me, team }: Props): ReactElement {
-    const [office, remote] = R.partition(team, (member) => member.default_loc === 'office')
+    const { office, remote, away } = R.groupBy(team, (member) => member.default_loc)
     const [isPending, startTransition] = useTransition()
 
     return (
@@ -22,7 +22,7 @@ export function EntireTeamView({ me, team }: Props): ReactElement {
                 FA1
             </Heading>
             <ul className="list-disc pl-5 mb-4">
-                {office.map((member) => (
+                {office?.map((member) => (
                     <li key={member.id}>{member.name}</li>
                 ))}
             </ul>
@@ -30,11 +30,23 @@ export function EntireTeamView({ me, team }: Props): ReactElement {
                 Remote
             </Heading>
             <ul className="list-disc pl-5">
-                {remote.map((member) => (
+                {remote?.map((member) => (
                     <li key={member.id}>{member.name}</li>
                 ))}
             </ul>
-            <div className="mt-4">
+            {away != null && (
+                <>
+                    <Heading level="4" size="small" spacing className="mt-4">
+                        Langtidsborte
+                    </Heading>
+                    <ul className="list-disc pl-5">
+                        {away.map((member) => (
+                            <li key={member.id}>{member.name}</li>
+                        ))}
+                    </ul>
+                </>
+            )}
+            <div className="mt-4 flex flex-col gap-2">
                 <Button
                     size="xsmall"
                     variant="secondary"
@@ -47,6 +59,19 @@ export function EntireTeamView({ me, team }: Props): ReactElement {
                     }}
                 >
                     Bytt meg til {me.default_loc === 'office' ? 'remote' : 'FA1'}-ansatt
+                </Button>
+                <Button
+                    size="xsmall"
+                    variant="secondary"
+                    className="w-full"
+                    loading={isPending}
+                    onClick={() => {
+                        startTransition(async () => {
+                            await registerKontor('away')
+                        })
+                    }}
+                >
+                    Sett meg som langtidsborte
                 </Button>
             </div>
         </div>

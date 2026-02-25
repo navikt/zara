@@ -1,6 +1,6 @@
 import { logger } from '@navikt/next-logger'
 import { Pool } from 'pg'
-import { subWeeks, addWeeks, getISOWeek, getISOWeekYear } from 'date-fns'
+import { addWeeks, getISOWeek, getISOWeekYear, subWeeks } from 'date-fns'
 
 import { bundledEnv } from '@lib/env'
 import { raise } from '@lib/ts'
@@ -29,6 +29,21 @@ export async function seedDevelopmentPostgres(client: Pool): Promise<void> {
     }
     await seedWeekSchedules(client)
     logger.info('Seeding postgres done!')
+}
+
+export function developmentOnlyResetPostgres(client: Pool): Promise<void> {
+    if (bundledEnv.runtimeEnv !== 'local') raise('What the HELL are you doing?')
+
+    return client
+        .query(
+            `
+        DROP TABLE IF EXISTS slack_cron_posts;
+        DROP TABLE IF EXISTS week_schedule;
+        DROP TABLE IF EXISTS users;
+        DROP TABLE IF EXISTS migrations;
+    `,
+        )
+        .then(() => logger.info('Postgres reset complete!'))
 }
 
 async function seedWeekSchedules(client: Pool): Promise<void> {
