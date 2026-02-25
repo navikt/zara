@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react'
-import { BodyShort, Detail, Heading } from '@navikt/ds-react'
+import { BodyShort, Detail, Heading, Tag } from '@navikt/ds-react'
 import Image from 'next/image'
 import { getISOWeek, setISODay, setISOWeek, startOfWeek, set, isAfter, isSameDay, getISODay } from 'date-fns'
 import { TZDate } from '@date-fns/tz'
@@ -120,16 +120,29 @@ function Day({
     const onThisDay = R.pipe(
         teamWeek,
         R.filter((it) => it.schedule[short]),
-        R.map((it) => `${it.user.name}${it.user.default_loc !== 'office' ? ' ✨' : ''}`),
+        R.map((it) => it.user),
     )
 
     return (
-        <div className="mt-4">
-            <Heading level="4" size="xsmall">
-                {label}
+        <div className="mt-4 border border-ax-border-info-subtle p-2 rounded-md">
+            <Heading level="4" size="xsmall" className="mb-1">
+                {label} ({onThisDay.length})
             </Heading>
+
             {onThisDay.length > 0 ? (
-                <Detail spacing>{onThisDay.join(', ')}</Detail>
+                <div className="flex gap-1 flex-wrap">
+                    {onThisDay.map((it) => (
+                        <Tag
+                            key={it.name}
+                            size="small"
+                            data-color="brand-blue"
+                            variant="moderate"
+                            icon={it.default_loc !== 'office' ? <span className="text-sm">✨</span> : undefined}
+                        >
+                            {it.name}
+                        </Tag>
+                    ))}
+                </div>
             ) : (
                 <Detail spacing aria-label="Ingen">
                     👻
