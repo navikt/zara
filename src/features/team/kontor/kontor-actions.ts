@@ -14,7 +14,19 @@ export async function registerKontor(newLocation: Location): Promise<void> {
     const user = await validateUserSession()
     const client = await pgClient()
 
-    await client.query(`UPDATE users SET default_loc = $2 WHERE user_id = $1`, [user.userId, newLocation])
+    const isNewUser = await client
+        .query('SELECT 1 FROM users WHERE user_id = $1', [user.userId])
+        .then((res) => res.rowCount === 0)
+
+    if (isNewUser) {
+        await client.query(`INSERT INTO users (user_id, name, default_loc) VALUES ($1, $2, $3)`, [
+            user.userId,
+            user.name,
+            newLocation,
+        ])
+    } else {
+        await client.query(`UPDATE users SET default_loc = $2 WHERE user_id = $1`, [user.userId, newLocation])
+    }
 
     revalidatePath('/team/kontor')
 }
