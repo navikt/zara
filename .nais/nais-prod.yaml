@@ -20,10 +20,8 @@ spec:
       tenant: nav.no
       claims:
         groups:
-          # EntraAD: nais-team-tsm
-          - id: '35c70ac7-e8e6-4cec-933b-86106a97c0d4'
-          # EntraAD: teamsykmelding
-          - id: '3a541678-8965-45c4-844b-486a8b9b94a3'
+          # EntraAD: Team Symfoni
+          - id: '74d71639-b6e1-487b-86e4-ca902a433f7c'
     sidecar:
       enabled: true
       autoLogin: true
