@@ -8,7 +8,8 @@ import JobStatusIcon from '@features/syk-inn/admin/JobStatusIcon'
 import { toReadableDateTime } from '@lib/date'
 import { JobStatus, JobStatusResponse } from '@services/syk-inn-api/jobs/types'
 import { cn } from '@lib/tw'
-import { startJob, stopJob } from '@features/syk-inn/admin/syk-inn-api-admin-actions'
+import { refetchJobs, startJob, stopJob } from '@features/syk-inn/admin/syk-inn-api-admin-actions'
+import useInterval from '@lib/hooks/useInterval'
 
 const STATUS_PRECEDENCE: JobStatus[] = ['FAILED', 'STOPPED', 'NOT_STARTED', 'RUNNING']
 
@@ -20,6 +21,10 @@ function JobPanel({ job }: Props): ReactElement {
     const [drawerOpen, setDrawerOpen] = useState(false)
     const worstState = STATUS_PRECEDENCE.find((status) => job.runners.some((pod) => pod.state === status))
     const [pending, startTransition] = useTransition()
+
+    useInterval(() => {
+        refetchJobs()
+    }, 30_000)
 
     return (
         <div className="flex">

@@ -16,7 +16,7 @@ async function SykInnApiJobs(): Promise<ReactElement> {
                 </Heading>
                 <RefreshButton />
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 pr-8">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 pr-8">
                 {jobs.map((job) => (
                     <JobPanel key={job.name} job={job} />
                 ))}
