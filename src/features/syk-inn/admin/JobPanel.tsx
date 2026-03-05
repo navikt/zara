@@ -25,16 +25,22 @@ function JobPanel({ job }: Props): ReactElement {
         <div className="flex">
             <div
                 key={job.name}
-                className="border border-ax-border-neutral-subtle bg-ax-bg-raised p-4 rounded-md rounded-r-none grow max-w-prose"
+                className="border border-ax-border-neutral-subtle bg-ax-bg-raised p-4 rounded-md rounded-r-none grow"
             >
                 <div className="flex items-start justify-between gap-4">
                     <Heading level="3" size="small" className="flex items-center gap-2" spacing>
-                        {worstState && <JobStatusIcon status={worstState} />}
+                        {worstState && (
+                            <div className="self-start mt-2">
+                                <JobStatusIcon status={worstState} />
+                            </div>
+                        )}
                         {job.name} ({job.runners.length} runners)
                     </Heading>
-                    <div className="flex flex-col text-sm -mt-1">
-                        <div>Current state: {worstState}</div>
-                        <div className="-mt-1">Desired state: {job.desiredState}</div>
+                    <div className="text-sm -mt-1 grid grid-cols-2 grid-rows-[1rem_1rem] gap-x-1">
+                        <div className="text-right">State:</div>
+                        <div>{worstState}</div>
+                        <div className="text-right">Desired:</div>
+                        <div>{job.desiredState}</div>
                     </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -49,7 +55,7 @@ function JobPanel({ job }: Props): ReactElement {
                                 <div className="self-start mt-1.5">
                                     <JobStatusIcon status={runner.state} />
                                 </div>
-                                <div className="font-bold">{runner.runner}</div>
+                                <div className="font-bold truncate min-w-0">{runner.runner}</div>
                             </div>
                             <Detail>Last updated: {toReadableDateTime(runner.updatedAt)}</Detail>
                         </div>
@@ -65,11 +71,11 @@ function JobPanel({ job }: Props): ReactElement {
                         <motion.div
                             className={cn('bg-ax-bg-sunken overflow-hidden')}
                             initial={{ width: 0, opacity: 0, scale: 0.95 }}
-                            animate={{ width: 176, opacity: 1, scale: 1 }}
+                            animate={{ width: 128, opacity: 1, scale: 1 }}
                             exit={{ width: 0, opacity: 0, scale: 0.95 }}
                             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                         >
-                            <div className="w-44 p-2 pl-3">
+                            <div className="w-32 p-2 pl-3">
                                 <Heading level="4" size="xsmall" className="text-center" spacing>
                                     Kontrollpanel
                                 </Heading>

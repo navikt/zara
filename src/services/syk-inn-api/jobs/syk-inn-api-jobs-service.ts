@@ -39,6 +39,23 @@ export async function getSykInnApiJobsStatus(): Promise<JobStatusResponse[]> {
                     },
                 ],
             },
+            {
+                name: 'ANOTHER_JOB' as 'SYKMELDING_CONSUMER',
+                updatedAt: new Date().toISOString(),
+                desiredState: 'STOPPED',
+                runners: [
+                    {
+                        runner: 'pod-189b94',
+                        state: 'STOPPED',
+                        updatedAt: new Date().toISOString(),
+                    },
+                    {
+                        runner: 'pod-6cb5f477',
+                        state: 'STOPPED',
+                        updatedAt: new Date().toISOString(),
+                    },
+                ],
+            },
         ]
     }
 
