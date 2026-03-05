@@ -1,4 +1,6 @@
 import { logger } from '@navikt/next-logger'
+import { getToken, requestOboToken } from '@navikt/oasis'
+import { headers } from 'next/headers'
 
 import { bundledEnv } from '@lib/env'
 import { JobStatusResponse, UpdateJobPayload } from '@services/syk-inn-api/jobs/types'
@@ -59,9 +61,10 @@ export async function getSykInnApiJobsStatus(): Promise<JobStatusResponse[]> {
         ]
     }
 
+    const oboToken = await getSykInnOboToken()
     const response = await fetch(SYK_INN_API_JOBS_API, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${oboToken}` },
     })
 
     if (!response.ok) {
@@ -79,9 +82,10 @@ export async function changeJobStatus(jobName: string, desiredState: 'START' | '
         return
     }
 
+    const oboToken = await getSykInnOboToken()
     const response = await fetch(`${SYK_INN_API_JOBS_API}/${jobName}/status`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${oboToken}` },
         body: JSON.stringify({
             desiredState,
             updatedBy: user.userId,
@@ -93,4 +97,20 @@ export async function changeJobStatus(jobName: string, desiredState: 'START' | '
     }
 
     return response.json()
+}
+
+export async function getSykInnOboToken(): Promise<string> {
+    const token = getToken(await headers())
+    if (!token) throw new Error('No token found')
+
+    if (bundledEnv.runtimeEnv === 'local') {
+        raise('Why are you trying to exchange a token in local environment?')
+    }
+
+    const tokenSet = await requestOboToken(token, `api://${bundledEnv.runtimeEnv}.tsm.syk-inn-api-ktor/.default`)
+    if (!tokenSet.ok) {
+        throw new Error(`Unable to exchange OBO token: ${tokenSet.error.message}`, { cause: tokenSet.error })
+    }
+
+    return tokenSet.token
 }
