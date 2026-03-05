@@ -14,7 +14,6 @@ export type JobStatusResponse = {
 }
 
 export type UpdateJobPayload = {
-    jobName: string
     desiredState: 'START' | 'STOP'
     updatedBy: string
 }

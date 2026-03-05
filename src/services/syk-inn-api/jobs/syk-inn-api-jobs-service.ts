@@ -5,7 +5,7 @@ import { JobStatusResponse, UpdateJobPayload } from '@services/syk-inn-api/jobs/
 import { User } from '@services/auth/user'
 import { raise } from '@lib/ts'
 
-const SYK_INN_API_JOBS_API = 'http://syk-inn-api/internal/admin/jobs'
+const SYK_INN_API_JOBS_API = 'http://syk-inn-api-ktor/internal/admin/jobs'
 
 export async function getSykInnApiJobsStatus(): Promise<JobStatusResponse[]> {
     if (bundledEnv.runtimeEnv === 'local') {
@@ -62,11 +62,10 @@ export async function changeJobStatus(jobName: string, desiredState: 'START' | '
         return
     }
 
-    const response = await fetch(SYK_INN_API_JOBS_API, {
+    const response = await fetch(`${SYK_INN_API_JOBS_API}/${jobName}/status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            jobName,
             desiredState,
             updatedBy: user.userId,
         } satisfies UpdateJobPayload),
