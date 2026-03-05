@@ -74,9 +74,9 @@ export async function getSykInnApiJobsStatus(): Promise<JobStatusResponse[]> {
     return response.json()
 }
 
-export async function changeJobStatus(jobName: string, desiredState: 'START' | 'STOP', user: User): Promise<void> {
+export async function changeJobStatus(jobName: string, state: 'START' | 'STOP', user: User): Promise<void> {
     if (bundledEnv.runtimeEnv === 'local') {
-        logger.warn(`Mock change job status: ${jobName} -> ${desiredState} by user ${user.userId}`)
+        logger.warn(`Mock change job status: ${jobName} -> ${state} by user ${user.userId}`)
 
         await new Promise((resolve) => setTimeout(resolve, 1000))
         return
@@ -87,8 +87,7 @@ export async function changeJobStatus(jobName: string, desiredState: 'START' | '
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${oboToken}` },
         body: JSON.stringify({
-            desiredState,
-            updatedBy: user.userId,
+            state: state,
         } satisfies UpdateJobPayload),
     })
 
