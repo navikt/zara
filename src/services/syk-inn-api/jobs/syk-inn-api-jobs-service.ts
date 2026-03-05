@@ -18,22 +18,22 @@ export async function getSykInnApiJobsStatus(): Promise<JobStatusResponse[]> {
                 desiredState: 'RUNNING',
                 runners: [
                     {
-                        runner: 'Pod-1',
+                        runner: 'pod-189b94fd',
                         state: 'RUNNING',
                         updatedAt: new Date().toISOString(),
                     },
                     {
-                        runner: 'Pod-2',
+                        runner: 'pod-6cb5f477',
                         state: 'FAILED',
                         updatedAt: new Date().toISOString(),
                     },
                     {
-                        runner: 'Pod-3',
+                        runner: 'pod-9c723853',
                         state: 'STOPPED',
                         updatedAt: new Date().toISOString(),
                     },
                     {
-                        runner: 'Pod-4',
+                        runner: 'pod-234cea34-b6b8-4528',
                         state: 'NOT_STARTED',
                         updatedAt: new Date().toISOString(),
                     },

@@ -39,10 +39,17 @@ function JobPanel({ job }: Props): ReactElement {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                     {job.runners.map((runner) => (
-                        <div key={runner.runner} className="p-2 flex flex-col bg-ax-bg-sunken rounded-md">
-                            <div className="flex gap-1 items-center mb-2">
-                                <JobStatusIcon status={runner.state} />
-                                {runner.runner} {runner.state}
+                        <div
+                            key={runner.runner}
+                            className={cn('p-2 flex flex-col bg-ax-bg-sunken rounded-md', {
+                                'border-2 border-dotted border-ax-danger-500': runner.state === 'FAILED',
+                            })}
+                        >
+                            <div className="flex gap-1.5 items-center mb-2">
+                                <div className="self-start mt-1.5">
+                                    <JobStatusIcon status={runner.state} />
+                                </div>
+                                <div className="font-bold">{runner.runner}</div>
                             </div>
                             <Detail>Last updated: {toReadableDateTime(runner.updatedAt)}</Detail>
                         </div>

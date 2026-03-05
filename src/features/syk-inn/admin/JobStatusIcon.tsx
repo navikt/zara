@@ -1,14 +1,17 @@
 import React, { ReactElement } from 'react'
+import { Tooltip } from '@navikt/ds-react'
 
 import { JobStatus } from '@services/syk-inn-api/jobs/types'
 import { cn } from '@lib/tw'
 
 function JobStatusIcon({ status }: { status: JobStatus }): ReactElement {
     return (
-        <div className="relative size-3">
-            <Dot status={status} />
-            {status !== 'RUNNING' && <Dot status={status} ping />}
-        </div>
+        <Tooltip content={status}>
+            <div className="relative size-3 shrink-0">
+                <Dot status={status} />
+                {status !== 'RUNNING' && <Dot status={status} ping />}
+            </div>
+        </Tooltip>
     )
 }
 
