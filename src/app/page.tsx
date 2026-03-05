@@ -2,9 +2,11 @@
 
 import React, { ReactElement } from 'react'
 import { Heading, LinkCard } from '@navikt/ds-react'
-import { BandageIcon, Buildings3Icon, GavelSoundBlockIcon, NotePencilDashIcon } from '@navikt/aksel-icons'
+import { BandageIcon, Buildings3Icon, GavelSoundBlockIcon, NotePencilDashIcon, SandboxIcon } from '@navikt/aksel-icons'
 import Link from 'next/link'
 import { PageBlock } from '@navikt/ds-react/Page'
+
+import { bundledEnv } from '@lib/env'
 
 function Page(): ReactElement {
     return (
@@ -45,6 +47,21 @@ function Page(): ReactElement {
                                 Se hvilke pilotbrukere som har signert bruksvilkår.
                             </LinkCard.Description>
                         </LinkCard>
+                        {bundledEnv.runtimeEnv !== 'prod-gcp' && (
+                            <LinkCard>
+                                <LinkCard.Icon>
+                                    <SandboxIcon fontSize="2rem" aria-hidden />
+                                </LinkCard.Icon>
+                                <LinkCard.Title>
+                                    <LinkCard.Anchor asChild aria-disabled>
+                                        <Link href="/syk-inn/admin">Administrasjon</Link>
+                                    </LinkCard.Anchor>
+                                </LinkCard.Title>
+                                <LinkCard.Description>
+                                    Se og kontroller syk-inn og API i produksjon
+                                </LinkCard.Description>
+                            </LinkCard>
+                        )}
                     </div>
                 </div>
                 <div className="bg-ax-bg-raised p-4 rounded-md w-full">

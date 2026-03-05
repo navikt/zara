@@ -1,1 +1,5 @@
-export type User = { oid: string; name: string; userId: string }
+export type User = {
+    oid: string
+    name: string
+    userId: string
+}

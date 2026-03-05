@@ -57,6 +57,7 @@ spec:
         - host: cdn.nav.no
         - host: api.slack.com
       rules:
+        - application: syk-inn-api-ktor
         - application: logging
           namespace: nais-system
   resources:
