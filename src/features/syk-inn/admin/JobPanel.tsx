@@ -39,7 +39,7 @@ function JobPanel({ job }: Props): ReactElement {
                                 <JobStatusIcon status={worstState} />
                             </div>
                         )}
-                        {job.name} ({job.runners.length} runners)
+                        {job.name}
                     </Heading>
                     <div className="text-sm -mt-1 grid grid-cols-2 grid-rows-[1rem_1rem] gap-x-1">
                         <div className="text-right">State:</div>
@@ -66,8 +66,11 @@ function JobPanel({ job }: Props): ReactElement {
                         </div>
                     ))}
                 </div>
-                <div suppressHydrationWarning className="mt-2 -mb-2 mr-2 flex justify-end">
-                    <Detail>Sist hentet: {toReadableDateTime(new Date(), true)}</Detail>
+                <div className="mt-2 -mb-2 flex justify-between items-center">
+                    <div className="ml-0.5">{job.runners.length} runners</div>
+                    <Detail className="mr-2" suppressHydrationWarning>
+                        Sist hentet: {toReadableDateTime(new Date(), true)}
+                    </Detail>
                 </div>
             </div>
             <div className="relative flex">
