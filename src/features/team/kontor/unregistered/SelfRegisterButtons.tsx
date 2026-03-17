@@ -13,7 +13,7 @@ function SelfRegisterButtons(): ReactElement {
         <div className="flex gap-4 justify-center">
             <Button
                 data-color="brand-magenta"
-                icon={<BedIcon />}
+                icon={<BedIcon aria-hidden />}
                 loading={isPending}
                 onClick={() => startTransition(async () => registerKontor('remote'))}
             >
@@ -21,7 +21,7 @@ function SelfRegisterButtons(): ReactElement {
             </Button>
             <Button
                 data-color="brand-blue"
-                icon={<Buildings3Icon />}
+                icon={<Buildings3Icon aria-hidden />}
                 loading={isPending}
                 onClick={() => startTransition(async () => registerKontor('office'))}
             >

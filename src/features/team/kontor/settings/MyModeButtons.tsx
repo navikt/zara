@@ -1,7 +1,7 @@
 'use client'
 
 import React, { ReactElement, useState, useTransition } from 'react'
-import { Button, Switch } from '@navikt/ds-react'
+import { Button, Label, Switch } from '@navikt/ds-react'
 
 import { nukeMe, registerKontor } from '@features/team/kontor/kontor-actions'
 import { OfficeUser } from '@services/team-office/types'
@@ -16,19 +16,35 @@ function MyModeButtons({ me }: Props): ReactElement {
 
     return (
         <div className="mt-4 flex flex-col gap-2">
-            <div className="flex gap-3">
+            <Label>Sett meg som</Label>
+            <div className="flex flex-col gap-3 sm:flex-row">
                 <Button
                     variant="secondary"
                     className="w-full"
                     loading={isPending}
                     onClick={() => {
                         startTransition(async () => {
-                            await registerKontor(me.default_loc === 'office' ? 'remote' : 'office')
+                            await registerKontor('office')
                         })
                     }}
+                    disabled={me.default_loc === 'office'}
                 >
-                    Bytt meg til {me.default_loc === 'office' ? 'remote' : 'FA1'}-ansatt
+                    FA1-ansatt
                 </Button>
+                <Button
+                    variant="secondary"
+                    className="w-full"
+                    loading={isPending}
+                    onClick={() => {
+                        startTransition(async () => {
+                            await registerKontor('remote')
+                        })
+                    }}
+                    disabled={me.default_loc === 'remote'}
+                >
+                    Remote-ansatt
+                </Button>
+
                 <Button
                     variant="secondary"
                     className="w-full"
@@ -39,8 +55,9 @@ function MyModeButtons({ me }: Props): ReactElement {
                             await registerKontor('away')
                         })
                     }}
+                    disabled={me.default_loc === 'away'}
                 >
-                    Sett meg som langtidsborte
+                    Langtidsborte
                 </Button>
             </div>
             <div className="border-2 border-dotted border-ax-border-danger rounded-md px-2 flex gap-3 items-center mt-2">
