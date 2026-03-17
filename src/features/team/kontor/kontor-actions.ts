@@ -3,6 +3,7 @@
 import { getISOWeekYear } from 'date-fns'
 import { revalidatePath } from 'next/cache'
 import { after } from 'next/server'
+import { logger } from '@navikt/next-logger'
 
 import { pgClient } from '@services/db/postgres/production-pg'
 import { validateUserSession } from '@services/auth/auth'
@@ -29,6 +30,7 @@ export async function registerKontor(newLocation: Location): Promise<void> {
     }
 
     revalidatePath('/team/kontor')
+    revalidatePath('/team/kontor/settings')
 }
 
 /**
@@ -67,4 +69,19 @@ export async function toggleWeekDay(week: number, daysOn: string[]): Promise<voi
     })
 
     revalidatePath('/team/kontor')
+}
+
+export async function nukeMe(): Promise<void> {
+    const { userId } = await validateUserSession()
+    const client = await pgClient()
+
+    await client.query('BEGIN')
+    await client.query('DELETE FROM week_schedule WHERE user_id = (SELECT id FROM users WHERE user_id = $1)', [userId])
+    await client.query('DELETE FROM users WHERE user_id = $1', [userId])
+    await client.query('COMMIT')
+
+    logger.info(`User ${userId} successfully deleted themselves.`)
+
+    revalidatePath('/team/kontor')
+    revalidatePath('/team/kontor/settings')
 }

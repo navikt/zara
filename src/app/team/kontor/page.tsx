@@ -1,19 +1,22 @@
 import React, { ReactElement } from 'react'
-import { Heading } from '@navikt/ds-react'
 import { PageBlock } from '@navikt/ds-react/Page'
-import { Buildings3Icon } from '@navikt/aksel-icons'
+import { Buildings3Icon, CogIcon } from '@navikt/aksel-icons'
 
 import KontorOversikt from '@features/team/kontor/KontorOversikt'
+import { AkselNextLinkButton } from '@components/AkselNextLink'
+import PageHeader from '@components/page/PageHeader'
 
 function Page(): ReactElement {
     return (
         <PageBlock as="main" width="2xl" gutters>
-            <div className="flex justify-between items-start">
-                <Heading level="2" size="large" spacing className="flex gap-1 items-center">
-                    <Buildings3Icon />
-                    Kontordager
-                </Heading>
-            </div>
+            <PageHeader heading="Kontordager" Icon={Buildings3Icon}>
+                <AkselNextLinkButton
+                    title="Innstillinger"
+                    href="/team/kontor/settings"
+                    icon={<CogIcon />}
+                    variant="secondary"
+                />
+            </PageHeader>
             <KontorOversikt />
         </PageBlock>
     )

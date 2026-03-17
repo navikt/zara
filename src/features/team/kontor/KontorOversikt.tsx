@@ -1,41 +1,23 @@
 import React, { ReactElement } from 'react'
 import { BodyShort, Detail, Heading, Tag } from '@navikt/ds-react'
-import Image from 'next/image'
 import { getISOWeek, setISODay, setISOWeek, startOfWeek, set, isAfter, isSameDay, getISODay } from 'date-fns'
 import { TZDate } from '@date-fns/tz'
 import * as R from 'remeda'
 
-import { getMyself, getMyWeek, getTeam, getTeamWeek } from '@services/team-office/team-office-service'
-import { zaraImages } from '@images/zaras'
-import SelfRegisterButtons from '@features/team/kontor/SelfRegisterButtons'
+import { getMyself, getMyWeek, getTeamWeek } from '@services/team-office/team-office-service'
 import { toReadableDate } from '@lib/date'
 import WeekToggleView from '@features/team/kontor/WeekToggleView'
 import { OfficeUser, TeamWeek, WeekSchedule } from '@services/team-office/types'
-import { EntireTeamView } from '@features/team/kontor/EntireTeamView'
+import Unregistered from '@features/team/kontor/unregistered/Unregistered'
 
 async function KontorOversikt(): Promise<ReactElement> {
     const me = await getMyself()
 
     if ('unregistered' in me) {
-        return (
-            <div className="flex gap-6 items-center ">
-                <div>
-                    <Image src={zaraImages.happy.src} width={256} height={256} alt="Zara!" />
-                </div>
-                <div className="flex flex-col items-center justify-center">
-                    <Heading level="3" size="medium" spacing className="mb-8">
-                        Hei! Du har ikke registrert deg i teamet enda
-                    </Heading>
-                    <SelfRegisterButtons />
-                </div>
-            </div>
-        )
+        return <Unregistered />
     }
 
-    const team = await getTeam()
     const currentWeek = getISOWeek(new Date())
-    const location = me.default_loc === 'office' ? 'FA1' : 'remote'
-
     const norwayNow = TZDate.tz('Europe/Oslo')
     const friday = set(setISODay(norwayNow, 5), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 })
     const isAfterTimeOnFriday = isAfter(norwayNow, friday)
@@ -44,9 +26,6 @@ async function KontorOversikt(): Promise<ReactElement> {
 
     return (
         <div className="relative">
-            <Detail className="-mt-4 mb-4">
-                Hei {me.name}! Du er registrert som {location}-ansatt. {`<3`}
-            </Detail>
             <div className="flex flex-col gap-6">
                 {isFriday && isAfterTimeOnFriday && (
                     <div className="max-w-prose">
@@ -61,9 +40,6 @@ async function KontorOversikt(): Promise<ReactElement> {
                 {!isAfterTimeOnFriday && <MyWeekView key={`n-${me.default_loc}`} week={currentWeek} me={me} />}
                 <MyWeekView key={`n1-${me.default_loc}`} week={currentWeek + 1} me={me} />
                 <MyWeekView key={`n2-${me.default_loc}`} week={currentWeek + 2} me={me} />
-            </div>
-            <div>
-                <EntireTeamView me={me} team={team} />
             </div>
         </div>
     )
