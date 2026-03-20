@@ -13,7 +13,7 @@ export async function redactFeedbackContent(
     id: string,
     redactLocations: [number, number][],
 ): Promise<{ redacted: boolean }> {
-    const user = await validateUserSession()
+    const user = await validateUserSession('TILBAKEMELDINGER')
     const client = getFeedbackClient()
     const feedback = await client.byId(id)
     if (!feedback) unauthorized()

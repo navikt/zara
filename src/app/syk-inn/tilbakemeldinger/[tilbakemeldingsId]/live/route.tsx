@@ -8,7 +8,7 @@ export async function GET(
     { params }: RouteContext<'/syk-inn/tilbakemeldinger/[tilbakemeldingsId]/live'>,
 ): Promise<Response> {
     const { tilbakemeldingsId } = await params
-    await validateUserSession()
+    await validateUserSession('TILBAKEMELDINGER')
     const encoder = new TextEncoder()
 
     let closed = false

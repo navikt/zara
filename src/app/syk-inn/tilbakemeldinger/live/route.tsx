@@ -5,7 +5,7 @@ import { getFeedbackClient } from '@services/feedback/feedback-client'
 import { subscriberValkeyClient } from '@services/db/valkey/production-valkey'
 
 export async function GET(): Promise<Response> {
-    await validateUserSession()
+    await validateUserSession('TILBAKEMELDINGER')
     const encoder = new TextEncoder()
 
     let closed = false

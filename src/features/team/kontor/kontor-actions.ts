@@ -12,7 +12,7 @@ import { updateTodaysOfficeSummaryIfNeeded } from '@services/slack/office-to-sla
 import { Location } from '@services/team-office/types'
 
 export async function registerKontor(newLocation: Location): Promise<void> {
-    const user = await validateUserSession()
+    const user = await validateUserSession('TEAM_MEMBER')
     const client = await pgClient()
 
     const isNewUser = await client
@@ -39,7 +39,7 @@ export async function registerKontor(newLocation: Location): Promise<void> {
  * '0' = Monday, etc
  */
 export async function toggleWeekDay(week: number, daysOn: string[]): Promise<void> {
-    const user = await validateUserSession()
+    const user = await validateUserSession('TEAM_MEMBER')
     const client = await pgClient()
 
     const days = ['mon', 'tue', 'wed', 'thu', 'fri']
@@ -72,7 +72,7 @@ export async function toggleWeekDay(week: number, daysOn: string[]): Promise<voi
 }
 
 export async function nukeMe(): Promise<void> {
-    const { userId } = await validateUserSession()
+    const { userId } = await validateUserSession('TEAM_MEMBER')
     const client = await pgClient()
 
     await client.query('BEGIN')

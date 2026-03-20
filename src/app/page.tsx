@@ -1,91 +1,19 @@
-'use client'
-
 import React, { ReactElement } from 'react'
-import { Heading, LinkCard } from '@navikt/ds-react'
-import { BandageIcon, Buildings3Icon, GavelSoundBlockIcon, NotePencilDashIcon, SandboxIcon } from '@navikt/aksel-icons'
-import Link from 'next/link'
+import { Heading } from '@navikt/ds-react'
 import { PageBlock } from '@navikt/ds-react/Page'
 
-import { bundledEnv } from '@lib/env'
+import { userFeatures } from '@services/auth/access-control'
+import LandingPage from '@features/landing-page/LandingPage'
 
-function Page(): ReactElement {
+async function Page(): Promise<ReactElement> {
+    const features = await userFeatures()
+
     return (
         <PageBlock as="main" width="2xl" gutters>
             <Heading level="2" size="large" spacing>
                 Hva vil du gjøre i dag?
             </Heading>
-            <div className="flex flex-col gap-6">
-                <div className="bg-ax-bg-raised p-4 rounded-md w-full">
-                    <Heading level="3" size="large" spacing className="flex items-center gap-3">
-                        <BandageIcon aria-hidden className="-mb-0.5" />
-                        syk-inn
-                    </Heading>
-                    <div className="gap-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                        <LinkCard>
-                            <LinkCard.Icon>
-                                <NotePencilDashIcon fontSize="2rem" aria-hidden />
-                            </LinkCard.Icon>
-                            <LinkCard.Title>
-                                <LinkCard.Anchor asChild>
-                                    <Link href="/syk-inn/tilbakemeldinger">Tilbakemeldinger</Link>
-                                </LinkCard.Anchor>
-                            </LinkCard.Title>
-                            <LinkCard.Description>
-                                Oversikt over tilbakemeldinger fra brukere i syk-inn-applikasjonen.
-                            </LinkCard.Description>
-                        </LinkCard>
-                        <LinkCard>
-                            <LinkCard.Icon>
-                                <GavelSoundBlockIcon fontSize="2rem" aria-hidden />
-                            </LinkCard.Icon>
-                            <LinkCard.Title>
-                                <LinkCard.Anchor asChild aria-disabled>
-                                    <Link href="/syk-inn/bruksvilkar">Bruksvilkår</Link>
-                                </LinkCard.Anchor>
-                            </LinkCard.Title>
-                            <LinkCard.Description>
-                                Se hvilke pilotbrukere som har signert bruksvilkår.
-                            </LinkCard.Description>
-                        </LinkCard>
-                        {bundledEnv.runtimeEnv !== 'prod-gcp' && (
-                            <LinkCard>
-                                <LinkCard.Icon>
-                                    <SandboxIcon fontSize="2rem" aria-hidden />
-                                </LinkCard.Icon>
-                                <LinkCard.Title>
-                                    <LinkCard.Anchor asChild aria-disabled>
-                                        <Link href="/syk-inn/admin">Administrasjon</Link>
-                                    </LinkCard.Anchor>
-                                </LinkCard.Title>
-                                <LinkCard.Description>
-                                    Se og kontroller syk-inn og API i produksjon
-                                </LinkCard.Description>
-                            </LinkCard>
-                        )}
-                    </div>
-                </div>
-                <div className="bg-ax-bg-raised p-4 rounded-md w-full">
-                    <Heading level="3" size="large" spacing className="flex items-center gap-3">
-                        <BandageIcon aria-hidden className="-mb-0.5" />
-                        Team
-                    </Heading>
-                    <div className="gap-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                        <LinkCard>
-                            <LinkCard.Icon>
-                                <Buildings3Icon fontSize="2rem" aria-hidden />
-                            </LinkCard.Icon>
-                            <LinkCard.Title>
-                                <LinkCard.Anchor asChild>
-                                    <Link href="/team/kontor">Kontordager</Link>
-                                </LinkCard.Anchor>
-                            </LinkCard.Title>
-                            <LinkCard.Description>
-                                Oversikt over tilbakemeldinger fra brukere i syk-inn-applikasjonen.
-                            </LinkCard.Description>
-                        </LinkCard>
-                    </div>
-                </div>
-            </div>
+            <LandingPage features={features} />
         </PageBlock>
     )
 }

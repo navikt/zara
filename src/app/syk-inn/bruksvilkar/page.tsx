@@ -11,7 +11,7 @@ async function Page(): Promise<ReactElement> {
     /**
      * No fanciness or pagination for now.
      */
-    const user = await validateUserSession()
+    const user = await validateUserSession('BRUKSVILKÅR')
 
     const client = getBruksvilkarClient()
     const bruksvilkar = await client.all()

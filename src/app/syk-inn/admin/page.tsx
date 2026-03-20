@@ -7,7 +7,7 @@ import LiveUsersList from '@components/live-view/LiveUsersList'
 import { validateUserSession } from '@services/auth/auth'
 
 async function Page(): Promise<ReactElement> {
-    const user = await validateUserSession()
+    const user = await validateUserSession('UTVIKLER')
 
     return (
         <PageBlock as="main" width="2xl" gutters>
