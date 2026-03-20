@@ -10,7 +10,7 @@ import { raise } from '@lib/ts'
 import { notifySlack } from '@services/slack/feedback-to-slack'
 
 export async function deleteFeedbackPermanently(id: string): Promise<never> {
-    const user = await validateUserSession()
+    const user = await validateUserSession('TILBAKEMELDINGER')
     const client = getFeedbackClient()
 
     const feedback = await client.byId(id)
@@ -24,7 +24,7 @@ export async function deleteFeedbackPermanently(id: string): Promise<never> {
 }
 
 export async function shareToSlack(id: string): Promise<void> {
-    const user = await validateUserSession()
+    const user = await validateUserSession('TILBAKEMELDINGER')
     const client = getFeedbackClient()
 
     const feedback = await client.byId(id)

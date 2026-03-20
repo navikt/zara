@@ -14,7 +14,7 @@ import { getFeedbackClient } from '@services/feedback/feedback-client'
 async function Page({ params }: PageProps<'/syk-inn/tilbakemeldinger/[tilbakemeldingsId]'>): Promise<ReactElement> {
     const { tilbakemeldingsId } = await params
 
-    const user = await validateUserSession()
+    const user = await validateUserSession('TILBAKEMELDINGER')
     const client = getFeedbackClient()
     const feedback = await client.byId(tilbakemeldingsId)
 

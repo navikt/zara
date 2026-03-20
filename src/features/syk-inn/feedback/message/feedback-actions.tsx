@@ -7,7 +7,7 @@ import { validateUserSession } from '@services/auth/auth'
 import { getFeedbackClient } from '@services/feedback/feedback-client'
 
 export async function setFeedbackVerified(id: string): Promise<{ ok: boolean }> {
-    const user = await validateUserSession()
+    const user = await validateUserSession('TILBAKEMELDINGER')
     const client = getFeedbackClient()
 
     const feedback = await client.byId(id)

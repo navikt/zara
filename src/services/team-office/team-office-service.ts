@@ -7,7 +7,7 @@ import { CronPost, DefaultWeekSchedule, Location, OfficeUser, TeamWeek, WeekSche
 import { toDefaultSchedule } from './team-office-utils'
 
 export async function getMyself(): Promise<{ unregistered: true } | OfficeUser> {
-    const session = await validateUserSession()
+    const session = await validateUserSession('TEAM_MEMBER')
     const client = await pgClient()
 
     const result = await client.query<OfficeUser>('SELECT * FROM users WHERE user_id = $1', [session.userId])
@@ -23,7 +23,7 @@ export async function getMyself(): Promise<{ unregistered: true } | OfficeUser> 
  * Gets users week, with fallback default values if week has no entry.
  */
 export async function getMyWeek(week: number, myLocation: Location): Promise<DefaultWeekSchedule> {
-    const session = await validateUserSession()
+    const session = await validateUserSession('TEAM_MEMBER')
     const client = await pgClient()
 
     const result = await client.query<Omit<DefaultWeekSchedule, 'isDefault'>>(
@@ -43,7 +43,7 @@ export async function getMyWeek(week: number, myLocation: Location): Promise<Def
 }
 
 export async function getTeamWeek(week: number): Promise<TeamWeek> {
-    await validateUserSession()
+    await validateUserSession('TEAM_MEMBER')
     const client = await pgClient()
 
     const result = await client.query<OfficeUser & WeekSchedule>(
@@ -62,7 +62,7 @@ export async function getTeamWeek(week: number): Promise<TeamWeek> {
 }
 
 export async function getTeam(): Promise<OfficeUser[]> {
-    await validateUserSession()
+    await validateUserSession('TEAM_MEMBER')
     const client = await pgClient()
 
     const result = await client.query<OfficeUser>('SELECT * FROM users')

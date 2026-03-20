@@ -9,7 +9,7 @@ export async function GET(request: NextRequest): Promise<Response> {
         return new Response('Missing page parameter', { status: 400 })
     }
 
-    const user = await validateUserSession()
+    const user = await validateUserSession('ANY')
     const encoder = new TextEncoder()
 
     let closed = false

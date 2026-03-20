@@ -24,6 +24,7 @@ jobs:
       - run: yarn next typegen
       - run: yarn lint
       - run: yarn tsc
+      - run: yarn test
 
   build-dev:
     name: Build for dev

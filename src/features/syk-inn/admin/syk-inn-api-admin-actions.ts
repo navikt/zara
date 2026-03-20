@@ -6,7 +6,7 @@ import { changeJobStatus } from '@services/syk-inn-api/jobs/syk-inn-api-jobs-ser
 import { validateUserSession } from '@services/auth/auth'
 
 export async function startJob(jobName: string): Promise<void> {
-    const user = await validateUserSession()
+    const user = await validateUserSession('UTVIKLER')
 
     await changeJobStatus(jobName, 'START', user)
 
@@ -14,7 +14,7 @@ export async function startJob(jobName: string): Promise<void> {
 }
 
 export async function stopJob(jobName: string): Promise<void> {
-    const user = await validateUserSession()
+    const user = await validateUserSession('UTVIKLER')
 
     await changeJobStatus(jobName, 'STOP', user)
 
@@ -22,7 +22,7 @@ export async function stopJob(jobName: string): Promise<void> {
 }
 
 export async function refetchJobs(): Promise<void> {
-    await validateUserSession()
+    await validateUserSession('UTVIKLER')
 
     revalidatePath('/syk-inn/admin')
 }

@@ -14,7 +14,7 @@ import PrivacyMode from '@components/privacy-mode/PrivacyMode'
 import { zaraImages } from '../../../../images/zaras'
 
 async function Page(): Promise<ReactElement> {
-    const user = await validateUserSession()
+    const user = await validateUserSession('TILBAKEMELDINGER')
     const client = getFeedbackClient()
     const feedback = await client.all()
     const relevant = R.pipe(
