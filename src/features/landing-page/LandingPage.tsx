@@ -2,7 +2,14 @@
 
 import React, { ReactElement } from 'react'
 import { Heading, LinkCard } from '@navikt/ds-react'
-import { BandageIcon, Buildings3Icon, GavelSoundBlockIcon, NotePencilDashIcon, SandboxIcon } from '@navikt/aksel-icons'
+import {
+    BandageIcon,
+    Buildings3Icon,
+    GavelSoundBlockIcon,
+    NotePencilDashIcon,
+    PadlockLockedIcon,
+    SandboxIcon,
+} from '@navikt/aksel-icons'
 import Link from 'next/link'
 
 import { type ZaraFeatures } from '@services/auth/access-control'
@@ -86,7 +93,8 @@ function AccessibleFeature({
             })}
         >
             {!hasAccess && (
-                <div className="w-full scale-120 bg-ax-bg-overlay bg-ax-bg-accent-soft absolute -rotate-12 flex items-center justify-center py-2 z-50">
+                <div className="w-full scale-120 bg-ax-bg-overlay absolute -rotate-12 items-center justify-center py-2 z-50 flex gap-2">
+                    <PadlockLockedIcon className="text-2xl" aria-hidden />
                     Ingen tilgang
                 </div>
             )}
