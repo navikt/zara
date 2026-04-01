@@ -24,7 +24,7 @@
         "@navikt/oasis": "^4.1.4",
         "@navikt/pino-logger": "^5.0.0",
         "@navikt/syk-zara": "^2.0.14",
-        "@opentelemetry/api": "^1.9.0",
+        "@opentelemetry/api": "^1.9.1",
         "@opentelemetry/core": "^2.6.0",
         "clsx": "^2.1.1",
         "croner": "^10.0.1",
