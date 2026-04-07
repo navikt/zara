@@ -1,3 +1,4 @@
+import * as R from 'remeda'
 import React, { ReactElement } from 'react'
 import { Heading } from '@navikt/ds-react'
 
@@ -17,9 +18,11 @@ async function SykInnApiJobs(): Promise<ReactElement> {
                 <RefreshButton />
             </div>
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 pr-8">
-                {jobs.map((job) => (
-                    <JobPanel key={job.name} job={job} />
-                ))}
+                {R.pipe(
+                    jobs,
+                    R.sortBy((it) => it.name),
+                    R.map((job) => <JobPanel key={job.name} job={job} />),
+                )}
             </div>
         </div>
     )
