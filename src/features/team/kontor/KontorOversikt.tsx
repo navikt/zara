@@ -3,6 +3,7 @@ import { BodyShort, Detail, Heading, Tag } from '@navikt/ds-react'
 import { getISOWeek, setISODay, setISOWeek, startOfWeek, set, isAfter, isSameDay, getISODay } from 'date-fns'
 import { TZDate } from '@date-fns/tz'
 import * as R from 'remeda'
+import { nb } from 'date-fns/locale'
 
 import { getMyself, getMyWeek, getTeamWeek } from '@services/team-office/team-office-service'
 import { toReadableDate } from '@lib/date'
@@ -47,7 +48,7 @@ async function KontorOversikt(): Promise<ReactElement> {
 
 async function MyWeekView({ week, me }: { week: number; me: OfficeUser }): Promise<ReactElement> {
     const myWeek = await getMyWeek(week, me.default_loc)
-    const firstWeekDate = startOfWeek(setISOWeek(new Date(), week))
+    const firstWeekDate = startOfWeek(setISOWeek(new Date(), week), { locale: nb })
     const currentWeek = getISOWeek(new Date())
     const isCurrentWeek = currentWeek === week
 
