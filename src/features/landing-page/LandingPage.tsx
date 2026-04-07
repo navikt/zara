@@ -93,11 +93,12 @@ function AccessibleFeature({
             })}
         >
             {!hasAccess && (
-                <div className="w-full scale-120 bg-ax-bg-overlay absolute -rotate-12 items-center justify-center py-2 z-50 flex gap-2">
+                <div className="w-full scale-120 bg-ax-neutral-300/70 dark:bg-ax-neutral-400/70 absolute -rotate-12 items-center justify-center py-2 z-50 flex gap-2">
                     <PadlockLockedIcon className="text-2xl" aria-hidden />
                     Ingen tilgang
                 </div>
             )}
+
             <LinkCard.Icon>
                 <Icon fontSize="2rem" aria-hidden />
             </LinkCard.Icon>

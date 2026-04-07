@@ -5,5 +5,6 @@ const config: Config = {
     presets: [navikt],
     content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
     plugins: [],
+    darkMode: 'selector',
 }
 export default config
