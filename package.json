@@ -42,7 +42,7 @@
         "prom-client": "^15.1.3",
         "react": "^19.2.4",
         "react-dom": "^19.2.4",
-        "remeda": "^2.33.6",
+        "remeda": "^2.34.0",
         "sonner": "^2.0.7",
         "tailwind-merge": "^3.5.0",
         "zod": "^4.3.6"
