@@ -817,16 +817,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/syk-zara@npm:^2.0.14":
-  version: 2.0.14
-  resolution: "@navikt/syk-zara@npm:2.0.14::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fsyk-zara%2F2.0.14%2F28f5afe79e9321b6d762f4d3e3f5365d072521cd"
+"@navikt/syk-zara@npm:^2.0.15":
+  version: 2.0.15
+  resolution: "@navikt/syk-zara@npm:2.0.15::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fsyk-zara%2F2.0.15%2F767a1ba02ff83001a9a9ec7493eb62fcae4b58eb"
   peerDependencies:
     "@navikt/pino-logger": "*"
     date-fns: 4
     iovalkey: 0 || 1
     remeda: "*"
     zod: 4
-  checksum: 10c0/cd30f3b497172b53f036397da82b0963fffea34e2945305bcbdf4f8593485ff0736acbfad6ebcc7f6f8af72fa0fcc34938747acef3590ffbe3480ecbf7b290a1
+  checksum: 10c0/91851bca7a56e2ac5db3f2a6a676cb364f484d9cb12a66d147bf06bbeb37482c785fb264e6932408c2500455da063b3728f63cc16119929e5e7c66b4785c958a
   languageName: node
   linkType: hard
 
@@ -6712,7 +6712,7 @@ __metadata:
     "@navikt/next-logger": "npm:^5.0.0"
     "@navikt/oasis": "npm:^4.1.4"
     "@navikt/pino-logger": "npm:^5.0.0"
-    "@navikt/syk-zara": "npm:^2.0.14"
+    "@navikt/syk-zara": "npm:^2.0.15"
     "@navikt/tsm-eslint-react": "npm:^1.0.0"
     "@navikt/tsm-prettier": "npm:^2.0.0"
     "@opentelemetry/api": "npm:^1.9.0"
