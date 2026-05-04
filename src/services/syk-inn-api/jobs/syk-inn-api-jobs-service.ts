@@ -7,7 +7,7 @@ import { JobStatusResponse, UpdateJobPayload } from '@services/syk-inn-api/jobs/
 import { User } from '@services/auth/user'
 import { raise } from '@lib/ts'
 
-const SYK_INN_API_JOBS_API = 'http://syk-inn-api-ktor/internal/admin/jobs'
+const SYK_INN_API_JOBS_API = 'http://syk-inn-api/internal/admin/jobs'
 
 export async function getSykInnApiJobsStatus(): Promise<JobStatusResponse[]> {
     if (bundledEnv.runtimeEnv === 'local') {
@@ -106,7 +106,7 @@ export async function getSykInnOboToken(): Promise<string> {
         raise('Why are you trying to exchange a token in local environment?')
     }
 
-    const tokenSet = await requestOboToken(token, `api://${bundledEnv.runtimeEnv}.tsm.syk-inn-api-ktor/.default`)
+    const tokenSet = await requestOboToken(token, `api://${bundledEnv.runtimeEnv}.tsm.syk-inn-api/.default`)
     if (!tokenSet.ok) {
         throw new Error(`Unable to exchange OBO token: ${tokenSet.error.message}`, { cause: tokenSet.error })
     }
