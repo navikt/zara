@@ -7,7 +7,7 @@ import { JobStatusResponse, UpdateJobPayload } from '@services/syk-inn-api/jobs/
 import { User } from '@services/auth/user'
 import { raise } from '@lib/ts'
 
-const SYK_INN_API_JOBS_API = 'http://syk-inn-api/internal/admin/jobs'
+const SYK_INN_API_ADMIN = 'http://syk-inn-api/internal/admin'
 
 export async function getSykInnApiJobsStatus(): Promise<JobStatusResponse[]> {
     if (bundledEnv.runtimeEnv === 'local') {
@@ -62,7 +62,7 @@ export async function getSykInnApiJobsStatus(): Promise<JobStatusResponse[]> {
     }
 
     const oboToken = await getSykInnOboToken()
-    const response = await fetch(SYK_INN_API_JOBS_API, {
+    const response = await fetch(`${SYK_INN_API_ADMIN}/jobs`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${oboToken}` },
     })
@@ -83,12 +83,33 @@ export async function changeJobStatus(jobName: string, state: 'START' | 'STOP', 
     }
 
     const oboToken = await getSykInnOboToken()
-    const response = await fetch(`${SYK_INN_API_JOBS_API}/${jobName}/status`, {
+    const response = await fetch(`${SYK_INN_API_ADMIN}/jobs/${jobName}/status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${oboToken}` },
         body: JSON.stringify({
             state: state,
         } satisfies UpdateJobPayload),
+    })
+
+    if (!response.ok) {
+        raise(`Failed to change job status in syk-inn-api: ${response.status} ${response.statusText}`)
+    }
+
+    return response.json()
+}
+
+export async function markSykmeldingPoisonPilled(uuid: string, user: User): Promise<void> {
+    if (bundledEnv.runtimeEnv === 'local') {
+        logger.warn(`Mock report ${uuid} as poison pill by user ${user.userId}`)
+
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+        return
+    }
+
+    const oboToken = await getSykInnOboToken()
+    const response = await fetch(`${SYK_INN_API_ADMIN}/poison-pills/${uuid}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${oboToken}` },
     })
 
     if (!response.ok) {

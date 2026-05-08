@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 
-import { changeJobStatus } from '@services/syk-inn-api/jobs/syk-inn-api-jobs-service'
+import { changeJobStatus } from '@services/syk-inn-api/jobs/syk-inn-api-service'
 import { validateUserSession } from '@services/auth/auth'
 
 export async function startJob(jobName: string): Promise<void> {

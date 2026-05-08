@@ -6,6 +6,7 @@ import {
     BandageIcon,
     Buildings3Icon,
     GavelSoundBlockIcon,
+    GlassesIcon,
     NotePencilDashIcon,
     PadlockLockedIcon,
     SandboxIcon,
@@ -14,6 +15,7 @@ import Link from 'next/link'
 
 import { type ZaraFeatures } from '@services/auth/access-control'
 import { cn } from '@lib/tw'
+import { produksjonsFeatureList } from '@features/landing-page/vakt/produksjons-feature-list'
 
 type Props = {
     features: ZaraFeatures[]
@@ -49,6 +51,24 @@ function LandingPage({ features }: Props): ReactElement {
                         href="/syk-inn/admin"
                         hasAccess={features.includes('UTVIKLER')}
                     />
+                </div>
+            </div>
+            <div className="bg-ax-bg-raised p-4 rounded-md w-full">
+                <Heading level="3" size="large" spacing className="flex items-center gap-3">
+                    <GlassesIcon aria-hidden className="-mb-0.5" />
+                    Produksjonsvakt
+                </Heading>
+                <div className="gap-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                    {produksjonsFeatureList.map((it) => (
+                        <AccessibleFeature
+                            key={it.href}
+                            Icon={it.Icon}
+                            title={it.title}
+                            href={it.href}
+                            description={it.description}
+                            hasAccess={features.includes('TEAM_MEMBER')}
+                        />
+                    ))}
                 </div>
             </div>
             <div className="bg-ax-bg-raised p-4 rounded-md w-full">
