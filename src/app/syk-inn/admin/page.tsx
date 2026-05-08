@@ -13,7 +13,7 @@ async function Page(): Promise<ReactElement> {
         <PageBlock as="main" width="2xl" gutters>
             <div className="flex justify-between items-start">
                 <Heading level="2" size="large" spacing>
-                    Bruksvilkår for brukere i syk-inn
+                    Jobber i syk-inn-api
                 </Heading>
                 <LiveUsersList page="/syk-inn/admin" me={user} />
             </div>

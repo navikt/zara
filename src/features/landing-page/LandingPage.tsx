@@ -13,7 +13,6 @@ import {
 import Link from 'next/link'
 
 import { type ZaraFeatures } from '@services/auth/access-control'
-import { bundledEnv } from '@lib/env'
 import { cn } from '@lib/tw'
 
 type Props = {
@@ -43,15 +42,13 @@ function LandingPage({ features }: Props): ReactElement {
                         href="/syk-inn/bruksvilkar"
                         hasAccess={features.includes('BRUKSVILKÅR')}
                     />
-                    {bundledEnv.runtimeEnv !== 'prod-gcp' && (
-                        <AccessibleFeature
-                            Icon={SandboxIcon}
-                            title="Systemjobber (utviklere)"
-                            description="Se og kontroller bakgrunnsjobber i syk-inn-applikasjonen."
-                            href="/syk-inn/admin"
-                            hasAccess={features.includes('UTVIKLER')}
-                        />
-                    )}
+                    <AccessibleFeature
+                        Icon={SandboxIcon}
+                        title="Systemjobber (utviklere)"
+                        description="Se og kontroller bakgrunnsjobber i syk-inn-applikasjonen."
+                        href="/syk-inn/admin"
+                        hasAccess={features.includes('UTVIKLER')}
+                    />
                 </div>
             </div>
             <div className="bg-ax-bg-raised p-4 rounded-md w-full">
