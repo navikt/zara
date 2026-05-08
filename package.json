@@ -45,7 +45,7 @@
         "remeda": "^2.34.0",
         "sonner": "^2.0.7",
         "tailwind-merge": "^3.5.0",
-        "zod": "^4.4.2"
+        "zod": "^4.4.3"
     },
     "devDependencies": {
         "@faker-js/faker": "^10.4.0",
