@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { LinkCardAnchor, LinkCardDescription, LinkCardIcon, LinkCardTitle } from '@navikt/ds-react/LinkCard'
 
 import { cn } from '@lib/tw'
-import { produksjonsFeatureList } from '@features/landing-page/vakt/produksjons-feature-list'
+
+import { produksjonsFeatureList } from './produksjons-feature-list'
 
 type Props = {
     className?: string

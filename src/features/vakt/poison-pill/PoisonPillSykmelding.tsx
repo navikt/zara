@@ -4,7 +4,7 @@ import React, { ReactElement, useState, useTransition } from 'react'
 import { Button, LocalAlert, Modal, TextField } from '@navikt/ds-react'
 import { ExclamationmarkTriangleIcon } from '@navikt/aksel-icons'
 
-import { markSykmeldingPoisonPill } from '@features/landing-page/vakt/poison-pill/poison-pill-actions'
+import { markSykmeldingPoisonPill } from './poison-pill-actions'
 
 function PoisonPillSykmelding(): ReactElement {
     const [isPending, startTransition] = useTransition()

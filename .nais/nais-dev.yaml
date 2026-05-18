@@ -58,6 +58,9 @@ spec:
         - host: api.slack.com
       rules:
         - application: syk-inn-api
+        - application: tsm-pdl-cache
+        - application: syfohelsenettproxy
+          namespace: teamsykmelding
         - application: logging
           namespace: nais-system
   resources:

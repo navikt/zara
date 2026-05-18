@@ -15,7 +15,7 @@ import Link from 'next/link'
 
 import { type ZaraFeatures } from '@services/auth/access-control'
 import { cn } from '@lib/tw'
-import { produksjonsFeatureList } from '@features/landing-page/vakt/produksjons-feature-list'
+import { produksjonsFeatureList } from '@features/vakt/produksjons-feature-list'
 
 type Props = {
     features: ZaraFeatures[]
