@@ -9,7 +9,7 @@ export default function VaktLayout({ children }: LayoutProps<'/vakt'>): ReactEle
         <NuqsAdapter>
             <PageBlock as="main">
                 <div className="grid grid-cols-[auto_1fr] h-full">
-                    <VaktSidebar className="" />
+                    <VaktSidebar />
                     <div className="">{children}</div>
                 </div>
             </PageBlock>
