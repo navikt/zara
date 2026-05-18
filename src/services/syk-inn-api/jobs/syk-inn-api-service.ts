@@ -98,9 +98,13 @@ export async function changeJobStatus(jobName: string, state: 'START' | 'STOP', 
     return response.json()
 }
 
-export async function markSykmeldingPoisonPilled(uuid: string, user: User): Promise<void> {
+export async function markSykmeldingPoisonPilled(uuid: string, reason: string, user: User): Promise<void> {
     if (bundledEnv.runtimeEnv === 'local') {
         logger.warn(`Mock report ${uuid} as poison pill by user ${user.userId}`)
+
+        if (!reason) {
+            throw new Error('Missing reason')
+        }
 
         await new Promise((resolve) => setTimeout(resolve, 1000))
         return
@@ -110,6 +114,7 @@ export async function markSykmeldingPoisonPilled(uuid: string, user: User): Prom
     const response = await fetch(`${SYK_INN_API_ADMIN}/poison-pills/${uuid}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${oboToken}` },
+        body: JSON.stringify({ reason }),
     })
 
     if (!response.ok) {

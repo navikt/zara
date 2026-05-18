@@ -3,8 +3,8 @@
 import { validateUserSession } from '@services/auth/auth'
 import { markSykmeldingPoisonPilled } from '@services/syk-inn-api/jobs/syk-inn-api-service'
 
-export async function markSykmeldingPoisonPill(uuid: string): Promise<void> {
+export async function markSykmeldingPoisonPill(uuid: string, reason: string): Promise<void> {
     const user = await validateUserSession('TEAM_MEMBER')
 
-    await markSykmeldingPoisonPilled(uuid, user)
+    await markSykmeldingPoisonPilled(uuid, reason, user)
 }
