@@ -1,7 +1,7 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, ReactNode, Suspense } from 'react'
 import { logger } from '@navikt/next-logger'
 import * as R from 'remeda'
-import { BodyShort, Heading, LocalAlert } from '@navikt/ds-react'
+import { BodyShort, Heading, LocalAlert, Skeleton } from '@navikt/ds-react'
 import { LocalAlertContent, LocalAlertHeader, LocalAlertTitle } from '@navikt/ds-react/LocalAlert'
 
 import { validateUserSession } from '@services/auth/auth'
@@ -20,59 +20,15 @@ async function BehandlerSearchInfo({ hpr }: Props): Promise<ReactElement> {
         logger.error(`Unable to find hpr person: ${hpr}, cause: ${hprPerson.errorType}`)
 
         return (
-            <LocalAlert status="error" className="max-w-prose mt-8">
-                <LocalAlertHeader>
-                    <LocalAlertTitle>Henting fra HPR-register feilet</LocalAlertTitle>
-                </LocalAlertHeader>
-                <LocalAlertContent>Teknisk feilmelding: {hprPerson.errorType}</LocalAlertContent>
-            </LocalAlert>
-        )
-    }
-
-    if (hprPerson.fnr == null) {
-        return (
-            <LocalAlert status="error" className="max-w-prose mt-8">
-                <LocalAlertHeader>
-                    <LocalAlertTitle>Behandler har ikke ident i HPR-registeret</LocalAlertTitle>
-                </LocalAlertHeader>
-                <LocalAlertContent>
-                    <Heading size="small" level="4">
-                        All info om person i HPR-registeret
-                    </Heading>
-                    <div className="max-w-prose border border-ax-border-neutral-subtle bg-ax-bg-raised p-4 rounded-md rounded-r-none grow">
-                        <pre className="overflow-auto">{JSON.stringify(hprPerson, null, 2)}</pre>
-                    </div>
-                </LocalAlertContent>
-            </LocalAlert>
-        )
-    }
-
-    const pdl = await pdlApiService.getPdlPerson(hprPerson.fnr)
-    if ('errorType' in pdl) {
-        logger.error(`Error fetching from PDL for ${hpr}, cause: ${pdl.errorType}`)
-
-        return (
-            <LocalAlert status="warning" className="max-w-prose mt-8">
-                <LocalAlertHeader>
-                    <LocalAlertTitle>Behandler fantes i HPR-registeret, men ikke i PDL</LocalAlertTitle>
-                </LocalAlertHeader>
-                <LocalAlertContent>
-                    <BodyShort spacing className="italic">
-                        Selv om personen ikke fantes i tsm-pdl-cache, kan du se all info fra HPR-registeret.
-                    </BodyShort>
-                    <Heading size="small" level="4">
-                        All info om person i HPR-registeret
-                    </Heading>
-                    <div className="max-w-prose border border-ax-border-neutral-subtle bg-ax-bg-raised p-4 rounded-md rounded-r-none grow">
-                        <pre className="overflow-auto">{JSON.stringify(hprPerson, null, 2)}</pre>
-                    </div>
-                </LocalAlertContent>
-            </LocalAlert>
+            <BehandlerError
+                title="Henting fra HPR-register feilet"
+                description={`Teknisk feilmelding: ${hprPerson.errorType}`}
+            />
         )
     }
 
     return (
-        <div className="mt-4">
+        <div className="mt-4 max-w-prose">
             <Heading size="small" level="4">
                 Info om bruker i HPR-registeret
             </Heading>
@@ -93,6 +49,65 @@ async function BehandlerSearchInfo({ hpr }: Props): Promise<ReactElement> {
                 )}
             </div>
 
+            <Suspense
+                fallback={
+                    <>
+                        <Heading size="small" level="4" className="mt-4">
+                            Info om bruker i PDL (tsm-pdl-cache)
+                        </Heading>
+                        <Skeleton variant="rounded" width="100%" height={600} />
+                    </>
+                }
+            >
+                <BehandlerInHprRegister ident={hprPerson.fnr} />
+            </Suspense>
+        </div>
+    )
+}
+
+function BehandlerError({ title, description }: { title: string; description: string | ReactNode }): ReactElement {
+    return (
+        <LocalAlert status="error" className="max-w-prose mt-4">
+            <LocalAlertHeader>
+                <LocalAlertTitle>{title}</LocalAlertTitle>
+            </LocalAlertHeader>
+            <LocalAlertContent>{description}</LocalAlertContent>
+        </LocalAlert>
+    )
+}
+
+async function BehandlerInHprRegister({ ident }: { ident: string | null }): Promise<ReactElement> {
+    if (ident == null) {
+        return (
+            <BehandlerError
+                title="Behandler har ikke ident (fnr/dnr) i HPR-registeret"
+                description="Kunne ikke slå opp personen i PDL fordi behandleren mangler ident"
+            />
+        )
+    }
+
+    const pdl = await pdlApiService.getPdlPerson(ident)
+    if ('errorType' in pdl) {
+        logger.error(`Error fetching from PDL, cause: ${pdl.errorType}`)
+
+        return (
+            <LocalAlert status="warning" className="max-w-prose mt-8">
+                <LocalAlertHeader>
+                    <LocalAlertTitle>Behandler fantes i HPR-registeret, men ikke i PDL</LocalAlertTitle>
+                </LocalAlertHeader>
+                <LocalAlertContent>
+                    <BodyShort spacing className="italic">
+                        Selv om personen ikke fantes i tsm-pdl-cache, kan du se all info fra HPR-registeret over.
+                    </BodyShort>
+                </LocalAlertContent>
+            </LocalAlert>
+        )
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 2500))
+
+    return (
+        <>
             <Heading size="small" level="4" className="mt-4">
                 Info om bruker i PDL (tsm-pdl-cache)
             </Heading>
@@ -112,7 +127,7 @@ async function BehandlerSearchInfo({ hpr }: Props): Promise<ReactElement> {
                     )),
                 )}
             </div>
-        </div>
+        </>
     )
 }
 
