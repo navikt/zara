@@ -17,7 +17,7 @@ export function createHprPersonMock(ident?: string): Behandler {
                 tillegskompetanse: [
                     {
                         avsluttetStatus: null,
-                        eTag: 'etag-1',
+                        etag: 'etag-1',
                         gyldig: {
                             fra: '2024-01-01T00:00:00',
                             til: null,

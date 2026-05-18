@@ -13,7 +13,7 @@ export const PeriodeSchema = z.object({
 
 export const TilleggskompetanseSchema = z.object({
     avsluttetStatus: KodeSchema.nullable(),
-    eTag: z.string().nullable(),
+    etag: z.string().nullable(),
     gyldig: PeriodeSchema.nullable(),
     id: z.number().int().nullable(),
     type: KodeSchema.nullable(),
