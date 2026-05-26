@@ -2,7 +2,7 @@ import { App as BoltApp } from '@slack/bolt'
 import { lazyNextleton } from 'nextleton'
 import { logger } from '@navikt/next-logger'
 
-import { getServerEnv } from '@lib/env'
+import { bundledEnv, getServerEnv } from '@lib/env'
 
 import { loggerAdapter } from './bot-logger'
 import { configureOfficeUpdatesListeners } from './office-updates-events'
@@ -18,7 +18,12 @@ const boltApp = lazyNextleton('boltorini', () => {
     })
 })
 
-export async function initializeBot(): Promise<App> {
+export async function initializeBot(): Promise<void> {
+    if (bundledEnv.runtimeEnv !== 'prod-gcp') {
+        logger.warn('Because of socket mode we cannot run the bot in any other environment than prod-gcp')
+        return
+    }
+
     logger.info('Initializing Slack bot...')
 
     const app = boltApp()
@@ -26,8 +31,6 @@ export async function initializeBot(): Promise<App> {
 
     await app.start()
     logger.info(`Started Slack bot in socket mode`)
-
-    return app
 }
 
 export type App = BoltApp
