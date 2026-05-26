@@ -3,8 +3,9 @@ import { lazyNextleton } from 'nextleton'
 import { logger } from '@navikt/next-logger'
 
 import { getServerEnv } from '@lib/env'
-import { loggerAdapter } from '@services/slack/bot/bot-logger'
-import { configureOfficeUpdatesListeners } from '@services/slack/bot/office-updates-service'
+
+import { loggerAdapter } from './bot-logger'
+import { configureOfficeUpdatesListeners } from './office-updates-events'
 
 const boltApp = lazyNextleton('boltorini', () => {
     const serverEnv = getServerEnv()

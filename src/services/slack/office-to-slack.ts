@@ -9,7 +9,7 @@ import { OfficeUser } from '../team-office/common/types'
 import { existingCronPost, getOfficeSnapshot, insertDailyPost } from '../team-office/internal/office-cron-service'
 
 import { createPermalink, slackChatPostMessage, updateSlackMessage } from './utils'
-import { OfficeUpdatesActions } from './bot/office-updates-service'
+import { OfficeUpdatesActions } from './bot/office-updates-events'
 
 export async function postDailyOfficeSummary(): Promise<{
     postLink: string | null
