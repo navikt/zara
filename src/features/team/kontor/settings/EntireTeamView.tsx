@@ -4,7 +4,7 @@ import React, { ReactElement } from 'react'
 import * as R from 'remeda'
 import { Heading } from '@navikt/ds-react'
 
-import { OfficeUser } from '@services/team-office/types'
+import { OfficeUser } from '@services/team-office/common/types'
 
 type Props = {
     team: OfficeUser[]

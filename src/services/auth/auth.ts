@@ -29,6 +29,7 @@ export async function validateUserSession(requiredAccess: 'ANY' | ZaraFeatures |
         oid: info.oid,
         name: info.name,
         userId: info.userId,
+        navIdent: info.navIdent,
         groups: info.groups,
     }
 }
@@ -43,9 +44,19 @@ export async function userInfo(token?: string): Promise<User | null> {
     if (!parsed.ok) return null
 
     return {
-        oid: parsed.oid,
         name: parsed.name,
+        /**
+         * The users email
+         */
         userId: parsed.preferred_username,
+        /**
+         * Entra's "immutable identifier for the requestor", used to display the users avatar
+         */
+        oid: parsed.oid,
+        /**
+         * Users navIdent, for example: O628282
+         */
+        navIdent: parsed.NAVident,
         groups: parsed.groups ?? [],
     }
 }

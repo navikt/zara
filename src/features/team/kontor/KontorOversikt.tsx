@@ -5,10 +5,11 @@ import { TZDate } from '@date-fns/tz'
 import * as R from 'remeda'
 import { nb } from 'date-fns/locale'
 
-import { getMyself, getMyWeek, getTeamWeek } from '@services/team-office/team-office-service'
 import { toReadableDate } from '@lib/date'
+import { getTeamWeek } from '@services/team-office/team-office-service'
+import { getMyself, getMyWeek } from '@services/team-office/me-office-service'
+import { OfficeUser, TeamWeek, WeekSchedule } from '@services/team-office/common/types'
 import WeekToggleView from '@features/team/kontor/WeekToggleView'
-import { OfficeUser, TeamWeek, WeekSchedule } from '@services/team-office/types'
 import Unregistered from '@features/team/kontor/unregistered/Unregistered'
 
 async function KontorOversikt(): Promise<ReactElement> {

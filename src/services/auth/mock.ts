@@ -2,7 +2,8 @@ import { User } from './user'
 
 export const LocalMockUser: User = {
     name: 'Låccy McDevssøn',
-    userId: 'loccy@example.com',
+    userId: 'låccy@example.com',
+    navIdent: 'O6910923',
     oid: 'fake-dev-oid',
     groups: [
         '74d71639-b6e1-487b-86e4-ca902a433f7c',

@@ -1,11 +1,12 @@
 import React, { ReactElement } from 'react'
-import { Heading } from '@navikt/ds-react'
+import { BodyShort, Heading } from '@navikt/ds-react'
 
-import { Location } from '@services/team-office/types'
-import { getMyself, getTeam } from '@services/team-office/team-office-service'
+import { Location } from '@services/team-office/common/types'
+import { getTeam } from '@services/team-office/team-office-service'
 import Unregistered from '@features/team/kontor/unregistered/Unregistered'
 import { EntireTeamView } from '@features/team/kontor/settings/EntireTeamView'
 import MyModeButtons from '@features/team/kontor/settings/MyModeButtons'
+import { getMyself } from '@services/team-office/me-office-service'
 
 async function KontorSettings(): Promise<ReactElement> {
     const me = await getMyself()
@@ -22,7 +23,10 @@ async function KontorSettings(): Promise<ReactElement> {
                 <Heading level="3" size="medium" spacing>
                     Deg
                 </Heading>
-                <div>Du er satt som {defaultLocToNorsk(me.default_loc)}.</div>
+                <BodyShort spacing>Du er satt som {defaultLocToNorsk(me.default_loc)}.</BodyShort>
+                <div>
+                    Du har nav ident: <span className="italic">{me.nav_ident ?? 'Ingen! Det var rart..'}</span>
+                </div>
                 <MyModeButtons me={me} />
             </div>
             <div className="border border-ax-border-neutral-subtle bg-ax-bg-raised p-4 rounded-md grow max-w-prose">

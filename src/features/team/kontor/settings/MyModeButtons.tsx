@@ -4,7 +4,7 @@ import React, { ReactElement, useState, useTransition } from 'react'
 import { Button, Label, Switch } from '@navikt/ds-react'
 
 import { nukeMe, registerKontor } from '@features/team/kontor/kontor-actions'
-import { OfficeUser } from '@services/team-office/types'
+import { OfficeUser } from '@services/team-office/common/types'
 
 type Props = {
     me: OfficeUser

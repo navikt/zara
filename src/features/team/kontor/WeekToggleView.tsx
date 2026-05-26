@@ -5,7 +5,7 @@ import { Checkbox, CheckboxGroup, InlineMessage } from '@navikt/ds-react'
 import React, { ReactElement, useTransition } from 'react'
 import { getISOWeek, getISODay } from 'date-fns'
 
-import { DefaultWeekSchedule } from '@services/team-office/types'
+import { DefaultWeekSchedule } from '@services/team-office/common/types'
 import { toggleWeekDay } from '@features/team/kontor/kontor-actions'
 
 type Props = {

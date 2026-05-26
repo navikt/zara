@@ -10,7 +10,7 @@ export function toDefaultSchedule(location: Location, rawSchedule?: WeekSchedule
         return defaultSchedule(location)
     }
 
-    if (Object.values(rawSchedule).some((value) => value == null)) {
+    if (Object.values(days).some((value) => value == null)) {
         throw new Error('Invalid schedule: some days are null while others are not. Should be impossible.')
     }
 

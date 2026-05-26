@@ -4,6 +4,7 @@ import { logger } from '@navikt/next-logger'
 
 import { getServerEnv } from '@lib/env'
 import { loggerAdapter } from '@services/slack/bot/bot-logger'
+import { configureOfficeUpdatesListeners } from '@services/slack/bot/office-updates-service'
 
 const boltApp = lazyNextleton('boltorini', () => {
     const serverEnv = getServerEnv()
@@ -20,9 +21,9 @@ export async function initializeBot(): Promise<App> {
     logger.info('Initializing Slack bot...')
 
     const app = boltApp()
+    configureOfficeUpdatesListeners(app)
 
     await app.start()
-
     logger.info(`Started Slack bot in socket mode`)
 
     return app
