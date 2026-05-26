@@ -1,15 +1,16 @@
 'use server'
 
-import { getISOWeekYear } from 'date-fns'
 import { revalidatePath } from 'next/cache'
 import { after } from 'next/server'
 import { logger } from '@navikt/next-logger'
 
-import { pgClient } from '@services/db/postgres/production-pg'
 import { validateUserSession } from '@services/auth/auth'
-import { raise } from '@lib/ts'
+import { pgClient } from '@services/db/postgres/production-pg'
 import { updateTodaysOfficeSummaryIfNeeded } from '@services/slack/office-to-slack'
-import { Location } from '@services/team-office/types'
+import { setAllDays } from '@services/team-office/internal/office-service'
+import { getMyself } from '@services/team-office/me-office-service'
+import { Location } from '@services/team-office/common/types'
+import { raise } from '@lib/ts'
 
 export async function registerKontor(newLocation: Location): Promise<void> {
     const user = await validateUserSession('TEAM_MEMBER')
@@ -39,29 +40,17 @@ export async function registerKontor(newLocation: Location): Promise<void> {
  * '0' = Monday, etc
  */
 export async function toggleWeekDay(week: number, daysOn: string[]): Promise<void> {
-    const user = await validateUserSession('TEAM_MEMBER')
-    const client = await pgClient()
-
-    const days = ['mon', 'tue', 'wed', 'thu', 'fri']
-    const values = days.map((_, i) => daysOn.includes(String(i)))
-    const weekYear = getISOWeekYear(new Date())
-
-    const { rows: userRows } = await client.query<{ id: string }>('SELECT id FROM users WHERE user_id = $1', [
-        user.userId,
-    ])
-    const userId = userRows[0]?.id
-    if (!userId) {
+    const user = await getMyself()
+    if ('unregistered' in user) {
         raise(
-            `User with user_id ${user.userId} not found in database. This should never happen, since registerKontor should have been called first.`,
+            `Logged in user not found in database. This should never happen, since registerKontor should have been called first.`,
         )
     }
 
-    await client.query(
-        `INSERT INTO week_schedule (user_id, week_number, week_year, mon, tue, wed, thu, fri)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-         ON CONFLICT (user_id, week_number, week_year)
-         DO UPDATE SET mon = EXCLUDED.mon, tue = EXCLUDED.tue, wed = EXCLUDED.wed, thu = EXCLUDED.thu, fri = EXCLUDED.fri`,
-        [userId, week, weekYear, ...values],
+    await setAllDays(
+        user.id,
+        week,
+        daysOn.map((it) => +it),
     )
 
     after(() => {

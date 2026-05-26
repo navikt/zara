@@ -16,7 +16,7 @@ function LinkHeader(): ReactElement {
 
     return (
         <Link href="/" className="flex items-center gap-3">
-            <Image src={zaraImages.normal.src} height="64" width={64} alt="Zara!" />
+            <Image src={zaraImages.normal.src} height="64" width={64} alt="Zara!" loading="eager" />
             <div>
                 <AnimatePresence>
                     {!isRoot && (

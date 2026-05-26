@@ -2,15 +2,14 @@ import { getISOWeek, getISOWeekYear, getISODay } from 'date-fns'
 import { logger } from '@navikt/next-logger'
 
 import { bundledEnv, getServerEnv } from '@lib/env'
-import { createPermalink, slackChatPostMessage, updateSlackMessage } from '@services/slack/utils'
-import {
-    getOfficeSnapshot,
-    existingCronPost,
-    insertDailyPost,
-    isTodayOfficeDay,
-} from '@services/team-office/team-office-service'
 import { toReadableFullDate } from '@lib/date'
-import { OfficeUser } from '@services/team-office/types'
+import { isTodayOfficeDay } from '@services/team-office/common/day-utils'
+
+import { OfficeUser } from '../team-office/common/types'
+import { existingCronPost, getOfficeSnapshot, insertDailyPost } from '../team-office/internal/office-cron-service'
+
+import { createPermalink, slackChatPostMessage, updateSlackMessage } from './utils'
+import { OfficeUpdatesActions } from './bot/office-updates-service'
 
 export async function postDailyOfficeSummary(): Promise<{
     postLink: string | null
@@ -87,7 +86,7 @@ export async function postWeeklyRememberToUpdatePost(): Promise<{ postLink: stri
                 type: 'section',
                 text: {
                     type: 'mrkdwn',
-                    text: `Er du remote ansatt og kommer til Oslo neste uke? Eller kontor-ansatt som ikke kan komme på kontoret tirsdag eller onsdag, eller skal andre dager?\n\nHusk å oppdatere kontorplanen din i Zara!\n\n<${getKontorUrl('ansatt')}|Zara →>`,
+                    text: `Er du remote ansatt og kommer til Oslo neste uke? Eller kontor-ansatt som ikke kan komme på kontoret tirsdag eller onsdag, eller skal andre dager?\n\nHusk å oppdatere kontorplanen din i Zara!\n\n<${getKontorUrl()}|Zara →>`,
                 },
             },
         ],
@@ -98,7 +97,7 @@ export async function postWeeklyRememberToUpdatePost(): Promise<{ postLink: stri
 
 function buildOfficeBlocks(office: OfficeUser[]): unknown[] {
     const dateLabel = toReadableFullDate(new Date())
-    const ansattUrl = getKontorUrl('ansatt')
+    const ansattUrl = getKontorUrl()
     const officeList =
         office.length > 0
             ? office
@@ -112,7 +111,7 @@ function buildOfficeBlocks(office: OfficeUser[]): unknown[] {
     return [
         {
             type: 'header',
-            text: { type: 'plain_text', text: `:zara-happy: Hvem skal på FA1 ${dateLabel}?`, emoji: true },
+            text: { type: 'plain_text', text: `:zara-happy: Hvem kommer på FA1 ${dateLabel}?`, emoji: true },
         },
         {
             type: 'section',
@@ -126,22 +125,37 @@ function buildOfficeBlocks(office: OfficeUser[]): unknown[] {
             ],
         },
         {
+            type: 'actions',
+            elements: [
+                {
+                    type: 'button',
+                    text: { type: 'plain_text', text: 'Kommer læll :zara-happy:', emoji: true },
+                    action_id: OfficeUpdatesActions.KommerLaell,
+                },
+                {
+                    type: 'button',
+                    text: { type: 'plain_text', text: 'Kan ikke i dag :zara:', emoji: true },
+                    action_id: OfficeUpdatesActions.KommerIkke,
+                },
+            ],
+        },
+        {
             type: 'section',
             text: {
                 type: 'mrkdwn',
-                text: `Har planene endra seg?  <${ansattUrl}|Zara →>`,
+                text: `Endre andre dager?  <${ansattUrl}|Åpne Zara →>`,
             },
         },
     ]
 }
 
-export function getKontorUrl(type: 'ansatt' | 'intern'): string {
+export function getKontorUrl(): string {
     switch (bundledEnv.runtimeEnv) {
         case 'local':
             return `http://localhost:3005/team/kontor`
         case 'prod-gcp':
-            return `https://zara.${type}.nav.no/team/kontor`
+            return `https://zara.ansatt.nav.no/team/kontor`
         case 'dev-gcp':
-            return `https://zara.${type}.dev.nav.no/team/kontor`
+            return `https://zara.ansatt.dev.nav.no/team/kontor`
     }
 }

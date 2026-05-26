@@ -6,11 +6,11 @@ import { bundledEnv } from '@lib/env'
 import { raise } from '@lib/ts'
 
 const TEAM_MEMBERS = [
-    { user_id: 'K123456', name: 'Kar O.', default_loc: 'office' },
-    { user_id: 'A234567', name: 'Anders B.', default_loc: 'remote' },
-    { user_id: 'M345678', name: 'Maria C.', default_loc: 'office' },
-    { user_id: 'T456789', name: 'Tine D.', default_loc: 'remote' },
-    { user_id: 'E567890', name: 'Erik F.', default_loc: 'office' },
+    { user_id: 'kar@example com', nav_ident: 'K123456', name: 'Kar O.', default_loc: 'office' },
+    { user_id: 'anders@example com', nav_ident: 'A234567', name: 'Anders B.', default_loc: 'remote' },
+    { user_id: 'maria@example com', nav_ident: 'M345678', name: 'Maria C.', default_loc: 'office' },
+    { user_id: 'tine@example com', nav_ident: 'T456789', name: 'Tine D.', default_loc: 'remote' },
+    { user_id: 'erik@example com', nav_ident: 'E567890', name: 'Erik F.', default_loc: 'office' },
 ]
 
 export async function seedDevelopmentPostgres(client: Pool): Promise<void> {
@@ -21,10 +21,10 @@ export async function seedDevelopmentPostgres(client: Pool): Promise<void> {
     logger.info(`Seeding postgres with ${TEAM_MEMBERS.length} users...`)
     for (const member of TEAM_MEMBERS) {
         await client.query(
-            `INSERT INTO users (user_id, name, default_loc)
-             VALUES ($1, $2, $3)
+            `INSERT INTO users (user_id, nav_ident, name, default_loc)
+             VALUES ($1, $2, $3, $4)
              ON CONFLICT (user_id) DO NOTHING`,
-            [member.user_id, member.name, member.default_loc],
+            [member.user_id, member.nav_ident, member.name, member.default_loc],
         )
     }
     await seedWeekSchedules(client)

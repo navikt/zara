@@ -29,6 +29,7 @@ export type CronPost = {
 export type OfficeUser = {
     id: string
     user_id: string
+    nav_ident: string | null
     name: string
     default_loc: Location
 }

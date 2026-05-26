@@ -11,9 +11,10 @@ const mockedUserInfo = vi.mocked(userInfo)
 
 test('user with all roles should have access to all features', async () => {
     mockedUserInfo.mockResolvedValue({
-        oid: 'test-oid',
         name: 'Test User',
         userId: 'test-user',
+        oid: 'test-oid',
+        navIdent: 'O123123',
         groups: [
             '74d71639-b6e1-487b-86e4-ca902a433f7c',
             '95f6101c-0cd4-4d4a-9435-6b1a7775782c',
@@ -31,9 +32,10 @@ test('user with all roles should have access to all features', async () => {
 
 test('user with only team member role should only have access to team member features', async () => {
     mockedUserInfo.mockResolvedValue({
-        oid: 'test-oid',
         name: 'Test User',
         userId: 'test-user',
+        oid: 'test-oid',
+        navIdent: 'O123123',
         groups: ['74d71639-b6e1-487b-86e4-ca902a433f7c'],
     })
 
