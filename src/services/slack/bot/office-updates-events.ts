@@ -146,6 +146,6 @@ async function handleMissingUser(
     await chat.postEphemeral({
         channel: body.channel?.id ?? '',
         user: body.user.id,
-        text: `Fant ingen bruker med nav ident ${currentNavIdent}. Du kan fikse dette ved å besøke <${getKontorUrl()}/settings|Zara innstillinger →>`,
+        text: `Fant ingen bruker med nav ident ${currentNavIdent}. Besøk <${getKontorUrl()}/settings|Zara innstillinger →> èn gang så blir det fikset! :zara-happy:`,
     })
 }
