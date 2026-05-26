@@ -8,10 +8,12 @@ import { runMigrations } from '@services/db/postgres/migrations'
 import { initializeBot } from '@services/slack/bot/bot'
 
 const migrationStatus = nextleton('migration-status', () => ({
+    doing: false,
     executed: false,
 }))
 
 const botStarted = nextleton('bot-started', () => ({
+    doing: false,
     executed: false,
 }))
 
@@ -19,16 +21,26 @@ export async function GET(): Promise<NextResponse> {
     try {
         getServerEnv()
 
-        if (!migrationStatus.executed) {
-            await runMigrations().then(() => {
-                migrationStatus.executed = true
-            })
+        if (!migrationStatus.executed && !migrationStatus.doing) {
+            migrationStatus.doing = true
+            await runMigrations()
+                .then(() => {
+                    migrationStatus.executed = true
+                })
+                .finally(() => {
+                    migrationStatus.doing = false
+                })
         }
 
-        if (!botStarted.executed) {
-            await initializeBot().then(() => {
-                botStarted.executed = true
-            })
+        if (!botStarted.executed && !botStarted.doing) {
+            botStarted.doing = true
+            await initializeBot()
+                .then(() => {
+                    botStarted.executed = true
+                })
+                .finally(() => {
+                    botStarted.doing = false
+                })
         }
 
         setupDailySummaryCron()
