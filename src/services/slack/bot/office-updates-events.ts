@@ -1,6 +1,7 @@
 import type { BlockAction } from '@slack/bolt/dist/types/actions/block-action'
 import * as R from 'remeda'
-import { getISODay, getISOWeek } from 'date-fns'
+import { getISODay, getISOWeek, isToday } from 'date-fns'
+import { TZDate } from '@date-fns/tz'
 
 import { raise } from '@lib/ts'
 import { getUserByNavIdent, getUsersWeek, setAllDays } from '@services/team-office/internal/office-service'
@@ -15,31 +16,28 @@ export const OfficeUpdatesActions = {
 }
 
 export function configureOfficeUpdatesListeners(app: App): void {
-    app.action(OfficeUpdatesActions.KommerLaell, async (action) => {
-        if (action.body.type !== 'block_actions') {
-            await action.ack()
+    app.action(OfficeUpdatesActions.KommerLaell, async ({ ack, body, client }) => {
+        if (body.type !== 'block_actions') {
+            await ack()
             return
         }
 
-        const currentNavIdent = navIdentFromAction(action.body)
+        if (isParentMessageOld(body)) {
+            await handleStaleAction(client.chat, body)
+            await ack()
+            return
+        }
+
+        const currentNavIdent = navIdentFromAction(body)
         const user = await getUserByNavIdent(currentNavIdent)
 
         if (user == null) {
-            await action.ack()
-            await action.client.chat.postEphemeral({
-                channel: action.body.channel?.id ?? '',
-                user: action.body.user.id,
-                text: `Fant ingen bruker med nav ident ${currentNavIdent}. Du kan fikse dette ved å besøke <${getKontorUrl()}/settings|Zara innstillinger →>`,
-            })
+            await handleMissingUser(client.chat, body, currentNavIdent)
+            await ack()
             return
         }
 
-        await action.ack()
-
-        const now = new Date()
-        const thisWeek = getISOWeek(now)
-        const thisDay = getISODay(now) - 1
-
+        const { thisWeek, thisDay } = getNow()
         const usersWeek = (await getUsersWeek(user.id, thisWeek)) ?? toDefaultSchedule(user.default_loc)
         const enabledDays: number[] = R.pipe(
             [
@@ -56,33 +54,31 @@ export function configureOfficeUpdatesListeners(app: App): void {
 
         await setAllDays(user.id, thisWeek, enabledDays)
         await updateTodaysOfficeSummaryIfNeeded()
+        await ack()
     })
 
-    app.action(OfficeUpdatesActions.KommerIkke, async (action) => {
-        if (action.body.type !== 'block_actions') {
-            await action.ack()
+    app.action(OfficeUpdatesActions.KommerIkke, async ({ ack, body, client }) => {
+        if (body.type !== 'block_actions') {
+            await ack()
             return
         }
 
-        const currentNavIdent = navIdentFromAction(action.body)
+        if (isParentMessageOld(body)) {
+            await handleStaleAction(client.chat, body)
+            await ack()
+            return
+        }
+
+        const currentNavIdent = navIdentFromAction(body)
         const user = await getUserByNavIdent(currentNavIdent)
 
         if (user == null) {
-            await action.ack()
-            await action.client.chat.postEphemeral({
-                channel: action.body.channel?.id ?? '',
-                user: action.body.user.id,
-                text: `Fant ingen bruker med nav ident ${currentNavIdent}. Du kan fikse dette ved å besøke <${getKontorUrl()}/settings|Zara innstillinger →>`,
-            })
+            await handleMissingUser(client.chat, body, currentNavIdent)
+            await ack()
             return
         }
 
-        await action.ack()
-
-        const now = new Date()
-        const thisWeek = getISOWeek(now)
-        const thisDay = getISODay(now) - 1
-
+        const { thisWeek, thisDay } = getNow()
         const usersWeek = (await getUsersWeek(user.user_id, thisWeek)) ?? toDefaultSchedule(user.default_loc)
         const enabledDays: number[] = R.pipe(
             [
@@ -99,6 +95,7 @@ export function configureOfficeUpdatesListeners(app: App): void {
 
         await setAllDays(user.id, thisWeek, enabledDays)
         await updateTodaysOfficeSummaryIfNeeded()
+        await ack()
     })
 }
 
@@ -110,4 +107,45 @@ export function configureOfficeUpdatesListeners(app: App): void {
  */
 function navIdentFromAction(body: BlockAction): string {
     return body.user.name ?? raise(`User with slack_id ${body.user.id} has no 'nav ident'-name.`)
+}
+
+function isParentMessageOld(body: BlockAction): boolean {
+    const slackTs = body.message?.ts ?? null
+    if (slackTs == null) return false
+
+    const tzDate = new TZDate(+slackTs * 1000, 'Europe/Oslo')
+    return !isToday(tzDate)
+}
+
+function getNow(): {
+    // ISO week number
+    thisWeek: number
+    // Zero-indexed day number
+    thisDay: number
+} {
+    const now = new Date()
+    const thisWeek = getISOWeek(now)
+    const thisDay = getISODay(now) - 1
+
+    return { thisWeek, thisDay }
+}
+
+async function handleStaleAction(chat: App['client']['chat'], body: BlockAction): Promise<void> {
+    await chat.postEphemeral({
+        channel: body.channel?.id ?? '',
+        user: body.user.id,
+        text: `Du kan ikke endre status på tidligere dager :zara:`,
+    })
+}
+
+async function handleMissingUser(
+    chat: App['client']['chat'],
+    body: BlockAction,
+    currentNavIdent: string,
+): Promise<void> {
+    await chat.postEphemeral({
+        channel: body.channel?.id ?? '',
+        user: body.user.id,
+        text: `Fant ingen bruker med nav ident ${currentNavIdent}. Du kan fikse dette ved å besøke <${getKontorUrl()}/settings|Zara innstillinger →>`,
+    })
 }
