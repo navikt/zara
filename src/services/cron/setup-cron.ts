@@ -43,9 +43,9 @@ export const setupDailySummaryCron = lazyNextleton('daily-summary-cron', () => {
 })
 
 export const setupDailyOfficeCron = lazyNextleton('daily-office-cron', () => {
-    const MORNING_7_00 = '0 6 * * *'
+    const MORNING_6_00 = '0 4 * * *'
 
-    const job = new Cron(MORNING_7_00, async () => {
+    const job = new Cron(MORNING_6_00, async () => {
         const executeJob = async (currentRetry: number, maxRetries: number): Promise<void> => {
             try {
                 const leader = await isLeader()
