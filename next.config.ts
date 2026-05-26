@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     assetPrefix: process.env.NEXT_PUBLIC_ASSET_PREFIX,
     transpilePackages: ['@navikt/syk-zara'],
     serverExternalPackages: [
+        '@slack/bolt',
         '@navikt/next-logger',
         'next-logger',
         'pino',
@@ -12,9 +13,16 @@ const nextConfig: NextConfig = {
         '@whatwg-node',
         'prom-client',
     ],
-    // NextJS module tracer weridly doesn't include this direct dependency of Pino
+    // NextJS module tracer misses the `module-sync` export condition (-> require.mjs) for these packages
     outputFileTracingIncludes: {
-        '/': ['real-require'],
+        '/': [
+            // Dependency of pino
+            'real-require',
+            // Because of @slack/bolt
+            './node_modules/async-function/**',
+            './node_modules/generator-function/**',
+            './node_modules/async-generator-function/**',
+        ],
     },
     experimental: {
         optimizePackageImports: ['@navikt/ds-react', '@navikt/aksel-icons'],
