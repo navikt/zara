@@ -55,7 +55,7 @@ export async function add_away_location_v3(client: Pool): Promise<void> {
 }
 
 export async function add_nav_ident_v4(client: Pool): Promise<void> {
-    logger.info('Running add_slack_user_id_v4 migration...')
+    logger.info('Running add_nav_ident_v4 migration...')
     await client.query(`ALTER TABLE users ADD COLUMN nav_ident TEXT UNIQUE`)
     await client.query('UPDATE migrations SET version = 4')
 }

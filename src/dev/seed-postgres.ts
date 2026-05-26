@@ -6,11 +6,11 @@ import { bundledEnv } from '@lib/env'
 import { raise } from '@lib/ts'
 
 const TEAM_MEMBERS = [
-    { user_id: 'kar@example com', nav_ident: 'K123456', name: 'Kar O.', default_loc: 'office' },
-    { user_id: 'anders@example com', nav_ident: 'A234567', name: 'Anders B.', default_loc: 'remote' },
-    { user_id: 'maria@example com', nav_ident: 'M345678', name: 'Maria C.', default_loc: 'office' },
-    { user_id: 'tine@example com', nav_ident: 'T456789', name: 'Tine D.', default_loc: 'remote' },
-    { user_id: 'erik@example com', nav_ident: 'E567890', name: 'Erik F.', default_loc: 'office' },
+    { user_id: 'kar@example.com', nav_ident: 'K123456', name: 'Kar O.', default_loc: 'office' },
+    { user_id: 'anders@example.com', nav_ident: 'A234567', name: 'Anders B.', default_loc: 'remote' },
+    { user_id: 'maria@example.com', nav_ident: 'M345678', name: 'Maria C.', default_loc: 'office' },
+    { user_id: 'tine@example.com', nav_ident: 'T456789', name: 'Tine D.', default_loc: 'remote' },
+    { user_id: 'erik@example.com', nav_ident: 'E567890', name: 'Erik F.', default_loc: 'office' },
 ]
 
 export async function seedDevelopmentPostgres(client: Pool): Promise<void> {
@@ -55,27 +55,27 @@ async function seedWeekSchedules(client: Pool): Promise<void> {
 
     // user_id -> per-week overrides [lastWeek, thisWeek, nextWeek]
     const schedules: Record<string, Array<Record<'mon' | 'tue' | 'wed' | 'thu' | 'fri', boolean>>> = {
-        K123456: [
+        'kar@example.com': [
             { mon: true, tue: true, wed: false, thu: true, fri: true },
             { mon: true, tue: false, wed: true, thu: true, fri: false },
             { mon: true, tue: true, wed: true, thu: true, fri: false },
         ],
-        A234567: [
+        'anders@example.com': [
             { mon: true, tue: true, wed: false, thu: false, fri: false },
             { mon: false, tue: false, wed: true, thu: false, fri: false },
             { mon: true, tue: false, wed: true, thu: false, fri: true },
         ],
-        M345678: [
+        'maria@example.com': [
             { mon: true, tue: true, wed: true, thu: true, fri: false },
             { mon: false, tue: false, wed: true, thu: true, fri: true },
             { mon: true, tue: true, wed: true, thu: false, fri: true },
         ],
-        T456789: [
+        'tine@example.com': [
             { mon: false, tue: true, wed: false, thu: true, fri: false },
             { mon: true, tue: false, wed: false, thu: false, fri: true },
             { mon: false, tue: false, wed: true, thu: false, fri: false },
         ],
-        E567890: [
+        'erik@example.com': [
             { mon: false, tue: true, wed: true, thu: true, fri: true },
             { mon: true, tue: true, wed: false, thu: false, fri: true },
             { mon: false, tue: true, wed: true, thu: true, fri: false },
