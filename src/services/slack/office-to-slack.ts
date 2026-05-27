@@ -1,9 +1,9 @@
-import { getISOWeek, getISOWeekYear, getISODay } from 'date-fns'
+import { getISOWeek, getISOWeekYear } from 'date-fns'
 import { logger } from '@navikt/next-logger'
 
 import { bundledEnv, getServerEnv } from '@lib/env'
-import { toReadableFullDate } from '@lib/date'
-import { isTodayOfficeDay } from '@services/team-office/common/day-utils'
+import { getZeroIndexedWeekday, toReadableFullDate } from '@lib/date'
+import { isWeekday } from '@services/team-office/common/day-utils'
 
 import { OfficeUser } from '../team-office/common/types'
 import { existingCronPost, getOfficeSnapshot, insertDailyPost } from '../team-office/internal/office-cron-service'
@@ -19,12 +19,12 @@ export async function postDailyOfficeSummary(): Promise<{
     const now = new Date()
     const currentYear = getISOWeekYear(now)
     const currentWeek = getISOWeek(now)
-    const day = getISODay(now) - 1
+    const day = getZeroIndexedWeekday(now)
 
     const { office } = await getOfficeSnapshot(currentYear, currentWeek, day)
 
-    if (!isTodayOfficeDay(day) && office.length === 0) {
-        logger.info("Not a office day and nobody is coming, don't post anything")
+    if (!isWeekday(day)) {
+        logger.info("Not a working day, skipping today's office post.")
         return { postLink: null }
     }
 
@@ -51,7 +51,7 @@ export async function updateTodaysOfficeSummaryIfNeeded(): Promise<void> {
     const now = new Date()
     const currentYear = getISOWeekYear(now)
     const currentWeek = getISOWeek(now)
-    const day = getISODay(now) - 1
+    const day = getZeroIndexedWeekday(now)
 
     const exists = await existingCronPost(currentWeek, currentYear, day)
     if (!exists) {

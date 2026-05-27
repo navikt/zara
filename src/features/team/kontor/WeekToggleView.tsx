@@ -3,10 +3,11 @@
 import * as R from 'remeda'
 import { Checkbox, CheckboxGroup, InlineMessage } from '@navikt/ds-react'
 import React, { ReactElement, useTransition } from 'react'
-import { getISOWeek, getISODay } from 'date-fns'
+import { getISOWeek } from 'date-fns'
 
 import { DefaultWeekSchedule } from '@services/team-office/common/types'
 import { toggleWeekDay } from '@features/team/kontor/kontor-actions'
+import { getZeroIndexedWeekday } from '@lib/date'
 
 type Props = {
     week: number
@@ -14,8 +15,9 @@ type Props = {
 }
 
 function WeekToggleView({ week, myWeek }: Props): ReactElement {
-    const currentWeekDay = getISODay(new Date()) - 1
-    const isCurrentWeek = getISOWeek(new Date()) === week
+    const now = new Date()
+    const currentWeekDay = getZeroIndexedWeekday(now)
+    const isCurrentWeek = getISOWeek(now) === week
     const [isPending, startTransition] = useTransition()
     const [days, setDays] = React.useState<string[]>(() => createInitialToggles(myWeek))
     const handleChange = (values: string[]): void => {

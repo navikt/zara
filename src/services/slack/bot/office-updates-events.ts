@@ -1,12 +1,13 @@
 import type { BlockAction } from '@slack/bolt/dist/types/actions/block-action'
 import * as R from 'remeda'
-import { getISODay, getISOWeek, isToday } from 'date-fns'
+import { getISOWeek, isToday } from 'date-fns'
 import { TZDate } from '@date-fns/tz'
 
 import { raise } from '@lib/ts'
 import { getUserByNavIdent, getUsersWeek, setAllDays } from '@services/team-office/internal/office-service'
 import { getKontorUrl, updateTodaysOfficeSummaryIfNeeded } from '@services/slack/office-to-slack'
 import { toDefaultSchedule } from '@services/team-office/common/team-office-utils'
+import { getZeroIndexedWeekday } from '@lib/date'
 
 import { App } from './bot'
 
@@ -125,7 +126,7 @@ function getNow(): {
 } {
     const now = new Date()
     const thisWeek = getISOWeek(now)
-    const thisDay = getISODay(now) - 1
+    const thisDay = getZeroIndexedWeekday(now)
 
     return { thisWeek, thisDay }
 }

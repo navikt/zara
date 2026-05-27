@@ -1,11 +1,11 @@
 import React, { ReactElement } from 'react'
 import { BodyShort, Detail, Heading, Tag } from '@navikt/ds-react'
-import { getISOWeek, setISODay, setISOWeek, startOfWeek, set, isAfter, isSameDay, getISODay } from 'date-fns'
+import { getISOWeek, setISODay, setISOWeek, startOfWeek, set, isAfter, isSameDay } from 'date-fns'
 import { TZDate } from '@date-fns/tz'
 import * as R from 'remeda'
 import { nb } from 'date-fns/locale'
 
-import { toReadableDate } from '@lib/date'
+import { getZeroIndexedWeekday, toReadableDate } from '@lib/date'
 import { getTeamWeek } from '@services/team-office/team-office-service'
 import { getMyself, getMyWeek } from '@services/team-office/me-office-service'
 import { OfficeUser, TeamWeek, WeekSchedule } from '@services/team-office/common/types'
@@ -24,7 +24,7 @@ async function KontorOversikt(): Promise<ReactElement> {
     const friday = set(setISODay(norwayNow, 5), { hours: 10, minutes: 0, seconds: 0, milliseconds: 0 })
     const isAfterTimeOnFriday = isAfter(norwayNow, friday)
     const isFriday = isSameDay(norwayNow, friday)
-    const todaysDay = getISODay(norwayNow) - 1
+    const todaysDay = getZeroIndexedWeekday(norwayNow)
 
     return (
         <div className="relative">
