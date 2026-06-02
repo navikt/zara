@@ -29,7 +29,7 @@
         "@slack/bolt": "^4.7.2",
         "clsx": "^2.1.1",
         "croner": "^10.0.1",
-        "date-fns": "^4.3.0",
+        "date-fns": "^4.4.0",
         "iovalkey": "^0.3.3",
         "motion": "^12.40.0",
         "next": "^16.2.6",
@@ -44,7 +44,7 @@
         "prom-client": "^15.1.3",
         "react": "^19.2.6",
         "react-dom": "^19.2.6",
-        "remeda": "^2.34.1",
+        "remeda": "^2.37.0",
         "sonner": "^2.0.7",
         "tailwind-merge": "^3.6.0",
         "zod": "^4.4.3"
