@@ -1104,15 +1104,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@slack/bolt@npm:^4.7.2":
-  version: 4.7.2
-  resolution: "@slack/bolt@npm:4.7.2"
+"@slack/bolt@npm:^4.7.3":
+  version: 4.7.3
+  resolution: "@slack/bolt@npm:4.7.3"
   dependencies:
     "@slack/logger": "npm:^4.0.1"
     "@slack/oauth": "npm:^3.0.5"
     "@slack/socket-mode": "npm:^2.0.7"
-    "@slack/types": "npm:^2.20.1"
-    "@slack/web-api": "npm:^7.15.1"
+    "@slack/types": "npm:^2.21.1"
+    "@slack/web-api": "npm:^7.16.0"
     axios: "npm:^1.12.0"
     express: "npm:^5.0.0"
     path-to-regexp: "npm:^8.1.0"
@@ -1120,7 +1120,7 @@ __metadata:
     tsscmp: "npm:^1.0.6"
   peerDependencies:
     "@types/express": ^5.0.0
-  checksum: 10c0/b0daa072a7263374d60316bda113f1e41e8e52d142f8cf1b2c9b77284455d3176a66fc311f4294e8419f7185e7a006ca46791b90e7f1a38efcdca96880735c3b
+  checksum: 10c0/2c7ac10a715ced556a207bc7f905896e895d5cc91e5ebc62e41d4f67a7d01b0ea23c723c4dea5adfd5e7c2a8f4c5da52cef9f1b201d7a9eb8e8de97c68be8d20
   languageName: node
   linkType: hard
 
@@ -1160,14 +1160,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@slack/types@npm:^2.20.1, @slack/types@npm:^2.21.0":
+"@slack/types@npm:^2.21.0, @slack/types@npm:^2.21.1":
   version: 2.21.1
   resolution: "@slack/types@npm:2.21.1"
   checksum: 10c0/d18c6e0029b651a3f788a0751c3949b34c66caebf16d3d836b632d51f2e0f812d885a540485c25c314783ba5fbf690616476ec316a46d81be485301fe745df74
   languageName: node
   linkType: hard
 
-"@slack/web-api@npm:^7.15.0, @slack/web-api@npm:^7.15.1":
+"@slack/web-api@npm:^7.15.0, @slack/web-api@npm:^7.16.0":
   version: 7.16.0
   resolution: "@slack/web-api@npm:7.16.0"
   dependencies:
@@ -7300,7 +7300,7 @@ __metadata:
     "@navikt/tsm-prettier": "npm:^2.0.0"
     "@opentelemetry/api": "npm:^1.9.1"
     "@opentelemetry/core": "npm:^2.7.1"
-    "@slack/bolt": "npm:^4.7.2"
+    "@slack/bolt": "npm:^4.7.3"
     "@tailwindcss/postcss": "npm:^4.3.0"
     "@types/node": "npm:^24.12.4"
     "@types/pg": "npm:^8.20.0"
