@@ -1,6 +1,13 @@
-import { HeadHeartIcon, PillRectangleIcon } from '@navikt/aksel-icons'
+import { HeadHeartIcon, PersonIcon, PillRectangleIcon } from '@navikt/aksel-icons'
 
 export const produksjonsFeatures = {
+    personLookup: {
+        Icon: PersonIcon,
+        title: 'Slå opp person i pdl-api',
+        href: '/vakt/person-lookup',
+        description: 'Søk på ident og se informasjon om person og identer.',
+        auditlog: false,
+    },
     behandlerLookup: {
         Icon: HeadHeartIcon,
         title: 'Slå opp på HPR-nummer',

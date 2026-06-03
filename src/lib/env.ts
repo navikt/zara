@@ -61,6 +61,7 @@ const ServerEnvSchema = z.object({
     zaraSlackBotToken: z.string(),
     zaraSlackChannelId: z.string(),
     tsmAwaySlackChannelId: z.string(),
+    queryParamEncryptionSecret: z.string(),
 })
 
 /**
@@ -103,6 +104,7 @@ export function getServerEnv(): ServerEnv {
         zaraSlackBotToken: process.env.ZARA_SLACK_BOT_TOKEN,
         zaraSlackChannelId: process.env.ZARA_SLACK_CHANNEL_ID,
         tsmAwaySlackChannelId: process.env.TSM_AWAY_SLACK_CHANNEL_ID,
+        queryParamEncryptionSecret: process.env.QUERY_PARAM_ENCRYPTION_SECRET,
     } satisfies Record<keyof ServerEnv, unknown | undefined>)
 
     if (bundledEnv.runtimeEnv !== 'local' && parsedEnv.useSykInnValkey) {
