@@ -3,8 +3,7 @@
 import { redirect } from 'next/navigation'
 
 import { validateUserSession } from '@services/auth/auth'
-
-import { encryptQueryParam } from './query-param-encryption'
+import { encryptQueryParam } from '@lib/crypto/query-param-encryption'
 
 export async function searchPerson(formData: FormData): Promise<void> {
     await validateUserSession('TEAM_MEMBER')

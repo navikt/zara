@@ -5,7 +5,7 @@ import { produksjonsFeatures } from '@features/vakt/produksjons-feature-list'
 import VaktFeaturePage from '@features/vakt/shared/VaktFeaturePage'
 import PersonSearchInfo from '@features/person-lookup/PersonSearchInfo'
 import PersonLookupForm from '@features/person-lookup/PersonLookupForm'
-import { decryptQueryParam } from '@features/person-lookup/query-param-encryption'
+import { decryptQueryParam } from '@lib/crypto/query-param-encryption'
 
 async function Page({ searchParams }: PageProps<'/vakt/person-lookup'>): Promise<ReactElement> {
     const { ident } = await searchParams
