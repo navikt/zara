@@ -3,9 +3,9 @@ import { Heading, Skeleton } from '@navikt/ds-react'
 
 import { produksjonsFeatures } from '@features/vakt/produksjons-feature-list'
 import VaktFeaturePage from '@features/vakt/shared/VaktFeaturePage'
-import PersonSearchInfo from '@features/person-lookup/PersonSearchInfo'
-import PersonLookupForm from '@features/person-lookup/PersonLookupForm'
+import PersonSearchInfo from '@features/vakt/person-lookup/PersonSearchInfo'
 import { decryptQueryParam } from '@lib/crypto/query-param-encryption'
+import PersonLookupForm from '@features/vakt/shared/person-search/PersonLookupForm'
 
 async function Page({ searchParams }: PageProps<'/vakt/person-lookup'>): Promise<ReactElement> {
     const { ident } = await searchParams
@@ -13,7 +13,11 @@ async function Page({ searchParams }: PageProps<'/vakt/person-lookup'>): Promise
 
     return (
         <VaktFeaturePage feature={produksjonsFeatures.personLookup}>
-            <PersonLookupForm defaultIdent={plainIdent ?? undefined} />
+            <PersonLookupForm
+                label="Søk på fnr, dnr eller aktør-id"
+                defaultIdent={plainIdent ?? undefined}
+                path="/vakt/person-lookup"
+            />
             {(plainIdent?.length ?? 0) > 3 && (
                 <Suspense
                     fallback={

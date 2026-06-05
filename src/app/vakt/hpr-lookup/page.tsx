@@ -3,8 +3,8 @@ import { Heading, Skeleton } from '@navikt/ds-react'
 
 import { produksjonsFeatures } from '@features/vakt/produksjons-feature-list'
 import VaktFeaturePage from '@features/vakt/shared/VaktFeaturePage'
-import BehandlerLookupForm from '@features/behandler-lookup/BehandlerLookupForm'
-import BehandlerSearchInfo from '@features/behandler-lookup/BehandlerSearchInfo'
+import BehandlerLookupForm from '@features/vakt/behandler-lookup/BehandlerLookupForm'
+import BehandlerSearchInfo from '@features/vakt/behandler-lookup/BehandlerSearchInfo'
 
 async function Page({ searchParams }: PageProps<'/vakt/hpr-lookup'>): Promise<ReactElement> {
     const { hpr } = await searchParams

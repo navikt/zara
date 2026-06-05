@@ -2,7 +2,7 @@ import * as R from 'remeda'
 import React, { ReactElement } from 'react'
 import { Heading } from '@navikt/ds-react'
 
-import { getSykInnApiJobsStatus } from '@services/syk-inn-api/jobs/syk-inn-api-service'
+import { getSykInnApiJobsStatus } from '@services/apps/syk-inn-api/syk-inn-api-service'
 import JobPanel from '@features/syk-inn/admin/JobPanel'
 import RefreshButton from '@features/syk-inn/admin/RefreshButton'
 

@@ -1,11 +1,10 @@
 import { logger } from '@navikt/next-logger'
-import { getToken, requestOboToken } from '@navikt/oasis'
-import { headers } from 'next/headers'
 
 import { bundledEnv } from '@lib/env'
-import { JobStatusResponse, UpdateJobPayload } from '@services/syk-inn-api/jobs/types'
+import { JobStatusResponse, UpdateJobPayload } from '@services/apps/syk-inn-api/types'
 import { User } from '@services/auth/user'
 import { raise } from '@lib/ts'
+import { getOboToken } from '@services/apps/common/obo'
 
 const SYK_INN_API_ADMIN = 'http://syk-inn-api/internal/admin'
 
@@ -61,7 +60,7 @@ export async function getSykInnApiJobsStatus(): Promise<JobStatusResponse[]> {
         ]
     }
 
-    const oboToken = await getSykInnOboToken()
+    const oboToken = await getOboToken('syk-inn-api')
     const response = await fetch(`${SYK_INN_API_ADMIN}/jobs`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${oboToken}` },
@@ -82,7 +81,7 @@ export async function changeJobStatus(jobName: string, state: 'START' | 'STOP', 
         return
     }
 
-    const oboToken = await getSykInnOboToken()
+    const oboToken = await getOboToken('syk-inn-api')
     const response = await fetch(`${SYK_INN_API_ADMIN}/jobs/${jobName}/status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${oboToken}` },
@@ -110,7 +109,7 @@ export async function markSykmeldingPoisonPilled(uuid: string, reason: string, u
         return
     }
 
-    const oboToken = await getSykInnOboToken()
+    const oboToken = await getOboToken('syk-inn-api')
     const response = await fetch(`${SYK_INN_API_ADMIN}/poison-pills/${uuid}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${oboToken}` },
@@ -122,20 +121,4 @@ export async function markSykmeldingPoisonPilled(uuid: string, reason: string, u
     }
 
     return response.json()
-}
-
-export async function getSykInnOboToken(): Promise<string> {
-    const token = getToken(await headers())
-    if (!token) throw new Error('No token found')
-
-    if (bundledEnv.runtimeEnv === 'local') {
-        raise('Why are you trying to exchange a token in local environment?')
-    }
-
-    const tokenSet = await requestOboToken(token, `api://${bundledEnv.runtimeEnv}.tsm.syk-inn-api/.default`)
-    if (!tokenSet.ok) {
-        throw new Error(`Unable to exchange OBO token: ${tokenSet.error.message}`, { cause: tokenSet.error })
-    }
-
-    return tokenSet.token
 }

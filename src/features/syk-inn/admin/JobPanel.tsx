@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'motion/react'
 
 import JobStatusIcon from '@features/syk-inn/admin/JobStatusIcon'
 import { toReadableDateTime } from '@lib/date'
-import { JobStatus, JobStatusResponse } from '@services/syk-inn-api/jobs/types'
+import { JobStatus, JobStatusResponse } from '@services/apps/syk-inn-api/types'
 import { cn } from '@lib/tw'
 import { refetchJobs, startJob, stopJob } from '@features/syk-inn/admin/syk-inn-api-admin-actions'
 import useInterval from '@lib/hooks/useInterval'

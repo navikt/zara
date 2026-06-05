@@ -2,7 +2,7 @@
     "name": "zara",
     "version": "1.0.0",
     "private": true,
-    "packageManager": "yarn@4.14.1",
+    "packageManager": "yarn@4.16.0",
     "engines": {
         "node": "24"
     },
