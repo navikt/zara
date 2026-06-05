@@ -1,4 +1,4 @@
-import { HeadHeartIcon, PersonIcon, PillRectangleIcon } from '@navikt/aksel-icons'
+import { HeadHeartIcon, HospitalIcon, PersonIcon, PillRectangleIcon } from '@navikt/aksel-icons'
 
 export const produksjonsFeatures = {
     personLookup: {
@@ -7,6 +7,13 @@ export const produksjonsFeatures = {
         href: '/vakt/person-lookup',
         description: 'Søk på ident og se informasjon om person og identer.',
         auditlog: false,
+    },
+    sykmeldingshistorikk: {
+        Icon: HospitalIcon,
+        title: 'Sykmeldingshistorikk',
+        href: '/vakt/sykmeldingshistorikk',
+        description: 'Se brukers sykmeldingshistorikk og detaljer for hver sykmelding.',
+        auditlog: true,
     },
     behandlerLookup: {
         Icon: HeadHeartIcon,

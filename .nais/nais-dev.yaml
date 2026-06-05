@@ -59,6 +59,7 @@ spec:
         - host: wss-primary.slack.com
       rules:
         - application: syk-inn-api
+        - application: regulus-maximus
         - application: tsm-pdl-cache
         - application: syfohelsenettproxy
           namespace: teamsykmelding
