@@ -3,6 +3,8 @@ import React, { ReactElement } from 'react'
 import { validateUserSession } from '@services/auth/auth'
 import { getRegulusMaximusSykmeldingshistorikk } from '@services/apps/regulus-maximus/regulus-maximus-service'
 import { ValidTimelineRanges } from '@features/vakt/sykmeldingshistorikk/RangePicker'
+import { logAuditEvent } from '@lib/audit-log'
+import { raise } from '@lib/ts'
 
 import SelectedSykmeldingDetails from './SelectedSykmeldingDetails'
 import { SykmeldingTimelineView } from './SykmeldingTimelineView'
@@ -13,7 +15,14 @@ type Props = {
 }
 
 async function Sykmeldingshistorikk({ ident, range }: Props): Promise<ReactElement> {
-    await validateUserSession('TEAM_MEMBER')
+    const user = await validateUserSession('TEAM_MEMBER')
+
+    logAuditEvent(
+        'VIEW_SYKMELDING_HISTORY',
+        'audit:read',
+        user.navIdent ?? raise(`Unable to audit log for user without navIdent (${user.userId})`),
+        ident,
+    )
 
     const history = await getRegulusMaximusSykmeldingshistorikk(ident, range)
 
