@@ -1,10 +1,10 @@
 import React, { ReactElement, Suspense } from 'react'
 import { Heading, Skeleton } from '@navikt/ds-react'
 
+import { decryptQueryParam } from '@lib/crypto/query-param-encryption'
 import { produksjonsFeatures } from '@features/vakt/produksjons-feature-list'
 import VaktFeaturePage from '@features/vakt/shared/VaktFeaturePage'
 import PersonSearchInfo from '@features/vakt/person-lookup/PersonSearchInfo'
-import { decryptQueryParam } from '@lib/crypto/query-param-encryption'
 import PersonLookupForm from '@features/vakt/shared/person-search/PersonLookupForm'
 
 async function Page({ searchParams }: PageProps<'/vakt/person-lookup'>): Promise<ReactElement> {

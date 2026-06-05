@@ -1,7 +1,7 @@
 import { logger } from '@navikt/next-logger'
 
-import { bundledEnv } from '@lib/env'
 import { JobStatusResponse, UpdateJobPayload } from '@services/apps/syk-inn-api/types'
+import { bundledEnv } from '@lib/env'
 import { User } from '@services/auth/user'
 import { raise } from '@lib/ts'
 import { getOboToken } from '@services/apps/common/obo'
