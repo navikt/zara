@@ -1,7 +1,7 @@
 'use client'
 
 import * as R from 'remeda'
-import { Heading, Timeline } from '@navikt/ds-react'
+import { Heading, InfoCard, Timeline } from '@navikt/ds-react'
 import React, { ReactElement } from 'react'
 import { VitalsIcon } from '@navikt/aksel-icons'
 import { isAfter, subYears } from 'date-fns'
@@ -21,29 +21,39 @@ export function SykmeldingTimelineView({ history, range }: Props): ReactElement 
     const { start, end } = getTimelineRange(history, range)
 
     return (
-        <div className="overflow-hidden border rounded-md border-ax-border-info-subtle py-4">
+        <div className="border rounded-md border-ax-border-info-subtle py-4">
             <Heading size="small" className="ml-4">
                 Brukerens sykmeldinger fra {toReadableDate(start)} til {toReadableDate(end)}
             </Heading>
-            <Timeline startDate={start} endDate={end}>
-                {history.map((sykmelding) => (
-                    <Timeline.Row key={sykmelding.sykmelding.id} label="">
-                        {sykmelding.sykmelding.aktivitet.map((aktivitet, i) => (
-                            <Timeline.Period
-                                key={i}
-                                start={new Date(aktivitet.fom)}
-                                end={new Date(aktivitet.tom)}
-                                status="info"
-                                icon={<VitalsIcon />}
-                                onClick={() => setSelected(sykmelding.sykmelding.id)}
-                                isActive={sykmelding.sykmelding.id === selected}
-                            >
-                                {JSON.stringify(aktivitet)}
-                            </Timeline.Period>
-                        ))}
-                    </Timeline.Row>
-                ))}
-            </Timeline>
+            {history.length > 0 ? (
+                <Timeline startDate={start} endDate={end}>
+                    {history.map((sykmelding) => (
+                        <Timeline.Row key={sykmelding.sykmelding.id} label="Sykmeldinger">
+                            {sykmelding.sykmelding.aktivitet.map((aktivitet, i) => (
+                                <Timeline.Period
+                                    key={i}
+                                    start={new Date(aktivitet.fom)}
+                                    end={new Date(aktivitet.tom)}
+                                    status="info"
+                                    icon={<VitalsIcon />}
+                                    onClick={() => setSelected(sykmelding.sykmelding.id)}
+                                    isActive={sykmelding.sykmelding.id === selected}
+                                >
+                                    {JSON.stringify(aktivitet)}
+                                </Timeline.Period>
+                            ))}
+                        </Timeline.Row>
+                    ))}
+                </Timeline>
+            ) : (
+                <div className="p-4">
+                    <InfoCard data-color="info" className="max-w-prose">
+                        <InfoCard.Header>
+                            <InfoCard.Title>Ingen sykmeldinger valgt periode</InfoCard.Title>
+                        </InfoCard.Header>
+                    </InfoCard>
+                </div>
+            )}
         </div>
     )
 }

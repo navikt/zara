@@ -18,7 +18,7 @@ async function Sykmeldingshistorikk({ ident, range }: Props): Promise<ReactEleme
     const user = await validateUserSession('TEAM_MEMBER')
 
     logAuditEvent(
-        'VIEW_SYKMELDING_HISTORY',
+        `Sykmeldingshistorikk for perioden "${range}"`,
         'audit:read',
         user.navIdent ?? raise(`Unable to audit log for user without navIdent (${user.userId})`),
         ident,
