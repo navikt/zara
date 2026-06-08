@@ -1,7 +1,7 @@
 'use client'
 
 import React, { ReactElement } from 'react'
-import { Heading } from '@navikt/ds-react'
+import { ExpansionCard } from '@navikt/ds-react'
 
 import { SykmeldingRecord } from '@services/apps/regulus-maximus/types'
 
@@ -11,8 +11,10 @@ type Props = {
     history: SykmeldingRecord[]
 }
 
-function SelectedSykmeldingDetails({ history }: Props): ReactElement {
+function SelectedSykmeldingDetails({ history }: Props): ReactElement | null {
     const { selected } = useSelected()
+
+    if (history.length === 0) return null
 
     if (selected == null) {
         return <div className="p-4">Velg en sykmelding i tidslinjen for å se mer detaljer</div>
@@ -25,11 +27,15 @@ function SelectedSykmeldingDetails({ history }: Props): ReactElement {
     }
 
     return (
-        <div className="mt-4 border border-ax-border-info-subtle py-4 rounded-md">
-            <Heading size="small" className="ml-4">
-                Rå JSON for sykmelding {selected}
-            </Heading>
-            <pre className="px-4">{JSON.stringify(sykmelding, null, 2)}</pre>
+        <div className="mt-4">
+            <ExpansionCard aria-label="Demo med bare tittel" size="small">
+                <ExpansionCard.Header>
+                    <ExpansionCard.Title>Rå sykmelding JSON</ExpansionCard.Title>
+                </ExpansionCard.Header>
+                <ExpansionCard.Content>
+                    <pre className="px-4">{JSON.stringify(sykmelding, null, 2)}</pre>
+                </ExpansionCard.Content>
+            </ExpansionCard>
         </div>
     )
 }
