@@ -1,12 +1,12 @@
 'use client'
 
 import * as R from 'remeda'
-import { Heading, InfoCard, Timeline } from '@navikt/ds-react'
+import { Heading, InfoCard, Timeline, TimelinePeriodProps } from '@navikt/ds-react'
 import React, { ReactElement } from 'react'
-import { VitalsIcon } from '@navikt/aksel-icons'
+import { CloudIcon, CodeIcon, EarthIcon, NewsletterIcon } from '@navikt/aksel-icons'
 import { isAfter, subYears } from 'date-fns'
 
-import { SykmeldingRecord } from '@services/apps/regulus-maximus/types'
+import { SykmeldingRecord, SykmeldingRecordValidationResult } from '@services/apps/regulus-maximus/types'
 import { ValidTimelineRanges } from '@features/vakt/sykmeldingshistorikk/RangePicker'
 import { useSelected } from '@features/vakt/sykmeldingshistorikk/useSelected'
 import { toReadableDate } from '@lib/date'
@@ -28,14 +28,14 @@ export function SykmeldingTimelineView({ history, range }: Props): ReactElement 
             {history.length > 0 ? (
                 <Timeline startDate={start} endDate={end}>
                     {history.map((sykmelding) => (
-                        <Timeline.Row key={sykmelding.sykmelding.id} label="Sykmeldinger">
+                        <Timeline.Row key={sykmelding.sykmelding.id} label="">
                             {sykmelding.sykmelding.aktivitet.map((aktivitet, i) => (
                                 <Timeline.Period
                                     key={i}
                                     start={new Date(aktivitet.fom)}
                                     end={new Date(aktivitet.tom)}
-                                    status="info"
-                                    icon={<VitalsIcon />}
+                                    status={sykmeldingOutcomeToStatus(sykmelding.validation)}
+                                    icon={<SykmeldingTypeIcon type={sykmelding.sykmelding.type} />}
                                     onClick={() => setSelected(sykmelding.sykmelding.id)}
                                     isActive={sykmelding.sykmelding.id === selected}
                                 >
@@ -56,6 +56,30 @@ export function SykmeldingTimelineView({ history, range }: Props): ReactElement 
             )}
         </div>
     )
+}
+
+function sykmeldingOutcomeToStatus(validation: SykmeldingRecordValidationResult): TimelinePeriodProps['status'] {
+    switch (validation.status) {
+        case 'OK':
+            return 'success'
+        case 'PENDING':
+            return 'warning'
+        case 'INVALID':
+            return 'danger'
+    }
+}
+
+function SykmeldingTypeIcon({ type }: { type: 'UTENLANDSK' | 'DIGITAL' | 'XML' | 'PAPIR' }): ReactElement {
+    switch (type) {
+        case 'UTENLANDSK':
+            return <EarthIcon />
+        case 'DIGITAL':
+            return <CloudIcon />
+        case 'XML':
+            return <CodeIcon />
+        case 'PAPIR':
+            return <NewsletterIcon />
+    }
 }
 
 function getTimelineRange(history: SykmeldingRecord[], range: ValidTimelineRanges): { start: Date; end: Date } {
