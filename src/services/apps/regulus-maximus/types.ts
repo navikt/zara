@@ -1,6 +1,10 @@
+/**
+ * These types are generated using Copilot based on the Kotlin types in tsm-sykmelding-input library.
+ */
+
 // ---- Shared primitives ----
 
-type Navn = {
+export type Navn = {
     fornavn: string
     mellomnavn: string | null
     etternavn: string
@@ -40,7 +44,7 @@ type AdresseType =
     | 'UKJENT'
     | 'UGYLDIG'
 
-type Adresse = {
+export type Adresse = {
     type: AdresseType
     gateadresse: string | null
     postnummer: string | null
@@ -177,6 +181,25 @@ type MottakenhetBlokk = {
 
 type Ack = { ackType: AckType }
 
+type MessageMetadataDigital = {
+    type: 'DIGITAL'
+    orgnummer: string
+}
+
+type MessageMetadataPapir = {
+    type: 'PAPIRSYKMELDING'
+    msgInfo: MessageInfo
+    sender: Organisasjon
+    receiver: Organisasjon
+    journalPostId: string
+}
+
+type MessageMetadataUtenlandsk = {
+    type: 'UTENLANDSK_SYKMELDING'
+    land: string
+    journalPostId: string
+}
+
 type MessageMetadataXml =
     | {
           type: 'EGENMELDT'
@@ -199,18 +222,6 @@ type MessageMetadataXml =
           receiver: Organisasjon
           vedlegg: string[] | null
       }
-
-type MessageMetadata =
-    | { type: 'DIGITAL'; orgnummer: string }
-    | {
-          type: 'PAPIRSYKMELDING'
-          msgInfo: MessageInfo
-          sender: Organisasjon
-          receiver: Organisasjon
-          journalPostId: string
-      }
-    | { type: 'UTENLANDSK_SYKMELDING'; land: string; journalPostId: string }
-    | MessageMetadataXml
 
 // ---- Pasient & Behandler (sykmelding level) ----
 
@@ -236,7 +247,7 @@ type Sykmelder = {
 
 // ---- Aktivitet ----
 
-type Aktivitet =
+export type Aktivitet =
     | { type: 'BEHANDLINGSDAGER'; fom: string; tom: string; antallBehandlingsdager: number }
     | { type: 'GRADERT'; fom: string; tom: string; grad: number; reisetilskudd: boolean }
     | { type: 'REISETILSKUDD'; fom: string; tom: string }
@@ -262,7 +273,7 @@ type ArbeidsrelatertArsak = { beskrivelse: string | null; arsak: Arbeidsrelatert
 
 // ---- Arbeidsgiver ----
 
-type ArbeidsgiverInfo =
+export type ArbeidsgiverInfo =
     | {
           type: 'EN_ARBEIDSGIVER'
           navn: string | null
@@ -302,7 +313,7 @@ type IArbeid =
 
 type DiagnoseSystem = 'ICPC2' | 'ICD10' | 'ICPC2B' | 'PHBU' | 'UGYLDIG'
 
-type DiagnoseInfo = { system: DiagnoseSystem; kode: string; tekst: string | null }
+export type DiagnoseInfo = { system: DiagnoseSystem; kode: string; tekst: string | null }
 
 type AnnenFravarArsakType =
     | 'GODKJENT_HELSEINSTITUSJON'
@@ -453,7 +464,7 @@ export type SykmeldingRecord =
               bistandNav: BistandNav | null
               utdypendeSporsmal: UtdypendeSporsmal[] | null
           }
-          metadata: MessageMetadata & { type: 'DIGITAL' }
+          metadata: MessageMetadataDigital
           validation: SykmeldingRecordValidationResult
       }
     | {
@@ -463,7 +474,7 @@ export type SykmeldingRecord =
       }
     | {
           sykmelding: SykmeldingNasjonalLegacyBase & { type: 'PAPIR' }
-          metadata: MessageMetadata & { type: 'PAPIRSYKMELDING' }
+          metadata: MessageMetadataPapir
           validation: SykmeldingRecordValidationResult
       }
     | {
@@ -476,6 +487,6 @@ export type SykmeldingRecord =
               aktivitet: Aktivitet[]
               utenlandskInfo: UtenlandskInfo
           }
-          metadata: MessageMetadata & { type: 'UTENLANDSK_SYKMELDING' }
+          metadata: MessageMetadataUtenlandsk
           validation: SykmeldingRecordValidationResult
       }
