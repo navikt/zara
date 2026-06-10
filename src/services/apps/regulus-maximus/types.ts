@@ -294,7 +294,7 @@ export type ArbeidsgiverInfo =
 
 // ---- IArbeid (for Prognose) ----
 
-type IArbeid =
+export type IArbeid =
     | {
           type: 'ER_I_ARBEID'
           egetArbeidPaSikt: boolean
@@ -370,7 +370,7 @@ type BistandNav = { bistandUmiddelbart: boolean; beskrivBistand: string | null }
 
 type Tiltak = { tiltakNav: string | null; andreTiltak: string | null }
 
-type Prognose = {
+export type Prognose = {
     arbeidsforEtterPeriode: boolean
     hensynArbeidsplassen: string | null
     arbeid: IArbeid | null
