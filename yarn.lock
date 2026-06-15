@@ -4332,6 +4332,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"kafkajs@npm:^2.2.4":
+  version: 2.2.4
+  resolution: "kafkajs@npm:2.2.4"
+  checksum: 10c0/6eece1f682a257955f647b6142430e87681d11bf01e9ebe0a73b4bc0653b8f970c48ba72a3b25fdbb4205cfbb36e5ef93d954b8f8c5f7767ae2b4693bdec9d88
+  languageName: node
+  linkType: hard
+
 "keyv@npm:^4.5.4":
   version: 4.5.4
   resolution: "keyv@npm:4.5.4"
@@ -7307,6 +7314,7 @@ __metadata:
     eslint-plugin-prettier: "npm:^5.5.6"
     husky: "npm:^9.1.7"
     iovalkey: "npm:^0.3.3"
+    kafkajs: "npm:^2.2.4"
     lint-staged: "npm:^17.0.7"
     motion: "npm:^12.40.0"
     next: "npm:^16.2.7"

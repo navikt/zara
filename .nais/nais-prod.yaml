@@ -40,6 +40,8 @@ spec:
       access: readwrite
   postgres:
     clusterName: zara-postgres
+  kafka:
+    pool: nav-prod
   observability:
     autoInstrumentation:
       enabled: true

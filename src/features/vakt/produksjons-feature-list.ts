@@ -1,4 +1,4 @@
-import { HeadHeartIcon, HospitalIcon, PersonIcon, PillRectangleIcon } from '@navikt/aksel-icons'
+import { HeadHeartIcon, HospitalIcon, LayersIcon, PersonIcon, PillRectangleIcon } from '@navikt/aksel-icons'
 
 export const produksjonsFeatures = {
     personLookup: {
@@ -27,6 +27,13 @@ export const produksjonsFeatures = {
         title: 'Poison Pill Sykmelding',
         href: '/vakt/poison-pill',
         description: "Marker en sykmelding som 'poison pill', som betyr at den ikke skal prosesseres.",
+        auditlog: false,
+    },
+    kafkaConsumerGroups: {
+        Icon: LayersIcon,
+        title: 'Kafka consumer groups',
+        href: '/vakt/kafka',
+        description: 'Se teamets consumer groups, aktivitet og lag. Reset offsets og slett consumer groups.',
         auditlog: false,
     },
 } as const
