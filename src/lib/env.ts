@@ -30,6 +30,21 @@ const PostgresConfigSchema = z.object({
     database: z.string(),
 })
 
+type KafkaConfig = z.infer<typeof KafkaConfigSchema>
+const KafkaConfigSchema = z.union([
+    z.object({
+        runtimeEnv: z.union([z.literal('dev-gcp'), z.literal('prod-gcp')]),
+        brokers: z.string(),
+        certificate: z.string(),
+        privateKey: z.string(),
+        ca: z.string(),
+    }),
+    z.object({
+        runtimeEnv: z.literal('local'),
+        brokers: z.string(),
+    }),
+])
+
 type ValkeyConfig = z.infer<typeof ValkeyConfigSchema>
 const ValkeyConfigSchema = z.union([
     /**
@@ -57,6 +72,7 @@ const ServerEnvSchema = z.object({
     useSykInnValkey: z.boolean().default(false),
     valkeyConfig: ValkeyConfigSchema,
     postgresConfig: PostgresConfigSchema,
+    kafkaConfig: KafkaConfigSchema,
     zaraSlackAppToken: z.string(),
     zaraSlackBotToken: z.string(),
     zaraSlackChannelId: z.string(),
@@ -96,10 +112,19 @@ export function getServerEnv(): ServerEnv {
         database: process.env.PGDATABASE,
     } satisfies Record<KeysOfUnion<PostgresConfig>, unknown>
 
+    const kafkaConfig = {
+        runtimeEnv: process.env.NEXT_PUBLIC_RUNTIME_ENV,
+        brokers: process.env.KAFKA_BROKERS,
+        certificate: process.env.KAFKA_CERTIFICATE,
+        privateKey: process.env.KAFKA_PRIVATE_KEY,
+        ca: process.env.KAFKA_CA,
+    } satisfies Record<KeysOfUnion<KafkaConfig>, unknown>
+
     const parsedEnv = ServerEnvSchema.parse({
         useSykInnValkey: useLocalSykInn,
         valkeyConfig: valkeyConfig,
         postgresConfig: postgresConfig,
+        kafkaConfig: kafkaConfig,
         zaraSlackAppToken: process.env.ZARA_SLACK_APP_TOKEN,
         zaraSlackBotToken: process.env.ZARA_SLACK_BOT_TOKEN,
         zaraSlackChannelId: process.env.ZARA_SLACK_CHANNEL_ID,
