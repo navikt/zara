@@ -25,7 +25,7 @@
         "@navikt/pino-logger": "^5.0.0",
         "@navikt/syk-zara": "^2.0.15",
         "@opentelemetry/api": "^1.9.1",
-        "@opentelemetry/core": "^2.7.1",
+        "@opentelemetry/core": "^2.8.0",
         "@slack/bolt": "^4.7.3",
         "clsx": "^2.1.1",
         "croner": "^10.0.1",
