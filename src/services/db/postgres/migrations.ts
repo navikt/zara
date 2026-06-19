@@ -2,7 +2,13 @@ import { Pool } from 'pg'
 import { logger } from '@navikt/next-logger'
 
 import { pgClient } from '@services/db/postgres/production-pg'
-import { initial_v1, office_cron_job_v2, add_away_location_v3, add_nav_ident_v4 } from '@services/db/postgres/schema'
+import {
+    initial_v1,
+    office_cron_job_v2,
+    add_away_location_v3,
+    add_nav_ident_v4,
+    quiz_tables_v5,
+} from '@services/db/postgres/schema'
 
 export async function runMigrations(): Promise<void> {
     const client = await pgClient()
@@ -23,6 +29,8 @@ export async function runMigrations(): Promise<void> {
             await add_away_location_v3(client)
         case 3:
             await add_nav_ident_v4(client)
+        case 4:
+            await quiz_tables_v5(client)
     }
     await client.query('COMMIT')
 }

@@ -84,6 +84,13 @@ function LandingPage({ features }: Props): ReactElement {
                         description="Styr dine kontordager og om du er remote- eller kontoransatt"
                         hasAccess={features.includes('TEAM_MEMBER')}
                     />
+                    <AccessibleFeature
+                        Icon={SandboxIcon}
+                        title="Quiz"
+                        href="/quiz"
+                        description="Lag og kjør Kahoot-aktige quizer live med teamet."
+                        hasAccess={features.includes('TEAM_MEMBER')}
+                    />
                 </div>
             </div>
         </div>
