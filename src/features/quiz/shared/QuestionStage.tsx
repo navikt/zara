@@ -15,7 +15,11 @@ function QuestionStage({ question }: Props): ReactElement {
             {question.imageId && (
                 // next/image does NOT enjoy auth-gated images that might 404, it spams the logs
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={`/quiz/image/${question.imageId}`} alt="" className="max-h-72 w-auto mx-auto rounded-md" />
+                <img
+                    src={`/quiz/image/${question.imageId}`}
+                    alt=""
+                    className="max-h-72 w-auto max-w-full object-contain rounded-md"
+                />
             )}
             <p className="text-2xl md:text-4xl font-bold text-center text-balance">{question.text}</p>
         </div>

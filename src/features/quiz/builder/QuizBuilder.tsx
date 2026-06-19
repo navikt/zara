@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import { QuestionType, QuizContent } from '@services/quiz/quiz-schema'
 import { saveExistingQuiz, saveNewQuiz } from '@features/quiz/quiz-actions'
 import { uploadQuizImage } from '@features/quiz/image-actions'
+import { resizeImageForUpload } from '@features/quiz/resize-image'
 import {
     DraftBase,
     DraftQuestion,
@@ -80,9 +81,11 @@ function ImagePicker({
         if (!file) return
 
         setUploadError(null)
-        const formData = new FormData()
-        formData.append('file', file)
         startUpload(async () => {
+            // Downscale large images in the browser so big phone photos don't hit the upload size limit.
+            const resized = await resizeImageForUpload(file)
+            const formData = new FormData()
+            formData.append('file', resized)
             const result = await uploadQuizImage(formData)
             if ('error' in result) {
                 setUploadError(result.error)
@@ -124,7 +127,11 @@ function ImagePicker({
             {imageId && (
                 // next/image does NOT enjoy auth-gated images that might 404, it spams the logs
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={`/quiz/image/${imageId}`} alt="" className="max-h-32 w-auto rounded-md" />
+                <img
+                    src={`/quiz/image/${imageId}`}
+                    alt=""
+                    className="max-h-32 w-auto max-w-full self-start object-contain rounded-md"
+                />
             )}
             {uploadError && <Alert variant="error">{uploadError}</Alert>}
         </div>
