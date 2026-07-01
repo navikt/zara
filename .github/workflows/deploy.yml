@@ -17,7 +17,7 @@ jobs:
     name: Test, lint and verify
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: navikt/tsm-workflows/actions/yarn@main
         with:
           READER_TOKEN: ${{ secrets.READER_TOKEN }}
@@ -30,7 +30,7 @@ jobs:
     name: Build for dev
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: navikt/tsm-workflows/actions/next/build@main
         id: next-build
         with:
@@ -48,7 +48,7 @@ jobs:
     name: Build for prod
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: navikt/tsm-workflows/actions/next/build@main
         id: next-build
         with:
@@ -92,7 +92,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-dev, test-lint]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
@@ -109,7 +109,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-prod]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: prod-gcp
