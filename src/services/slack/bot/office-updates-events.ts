@@ -1,13 +1,13 @@
-import type { BlockAction } from '@slack/bolt/dist/types/actions/block-action'
-import * as R from 'remeda'
-import { getISOWeek, isToday } from 'date-fns'
 import { TZDate } from '@date-fns/tz'
+import type { BlockAction } from '@slack/bolt/dist/types/actions/block-action'
+import { getISOWeek, isToday } from 'date-fns'
+import * as R from 'remeda'
 
-import { raise } from '@lib/ts'
-import { getUserByNavIdent, getUsersWeek, setAllDays } from '@services/team-office/internal/office-service'
-import { getKontorUrl, updateTodaysOfficeSummaryIfNeeded } from '@services/slack/office-to-slack'
-import { toDefaultSchedule } from '@services/team-office/common/team-office-utils'
-import { getZeroIndexedWeekday } from '@lib/date'
+import { getZeroIndexedWeekday } from '#lib/date'
+import { raise } from '#lib/ts'
+import { getKontorUrl, updateTodaysOfficeSummaryIfNeeded } from '#services/slack/office-to-slack'
+import { toDefaultSchedule } from '#services/team-office/common/team-office-utils'
+import { getUserByNavIdent, getUsersWeek, setAllDays } from '#services/team-office/internal/office-service'
 
 import { App } from './bot'
 

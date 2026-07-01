@@ -1,13 +1,13 @@
 'use client'
 
-import React, { ReactElement, useEffect } from 'react'
 import { BodyShort, Detail, Heading } from '@navikt/ds-react'
 import { PageBlock } from '@navikt/ds-react/Page'
-import Image from 'next/image'
 import { logger } from '@navikt/next-logger'
+import Image from 'next/image'
+import React, { ReactElement, useEffect } from 'react'
 
-import { AkselNextLink } from '@components/AkselNextLink'
-import { zaraImages } from '@images/zaras'
+import { AkselNextLink } from '#components/AkselNextLink'
+import { zaraImages } from '#images/zaras'
 
 type ErrerProps = {
     error: Error & { digest?: string }

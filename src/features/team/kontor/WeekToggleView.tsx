@@ -1,13 +1,13 @@
 'use client'
 
-import * as R from 'remeda'
 import { Checkbox, CheckboxGroup, InlineMessage } from '@navikt/ds-react'
-import React, { ReactElement, useTransition } from 'react'
 import { getISOWeek } from 'date-fns'
+import React, { ReactElement, useTransition } from 'react'
+import * as R from 'remeda'
 
-import { DefaultWeekSchedule } from '@services/team-office/common/types'
-import { toggleWeekDay } from '@features/team/kontor/kontor-actions'
-import { getZeroIndexedWeekday } from '@lib/date'
+import { toggleWeekDay } from '#features/team/kontor/kontor-actions'
+import { getZeroIndexedWeekday } from '#lib/date'
+import { DefaultWeekSchedule } from '#services/team-office/common/types'
 
 type Props = {
     week: number

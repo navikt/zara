@@ -1,5 +1,3 @@
-import React, { ReactElement } from 'react'
-import { Detail, Heading, Tag, Tooltip } from '@navikt/ds-react'
 import {
     ArrowRightIcon,
     CheckmarkHeavyIcon,
@@ -8,14 +6,16 @@ import {
     PersonGavelIcon,
     PhoneIcon,
 } from '@navikt/aksel-icons'
-import Link from 'next/link'
+import { Detail, Heading, Tag, Tooltip } from '@navikt/ds-react'
 import { Feedback, ContactableUserFeedback, InSituFeedback } from '@navikt/syk-zara/feedback'
+import Link from 'next/link'
+import React, { ReactElement } from 'react'
 
-import { MultilineUserFeedback } from '@components/feedback/MultilineUserFeedback'
-import { cn } from '@lib/tw'
-import { toReadableDateTime } from '@lib/date'
-import { AutoUpdatingDistance } from '@components/AutoUpdatingDistance'
-import SentimentIcon from '@components/feedback/SentimentIcon'
+import { AutoUpdatingDistance } from '#components/AutoUpdatingDistance'
+import { MultilineUserFeedback } from '#components/feedback/MultilineUserFeedback'
+import SentimentIcon from '#components/feedback/SentimentIcon'
+import { toReadableDateTime } from '#lib/date'
+import { cn } from '#lib/tw'
 
 export function FeedbackCard({ feedback, fresh }: { feedback: Feedback; fresh: boolean }): ReactElement {
     return (

@@ -1,10 +1,10 @@
-import React, { ReactElement } from 'react'
-import { PageBlock } from '@navikt/ds-react/Page'
 import { Buildings3Icon, CogIcon } from '@navikt/aksel-icons'
+import { PageBlock } from '@navikt/ds-react/Page'
+import React, { ReactElement } from 'react'
 
-import KontorOversikt from '@features/team/kontor/KontorOversikt'
-import { AkselNextLinkButton } from '@components/AkselNextLink'
-import PageHeader from '@components/page/PageHeader'
+import { AkselNextLinkButton } from '#components/AkselNextLink'
+import PageHeader from '#components/page/PageHeader'
+import KontorOversikt from '#features/team/kontor/KontorOversikt'
 
 function Page(): ReactElement {
     return (

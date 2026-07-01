@@ -1,13 +1,13 @@
-import * as R from 'remeda'
-import { logger } from '@navikt/next-logger'
-import Valkey from 'iovalkey'
 import { faker } from '@faker-js/faker'
-import { subDays } from 'date-fns'
+import { logger } from '@navikt/next-logger'
 import { InSituFeedback, ContactableUserFeedback } from '@navikt/syk-zara/feedback'
 import { AdminFeedbackClient } from '@navikt/syk-zara/feedback/admin'
+import { subDays } from 'date-fns'
+import Valkey from 'iovalkey'
+import * as R from 'remeda'
 
-import { bundledEnv } from '@lib/env'
-import { raise } from '@lib/ts'
+import { bundledEnv } from '#lib/env'
+import { raise } from '#lib/ts'
 
 import { createContactDetails, createContactedInfo, createVerifiedContentInfo } from './test-data'
 

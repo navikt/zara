@@ -1,15 +1,15 @@
 'use client'
 
-import React, { ReactElement, useState, useTransition } from 'react'
 import { Button, Detail, Heading } from '@navikt/ds-react'
 import { motion, AnimatePresence } from 'motion/react'
+import React, { ReactElement, useState, useTransition } from 'react'
 
-import JobStatusIcon from '@features/syk-inn/admin/JobStatusIcon'
-import { toReadableDateTime } from '@lib/date'
-import { JobStatus, JobStatusResponse } from '@services/apps/syk-inn-api/types'
-import { cn } from '@lib/tw'
-import { refetchJobs, startJob, stopJob } from '@features/syk-inn/admin/syk-inn-api-admin-actions'
-import useInterval from '@lib/hooks/useInterval'
+import JobStatusIcon from '#features/syk-inn/admin/JobStatusIcon'
+import { refetchJobs, startJob, stopJob } from '#features/syk-inn/admin/syk-inn-api-admin-actions'
+import { toReadableDateTime } from '#lib/date'
+import useInterval from '#lib/hooks/useInterval'
+import { cn } from '#lib/tw'
+import { JobStatus, JobStatusResponse } from '#services/apps/syk-inn-api/types'
 
 const STATUS_PRECEDENCE: JobStatus[] = ['FAILED', 'STOPPED', 'NOT_STARTED', 'RUNNING']
 
@@ -23,7 +23,7 @@ function JobPanel({ job }: Props): ReactElement {
     const [pending, startTransition] = useTransition()
 
     useInterval(() => {
-        refetchJobs()
+        void refetchJobs()
     }, 30_000)
 
     return (

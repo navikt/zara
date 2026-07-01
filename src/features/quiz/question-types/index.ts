@@ -9,7 +9,7 @@ import {
     QuestionType,
     RevealData,
     RevealResult,
-} from '@services/quiz/quiz-schema'
+} from '#services/quiz/quiz-schema'
 
 import MultipleChoiceEditor from './multiple-choice/Editor'
 import MultipleChoicePlayInput from './multiple-choice/PlayInput'

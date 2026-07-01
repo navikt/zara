@@ -1,15 +1,15 @@
-import { getISOWeek, getISOWeekYear } from 'date-fns'
 import { logger } from '@navikt/next-logger'
+import { getISOWeek, getISOWeekYear } from 'date-fns'
 
-import { bundledEnv, getServerEnv } from '@lib/env'
-import { getZeroIndexedWeekday, toReadableFullDate } from '@lib/date'
-import { isWeekday } from '@services/team-office/common/day-utils'
+import { getZeroIndexedWeekday, toReadableFullDate } from '#lib/date'
+import { bundledEnv, getServerEnv } from '#lib/env'
+import { isWeekday } from '#services/team-office/common/day-utils'
 
 import { OfficeUser } from '../team-office/common/types'
 import { existingCronPost, getOfficeSnapshot, insertDailyPost } from '../team-office/internal/office-cron-service'
 
-import { createPermalink, slackChatPostMessage, updateSlackMessage } from './utils'
 import { OfficeUpdatesActions } from './bot/office-updates-events'
+import { createPermalink, slackChatPostMessage, updateSlackMessage } from './utils'
 
 export async function postDailyOfficeSummary(): Promise<{
     postLink: string | null

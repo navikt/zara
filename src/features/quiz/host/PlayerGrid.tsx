@@ -1,10 +1,10 @@
 'use client'
 
-import React, { ReactElement } from 'react'
 import { BodyShort, Tag } from '@navikt/ds-react'
+import React, { ReactElement } from 'react'
 
-import Avatar from '@components/live-view/Avatar'
-import { PlayerPresence } from '@services/quiz/quiz-schema'
+import Avatar from '#components/live-view/Avatar'
+import { PlayerPresence } from '#services/quiz/quiz-schema'
 
 type Props = {
     players: PlayerPresence[]

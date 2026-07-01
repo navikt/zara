@@ -1,12 +1,12 @@
-import React, { ReactElement, Suspense } from 'react'
-import { notFound } from 'next/navigation'
-import { Skeleton } from '@navikt/ds-react'
 import { BarChartIcon } from '@navikt/aksel-icons'
+import { Skeleton } from '@navikt/ds-react'
+import { notFound } from 'next/navigation'
+import React, { ReactElement, Suspense } from 'react'
 
-import { validateUserSession } from '@services/auth/auth'
-import { getQuizMeta, listQuizRuns } from '@services/quiz/quiz-store'
-import PageHeader from '@components/page/PageHeader'
-import QuizRuns from '@features/quiz/results/QuizRuns'
+import PageHeader from '#components/page/PageHeader'
+import QuizRuns from '#features/quiz/results/QuizRuns'
+import { validateUserSession } from '#services/auth/auth'
+import { getQuizMeta, listQuizRuns } from '#services/quiz/quiz-store'
 
 async function RunsSection({ quizId, userId }: { quizId: string; userId: string }): Promise<ReactElement> {
     const runs = await listQuizRuns(quizId, userId)

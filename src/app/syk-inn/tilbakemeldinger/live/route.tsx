@@ -1,8 +1,8 @@
 import { subscribeToFeedbackChannels } from '@navikt/syk-zara/feedback/admin'
 
-import { validateUserSession } from '@services/auth/auth'
-import { getFeedbackClient } from '@services/feedback/feedback-client'
-import { subscriberValkeyClient } from '@services/db/valkey/production-valkey'
+import { validateUserSession } from '#services/auth/auth'
+import { subscriberValkeyClient } from '#services/db/valkey/production-valkey'
+import { getFeedbackClient } from '#services/feedback/feedback-client'
 
 export async function GET(): Promise<Response> {
     await validateUserSession('TILBAKEMELDINGER')

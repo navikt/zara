@@ -1,11 +1,11 @@
 'use client'
 
-import React, { ReactElement, useRef, useState, useTransition } from 'react'
-import { BodyShort, Button, Detail, Modal, Select, TextField } from '@navikt/ds-react'
 import { ArrowUndoIcon, ExclamationmarkTriangleIcon, TrashIcon } from '@navikt/aksel-icons'
+import { BodyShort, Button, Detail, Modal, Select, TextField } from '@navikt/ds-react'
+import React, { ReactElement, useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
-import { ResetOffsetTarget } from '@services/kafka/types'
+import { ResetOffsetTarget } from '#services/kafka/types'
 
 import { deleteGroup, resetOffsets } from './kafka-actions'
 

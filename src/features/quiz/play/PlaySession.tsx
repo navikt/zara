@@ -1,18 +1,18 @@
 'use client'
 
-import React, { ReactElement, useState, useTransition } from 'react'
 import { Alert, Button, Heading, Loader, Tag } from '@navikt/ds-react'
 import { useRouter } from 'next/navigation'
+import React, { ReactElement, useState, useTransition } from 'react'
 
-import { AnswerPayload } from '@services/quiz/quiz-schema'
-import { averagePercent } from '@services/quiz/quiz-scoring'
-import { useQuizSession } from '@features/quiz/shared/useQuizSession'
-import { answerQuestion } from '@features/quiz/play-actions'
-import { QUESTION_TYPES } from '@features/quiz/question-types'
-import Countdown from '@features/quiz/shared/Countdown'
-import Leaderboard from '@features/quiz/shared/Leaderboard'
-import QuestionStage from '@features/quiz/shared/QuestionStage'
-import PlayerGrid from '@features/quiz/host/PlayerGrid'
+import PlayerGrid from '#features/quiz/host/PlayerGrid'
+import { answerQuestion } from '#features/quiz/play-actions'
+import { QUESTION_TYPES } from '#features/quiz/question-types'
+import Countdown from '#features/quiz/shared/Countdown'
+import Leaderboard from '#features/quiz/shared/Leaderboard'
+import QuestionStage from '#features/quiz/shared/QuestionStage'
+import { useQuizSession } from '#features/quiz/shared/useQuizSession'
+import { AnswerPayload } from '#services/quiz/quiz-schema'
+import { averagePercent } from '#services/quiz/quiz-scoring'
 
 type Props = {
     sessionId: string

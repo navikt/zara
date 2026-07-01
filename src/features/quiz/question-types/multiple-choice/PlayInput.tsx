@@ -1,9 +1,9 @@
 'use client'
 
-import React, { ReactElement, useState } from 'react'
 import { Button } from '@navikt/ds-react'
+import React, { ReactElement, useState } from 'react'
 
-import { PlayInputProps } from '@features/quiz/question-types'
+import { PlayInputProps } from '#features/quiz/question-types'
 
 function MultipleChoicePlayInput({ question, onAnswer, disabled }: PlayInputProps<'multiple-choice'>): ReactElement {
     const [selectedId, setSelectedId] = useState<string | null>(null)

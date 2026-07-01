@@ -1,9 +1,9 @@
 import { logger } from '@navikt/next-logger'
-import { Pool } from 'pg'
 import { addWeeks, getISOWeek, getISOWeekYear, subWeeks } from 'date-fns'
+import { Pool } from 'pg'
 
-import { bundledEnv } from '@lib/env'
-import { raise } from '@lib/ts'
+import { bundledEnv } from '#lib/env'
+import { raise } from '#lib/ts'
 
 const TEAM_MEMBERS = [
     { user_id: 'kar@example.com', nav_ident: 'K123456', name: 'Kar O.', default_loc: 'office' },

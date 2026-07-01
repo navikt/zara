@@ -1,14 +1,14 @@
-import React, { ReactElement, Suspense } from 'react'
-import { Heading, Skeleton } from '@navikt/ds-react'
 import { PlusIcon, SandboxIcon } from '@navikt/aksel-icons'
+import { Heading, Skeleton } from '@navikt/ds-react'
+import React, { ReactElement, Suspense } from 'react'
 
-import { validateUserSession } from '@services/auth/auth'
-import { listMyQuizzes } from '@services/quiz/quiz-store'
-import { listActiveSessions } from '@services/quiz/quiz-session-service'
-import PageHeader from '@components/page/PageHeader'
-import { AkselNextLinkButton } from '@components/AkselNextLink'
-import MyQuizzes from '@features/quiz/list/MyQuizzes'
-import ActiveSessions from '@features/quiz/lobby/ActiveSessions'
+import { AkselNextLinkButton } from '#components/AkselNextLink'
+import PageHeader from '#components/page/PageHeader'
+import MyQuizzes from '#features/quiz/list/MyQuizzes'
+import ActiveSessions from '#features/quiz/lobby/ActiveSessions'
+import { validateUserSession } from '#services/auth/auth'
+import { listActiveSessions } from '#services/quiz/quiz-session-service'
+import { listMyQuizzes } from '#services/quiz/quiz-store'
 
 async function ActiveSessionsSection({ userId }: { userId: string }): Promise<ReactElement> {
     const sessions = await listActiveSessions()

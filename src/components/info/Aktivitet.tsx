@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react'
 
-import { Aktivitet as AktivitetType } from '@services/apps/regulus-maximus/types'
+import { Aktivitet as AktivitetType } from '#services/apps/regulus-maximus/types'
 
 const typeLabel: Record<AktivitetType['type'], string> = {
     AKTIVITET_IKKE_MULIG: '100% sykmeldt',

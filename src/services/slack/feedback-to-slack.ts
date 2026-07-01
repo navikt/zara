@@ -1,9 +1,9 @@
 import { Feedback } from '@navikt/syk-zara/feedback'
 
-import { getServerEnv } from '@lib/env'
-import { User } from '@services/auth/user'
-import { createPermalink, getFeedbackUrl, slackChatPostMessage } from '@services/slack/utils'
-import { createFeedbackHeader } from '@services/slack/blocks'
+import { getServerEnv } from '#lib/env'
+import { User } from '#services/auth/user'
+import { createFeedbackHeader } from '#services/slack/blocks'
+import { createPermalink, getFeedbackUrl, slackChatPostMessage } from '#services/slack/utils'
 
 export async function notifySlack(feedback: Feedback, byWho: User): Promise<{ postLink: string }> {
     const { zaraSlackChannelId } = getServerEnv()

@@ -1,10 +1,10 @@
 'use client'
 
-import React, { ReactElement } from 'react'
-import { Button, Select, TextField } from '@navikt/ds-react'
 import { PlusIcon, TrashIcon } from '@navikt/aksel-icons'
+import { Button, Select, TextField } from '@navikt/ds-react'
+import React, { ReactElement } from 'react'
 
-import { EditorProps } from '@features/quiz/question-types'
+import { EditorProps } from '#features/quiz/question-types'
 
 const FUZZ_OPTIONS: { value: 'off' | 'low' | 'medium'; label: string }[] = [
     { value: 'off', label: 'Av (eksakt treff)' },

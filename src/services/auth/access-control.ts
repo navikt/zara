@@ -1,8 +1,8 @@
-import * as R from 'remeda'
 import { logger } from '@navikt/next-logger'
+import * as R from 'remeda'
 
-import { userInfo } from '@services/auth/auth'
-import { bundledEnv } from '@lib/env'
+import { bundledEnv } from '#lib/env'
+import { userInfo } from '#services/auth/auth'
 
 const GroupToFeatureMap: Record<string, ZaraFeatures> = {
     '74d71639-b6e1-487b-86e4-ca902a433f7c': 'TEAM_MEMBER',

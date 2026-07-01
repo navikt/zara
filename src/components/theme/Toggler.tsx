@@ -1,9 +1,9 @@
 'use client'
 
+import { CheckmarkIcon, MonitorIcon, MoonIcon, SunIcon, ThemeIcon } from '@navikt/aksel-icons'
+import { ActionMenu, Button, HStack, Tooltip } from '@navikt/ds-react'
 import { useTheme } from 'next-themes'
 import { ReactElement } from 'react'
-import { ActionMenu, Button, HStack, Tooltip } from '@navikt/ds-react'
-import { CheckmarkIcon, MonitorIcon, MoonIcon, SunIcon, ThemeIcon } from '@navikt/aksel-icons'
 
 export function ThemeToggler(): ReactElement {
     const { theme, setTheme } = useTheme()

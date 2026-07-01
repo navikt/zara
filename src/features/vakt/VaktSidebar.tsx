@@ -1,13 +1,13 @@
 'use client'
 
-import { Heading, LinkCard } from '@navikt/ds-react'
-import React, { ReactElement } from 'react'
-import Link from 'next/link'
-import { LinkCardAnchor, LinkCardDescription, LinkCardIcon, LinkCardTitle } from '@navikt/ds-react/LinkCard'
-import { useSelectedLayoutSegment } from 'next/navigation'
 import { ChevronRightIcon } from '@navikt/aksel-icons'
+import { Heading, LinkCard } from '@navikt/ds-react'
+import { LinkCardAnchor, LinkCardDescription, LinkCardIcon, LinkCardTitle } from '@navikt/ds-react/LinkCard'
+import Link from 'next/link'
+import { useSelectedLayoutSegment } from 'next/navigation'
+import React, { ReactElement } from 'react'
 
-import { cn } from '@lib/tw'
+import { cn } from '#lib/tw'
 
 import { produksjonsFeatureList } from './produksjons-feature-list'
 

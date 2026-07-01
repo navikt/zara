@@ -1,13 +1,10 @@
+import { logger } from '@navikt/next-logger'
 import { randomInt, randomUUID } from 'node:crypto'
 
-import { logger } from '@navikt/next-logger'
-
-import { valkeyClient } from '@services/db/valkey/production-valkey'
-import { User } from '@services/auth/user'
-import { publishLobbyChanged, publishQuizEvent } from '@services/quiz/quiz-pubsub-client'
-import { averagePercent, buildLeaderboard, PlayerScore } from '@services/quiz/quiz-scoring'
-import { gradeAnswer } from '@services/quiz/quiz-grading'
-import { SessionStatsInput } from '@services/quiz/quiz-store'
+import { User } from '#services/auth/user'
+import { valkeyClient } from '#services/db/valkey/production-valkey'
+import { gradeAnswer } from '#services/quiz/quiz-grading'
+import { publishLobbyChanged, publishQuizEvent } from '#services/quiz/quiz-pubsub-client'
 import {
     ActiveSession,
     AnswerPayload,
@@ -20,7 +17,9 @@ import {
     QuizContent,
     RevealData,
     RevealResult,
-} from '@services/quiz/quiz-schema'
+} from '#services/quiz/quiz-schema'
+import { averagePercent, buildLeaderboard, PlayerScore } from '#services/quiz/quiz-scoring'
+import { SessionStatsInput } from '#services/quiz/quiz-store'
 
 const TTL = 6 * 60 * 60
 const ENDED_TTL = 30 * 60

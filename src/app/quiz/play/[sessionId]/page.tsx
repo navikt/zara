@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react'
 
-import { validateUserSession } from '@services/auth/auth'
-import PlaySession from '@features/quiz/play/PlaySession'
+import PlaySession from '#features/quiz/play/PlaySession'
+import { validateUserSession } from '#services/auth/auth'
 
 async function Page({ params }: PageProps<'/quiz/play/[sessionId]'>): Promise<ReactElement> {
     const user = await validateUserSession('TEAM_MEMBER')

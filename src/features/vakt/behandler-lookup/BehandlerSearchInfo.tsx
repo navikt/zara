@@ -1,12 +1,12 @@
-import React, { ReactElement, ReactNode, Suspense } from 'react'
-import { logger } from '@navikt/next-logger'
-import * as R from 'remeda'
 import { BodyShort, Heading, LocalAlert, Skeleton } from '@navikt/ds-react'
 import { LocalAlertContent, LocalAlertHeader, LocalAlertTitle } from '@navikt/ds-react/LocalAlert'
+import { logger } from '@navikt/next-logger'
+import React, { ReactElement, ReactNode, Suspense } from 'react'
+import * as R from 'remeda'
 
-import { validateUserSession } from '@services/auth/auth'
-import { pdlApiService } from '@services/pdl/pdl-api-service'
-import { hprApiService } from '@services/hpr/hpr-service'
+import { validateUserSession } from '#services/auth/auth'
+import { hprApiService } from '#services/hpr/hpr-service'
+import { pdlApiService } from '#services/pdl/pdl-api-service'
 
 type Props = {
     hpr: string

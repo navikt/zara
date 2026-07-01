@@ -1,10 +1,10 @@
 'use server'
 
-import { unauthorized } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+import { unauthorized } from 'next/navigation'
 
-import { validateUserSession } from '@services/auth/auth'
-import { getFeedbackClient } from '@services/feedback/feedback-client'
+import { validateUserSession } from '#services/auth/auth'
+import { getFeedbackClient } from '#services/feedback/feedback-client'
 
 export async function setFeedbackVerified(id: string): Promise<{ ok: boolean }> {
     const user = await validateUserSession('TILBAKEMELDINGER')

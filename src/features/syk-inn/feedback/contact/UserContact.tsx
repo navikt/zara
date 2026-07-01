@@ -1,4 +1,3 @@
-import React, { ReactElement, useTransition } from 'react'
 import {
     CheckmarkHeavyIcon,
     CircleSlashIcon,
@@ -8,8 +7,9 @@ import {
 } from '@navikt/aksel-icons'
 import { BodyShort, Button, CopyButton, Detail } from '@navikt/ds-react'
 import { ContactableUserFeedback } from '@navikt/syk-zara/feedback'
+import React, { ReactElement, useTransition } from 'react'
 
-import { toReadableDateTime } from '@lib/date'
+import { toReadableDateTime } from '#lib/date'
 
 import { setUserContacted } from './contact-actions'
 

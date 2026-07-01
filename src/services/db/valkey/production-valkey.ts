@@ -1,9 +1,9 @@
-import { lazyNextleton } from 'nextleton'
-import Valkey from 'iovalkey'
-import * as R from 'remeda'
 import { logger } from '@navikt/next-logger'
+import Valkey from 'iovalkey'
+import { lazyNextleton } from 'nextleton'
+import * as R from 'remeda'
 
-import { getServerEnv } from '@lib/env'
+import { getServerEnv } from '#lib/env'
 
 export const valkeyClient = lazyNextleton('valkey-client', () => initializeValkey())
 export const subscriberValkeyClient = lazyNextleton('subscriber-valkey', () => initializeValkey())

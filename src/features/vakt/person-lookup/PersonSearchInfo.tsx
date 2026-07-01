@@ -1,11 +1,11 @@
-import React, { ReactElement, ReactNode } from 'react'
-import { logger } from '@navikt/next-logger'
-import * as R from 'remeda'
 import { Heading, LocalAlert } from '@navikt/ds-react'
 import { LocalAlertContent, LocalAlertHeader, LocalAlertTitle } from '@navikt/ds-react/LocalAlert'
+import { logger } from '@navikt/next-logger'
+import React, { ReactElement, ReactNode } from 'react'
+import * as R from 'remeda'
 
-import { validateUserSession } from '@services/auth/auth'
-import { pdlApiService } from '@services/pdl/pdl-api-service'
+import { validateUserSession } from '#services/auth/auth'
+import { pdlApiService } from '#services/pdl/pdl-api-service'
 
 type Props = {
     ident: string

@@ -1,8 +1,8 @@
 'use client'
 
-import React, { ReactElement } from 'react'
 import { Select } from '@navikt/ds-react'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
+import React, { ReactElement } from 'react'
 
 const validOptions = ['LAST_1_YEARS', 'LAST_3_YEARS', 'LAST_10_YEARS'] as const
 

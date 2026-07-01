@@ -1,4 +1,4 @@
-import { WeekDay } from '@lib/date'
+import { WeekDay } from '#lib/date'
 
 export const DEFAULT_OFFICE_DAYS = [1, 2]
 

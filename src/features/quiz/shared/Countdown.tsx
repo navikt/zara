@@ -2,7 +2,7 @@
 
 import React, { ReactElement, useState } from 'react'
 
-import useInterval from '@lib/hooks/useInterval'
+import useInterval from '#lib/hooks/useInterval'
 
 type Props = {
     startedAt: number

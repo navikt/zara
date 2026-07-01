@@ -1,12 +1,12 @@
 'use client'
 
-import React, { ReactElement, useState } from 'react'
-import { Button } from '@navikt/ds-react'
 import { ChevronDownIcon, ChevronUpIcon } from '@navikt/aksel-icons'
+import { Button } from '@navikt/ds-react'
+import React, { ReactElement, useState } from 'react'
 
-import { PublicOrderingItem } from '@services/quiz/quiz-schema'
-import { PlayInputProps } from '@features/quiz/question-types'
-import { move } from '@features/quiz/question-types/ordering/move'
+import { PlayInputProps } from '#features/quiz/question-types'
+import { move } from '#features/quiz/question-types/ordering/move'
+import { PublicOrderingItem } from '#services/quiz/quiz-schema'
 
 function OrderingPlayInput({ question, onAnswer, disabled }: PlayInputProps<'ordering'>): ReactElement {
     const [items, setItems] = useState<PublicOrderingItem[]>(question.items)

@@ -1,12 +1,12 @@
-import React, { ReactElement, Suspense } from 'react'
 import { Skeleton } from '@navikt/ds-react'
+import React, { ReactElement, Suspense } from 'react'
 
-import { produksjonsFeatures } from '@features/vakt/produksjons-feature-list'
-import VaktFeaturePage from '@features/vakt/shared/VaktFeaturePage'
-import PersonLookupForm from '@features/vakt/shared/person-search/PersonLookupForm'
-import { decryptQueryParam } from '@lib/crypto/query-param-encryption'
-import RangePicker, { ValidTimelineRanges } from '@features/vakt/sykmeldingshistorikk/RangePicker'
-import Sykmeldingshistorikk from '@features/vakt/sykmeldingshistorikk/Sykmeldingshistorikk'
+import { produksjonsFeatures } from '#features/vakt/produksjons-feature-list'
+import PersonLookupForm from '#features/vakt/shared/person-search/PersonLookupForm'
+import VaktFeaturePage from '#features/vakt/shared/VaktFeaturePage'
+import RangePicker, { ValidTimelineRanges } from '#features/vakt/sykmeldingshistorikk/RangePicker'
+import Sykmeldingshistorikk from '#features/vakt/sykmeldingshistorikk/Sykmeldingshistorikk'
+import { decryptQueryParam } from '#lib/crypto/query-param-encryption'
 
 async function Page({ searchParams }: PageProps<'/vakt/sykmeldingshistorikk'>): Promise<ReactElement> {
     const { ident, range } = await searchParams

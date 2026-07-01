@@ -11,7 +11,10 @@
         "dev": "./scripts/pre-dev.sh && PORT=3005 yarn dev:next",
         "dev:next": "next dev --turbo | pino-pretty --messageKey=message",
         "build": "./scripts/pre-build.sh && next build",
-        "lint": "eslint src",
+        "lint": "oxlint",
+        "lint:fix": "oxlint --fix",
+        "fmt": "oxfmt",
+        "fmt:check": "oxfmt --check",
         "test": "vitest",
         "postinstall": "husky"
     },
@@ -25,6 +28,7 @@
         "@navikt/oasis": "^4.1.4",
         "@navikt/pino-logger": "^5.0.0",
         "@navikt/syk-zara": "^2.0.19",
+        "@navikt/tsm-oxfmt": "^0.0.8",
         "@opentelemetry/api": "^1.9.1",
         "@opentelemetry/core": "^2.8.0",
         "@slack/bolt": "^4.7.3",
@@ -54,24 +58,19 @@
     },
     "devDependencies": {
         "@faker-js/faker": "^10.5.0",
-        "@navikt/tsm-eslint-react": "^1.0.0",
-        "@navikt/tsm-prettier": "^2.0.0",
         "@tailwindcss/postcss": "^4.3.1",
         "@types/node": "^24.13.2",
         "@types/pg": "^8.20.0",
         "@types/react": "19.2.17",
         "@types/react-dom": "19.2.3",
-        "eslint": "^9.39.4",
-        "eslint-config-next": "^16.2.9",
-        "eslint-config-prettier": "^10.1.8",
-        "eslint-plugin-prettier": "^5.5.6",
         "husky": "^9.1.7",
         "lint-staged": "^17.0.8",
+        "oxfmt": "^0.56.0",
+        "oxlint": "^1.71.0",
+        "oxlint-tsgolint": "^0.23.0",
         "postcss": "^8.5.16",
-        "prettier": "^3.9.3",
         "tailwindcss": "^4.3.1",
         "typescript": "^6.0.3",
         "vitest": "^4.1.9"
-    },
-    "prettier": "@navikt/tsm-prettier"
+    }
 }

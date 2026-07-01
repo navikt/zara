@@ -1,11 +1,10 @@
 import './globals.css'
-
-import React, { ReactElement } from 'react'
-import type { Metadata } from 'next'
 import { Page } from '@navikt/ds-react'
+import type { Metadata } from 'next'
+import React, { ReactElement } from 'react'
 
-import Header from '@components/Header'
-import { bundledEnv } from '@lib/env'
+import Header from '#components/Header'
+import { bundledEnv } from '#lib/env'
 
 import Providers from './providers'
 

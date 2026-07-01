@@ -1,9 +1,9 @@
 'use client'
 
-import React, { ReactElement } from 'react'
 import { TextField } from '@navikt/ds-react'
+import React, { ReactElement } from 'react'
 
-import { DraftSlider, EditorProps } from '@features/quiz/question-types'
+import { DraftSlider, EditorProps } from '#features/quiz/question-types'
 
 type NumberKey = 'min' | 'max' | 'step' | 'correct' | 'tolerance'
 

@@ -1,14 +1,14 @@
-import { Pool } from 'pg'
 import { logger } from '@navikt/next-logger'
+import { Pool } from 'pg'
 
-import { pgClient } from '@services/db/postgres/production-pg'
+import { pgClient } from '#services/db/postgres/production-pg'
 import {
     initial_v1,
     office_cron_job_v2,
     add_away_location_v3,
     add_nav_ident_v4,
     quiz_tables_v5,
-} from '@services/db/postgres/schema'
+} from '#services/db/postgres/schema'
 
 export async function runMigrations(): Promise<void> {
     const client = await pgClient()

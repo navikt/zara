@@ -1,9 +1,9 @@
+import { logger } from '@navikt/next-logger'
 import Valkey from 'iovalkey'
 import * as R from 'remeda'
-import { logger } from '@navikt/next-logger'
 
-import { UserActivity } from '@services/live-service/pages'
-import { subscriberValkeyClient, valkeyClient } from '@services/db/valkey/production-valkey'
+import { subscriberValkeyClient, valkeyClient } from '#services/db/valkey/production-valkey'
+import { UserActivity } from '#services/live-service/pages'
 
 const CHANNELS = {
     ACTIVITY: 'channel:user-activity',

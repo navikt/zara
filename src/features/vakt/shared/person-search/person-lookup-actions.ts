@@ -1,10 +1,10 @@
 'use server'
 
-import { redirect } from 'next/navigation'
 import { logger } from '@navikt/next-logger'
+import { redirect } from 'next/navigation'
 
-import { validateUserSession } from '@services/auth/auth'
-import { encryptQueryParam } from '@lib/crypto/query-param-encryption'
+import { encryptQueryParam } from '#lib/crypto/query-param-encryption'
+import { validateUserSession } from '#services/auth/auth'
 
 export async function searchPerson(formData: FormData): Promise<void> {
     await validateUserSession('TEAM_MEMBER')

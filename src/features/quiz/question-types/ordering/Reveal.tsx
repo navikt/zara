@@ -2,8 +2,8 @@
 
 import React, { ReactElement } from 'react'
 
-import { cn } from '@lib/tw'
-import { RevealProps } from '@features/quiz/question-types'
+import { RevealProps } from '#features/quiz/question-types'
+import { cn } from '#lib/tw'
 
 function OrderingReveal({ question, data, myResult }: RevealProps<'ordering'>): ReactElement {
     const textById = new Map(question.items.map((it) => [it.id, it.text] as const))

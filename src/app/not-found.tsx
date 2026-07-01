@@ -1,9 +1,9 @@
-import React, { ReactElement } from 'react'
 import { BodyShort, Heading } from '@navikt/ds-react'
 import { PageBlock } from '@navikt/ds-react/Page'
 import Image from 'next/image'
+import React, { ReactElement } from 'react'
 
-import { AkselNextLink } from '@components/AkselNextLink'
+import { AkselNextLink } from '#components/AkselNextLink'
 
 import { zaraImages } from '../images/zaras'
 

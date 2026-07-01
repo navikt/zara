@@ -1,8 +1,8 @@
 import { getToken, requestOboToken } from '@navikt/oasis'
 import { headers } from 'next/headers'
 
-import { bundledEnv } from '@lib/env'
-import { raise } from '@lib/ts'
+import { bundledEnv } from '#lib/env'
+import { raise } from '#lib/ts'
 
 export async function getOboToken(app: string): Promise<string> {
     const token = getToken(await headers())

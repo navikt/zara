@@ -1,8 +1,8 @@
-import React, { PropsWithChildren, ReactElement } from 'react'
-import { BodyShort, Heading, Tooltip } from '@navikt/ds-react'
 import { EyeIcon, EyeClosedIcon } from '@navikt/aksel-icons'
+import { BodyShort, Heading, Tooltip } from '@navikt/ds-react'
+import React, { PropsWithChildren, ReactElement } from 'react'
 
-import { produksjonsFeatures } from '@features/vakt/produksjons-feature-list'
+import { produksjonsFeatures } from '#features/vakt/produksjons-feature-list'
 
 type Props = {
     feature: (typeof produksjonsFeatures)[keyof typeof produksjonsFeatures]

@@ -15,12 +15,12 @@
         "plugins": [{ "name": "next" }],
         "types": ["@navikt/ds-react/types/theme"],
         "paths": {
-            "@components/*": ["./src/components/*"],
-            "@lib/*": ["./src/lib/*"],
-            "@services/*": ["./src/services/*"],
-            "@features/*": ["./src/features/*"],
-            "@dev/*": ["./src/dev/*"],
-            "@images/*": ["./src/images/*"]
+            "#components/*": ["./src/components/*"],
+            "#lib/*": ["./src/lib/*"],
+            "#services/*": ["./src/services/*"],
+            "#features/*": ["./src/features/*"],
+            "#dev/*": ["./src/dev/*"],
+            "#images/*": ["./src/images/*"]
         },
         "target": "ES2017"
     },

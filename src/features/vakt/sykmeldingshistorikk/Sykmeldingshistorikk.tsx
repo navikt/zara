@@ -1,10 +1,10 @@
 import React, { ReactElement } from 'react'
 
-import { validateUserSession } from '@services/auth/auth'
-import { getRegulusMaximusSykmeldingshistorikk } from '@services/apps/regulus-maximus/regulus-maximus-service'
-import { ValidTimelineRanges } from '@features/vakt/sykmeldingshistorikk/RangePicker'
-import { logAuditEvent } from '@lib/audit-log'
-import { raise } from '@lib/ts'
+import { ValidTimelineRanges } from '#features/vakt/sykmeldingshistorikk/RangePicker'
+import { logAuditEvent } from '#lib/audit-log'
+import { raise } from '#lib/ts'
+import { getRegulusMaximusSykmeldingshistorikk } from '#services/apps/regulus-maximus/regulus-maximus-service'
+import { validateUserSession } from '#services/auth/auth'
 
 import SelectedSykmeldingDetails from './SelectedSykmeldingDetails'
 import { SykmeldingTimelineView } from './SykmeldingTimelineView'

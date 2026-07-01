@@ -1,6 +1,6 @@
 import { logger } from '@navikt/next-logger'
 
-import { bundledEnv } from '@lib/env'
+import { bundledEnv } from '#lib/env'
 
 import { ApiFetchErrors, fetchInternalAPI } from '../shared/api-fetcher'
 

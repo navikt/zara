@@ -1,18 +1,18 @@
 'use client'
 
-import * as R from 'remeda'
+import { faker } from '@faker-js/faker'
+import { Tooltip } from '@navikt/ds-react'
 import { motion, AnimatePresence } from 'motion/react'
 import React, { ReactElement, useCallback, useEffect, useState } from 'react'
-import { Tooltip } from '@navikt/ds-react'
-import { faker } from '@faker-js/faker'
+import * as R from 'remeda'
 
-import useInterval from '@lib/hooks/useInterval'
-import { cn } from '@lib/tw'
-import { bundledEnv } from '@lib/env'
-import { User } from '@services/auth/user'
-import Avatar from '@components/live-view/Avatar'
-import { Pages, UserActivity } from '@services/live-service/pages'
-import { meActive } from '@components/live-view/live-actions'
+import Avatar from '#components/live-view/Avatar'
+import { meActive } from '#components/live-view/live-actions'
+import { bundledEnv } from '#lib/env'
+import useInterval from '#lib/hooks/useInterval'
+import { cn } from '#lib/tw'
+import { User } from '#services/auth/user'
+import { Pages, UserActivity } from '#services/live-service/pages'
 
 type Props = {
     page: Pages
@@ -76,7 +76,7 @@ function LiveUsersList({ page, me }: Props): ReactElement {
  */
 function useMyActivity(page: Pages): () => void {
     const pingMe = useCallback(() => {
-        meActive(page)
+        void meActive(page)
     }, [page])
 
     // Register me as active on mount

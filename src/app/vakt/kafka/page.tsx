@@ -1,10 +1,10 @@
-import React, { ReactElement, Suspense } from 'react'
 import { Heading, Skeleton } from '@navikt/ds-react'
+import React, { ReactElement, Suspense } from 'react'
 
-import { produksjonsFeatures } from '@features/vakt/produksjons-feature-list'
-import VaktFeaturePage from '@features/vakt/shared/VaktFeaturePage'
-import KafkaConsumerGroupForm from '@features/vakt/kafka/KafkaConsumerGroupForm'
-import KafkaConsumerGroupSearchInfo from '@features/vakt/kafka/KafkaConsumerGroupSearchInfo'
+import KafkaConsumerGroupForm from '#features/vakt/kafka/KafkaConsumerGroupForm'
+import KafkaConsumerGroupSearchInfo from '#features/vakt/kafka/KafkaConsumerGroupSearchInfo'
+import { produksjonsFeatures } from '#features/vakt/produksjons-feature-list'
+import VaktFeaturePage from '#features/vakt/shared/VaktFeaturePage'
 
 async function Page({ searchParams }: PageProps<'/vakt/kafka'>): Promise<ReactElement> {
     const { group } = await searchParams

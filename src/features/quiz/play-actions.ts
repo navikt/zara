@@ -2,9 +2,9 @@
 
 import { notFound, redirect } from 'next/navigation'
 
-import { validateUserSession } from '@services/auth/auth'
-import { joinSession, submitAnswer } from '@services/quiz/quiz-session-service'
-import { AnswerPayload, AnswerPayloadSchema } from '@services/quiz/quiz-schema'
+import { validateUserSession } from '#services/auth/auth'
+import { AnswerPayload, AnswerPayloadSchema } from '#services/quiz/quiz-schema'
+import { joinSession, submitAnswer } from '#services/quiz/quiz-session-service'
 
 /**
  * Joins the caller into the session (idempotent) and sends them to the play view. The mutation

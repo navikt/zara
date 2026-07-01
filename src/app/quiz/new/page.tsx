@@ -1,8 +1,8 @@
-import React, { ReactElement } from 'react'
 import { SandboxIcon } from '@navikt/aksel-icons'
+import React, { ReactElement } from 'react'
 
-import PageHeader from '@components/page/PageHeader'
-import QuizBuilder from '@features/quiz/builder/QuizBuilder'
+import PageHeader from '#components/page/PageHeader'
+import QuizBuilder from '#features/quiz/builder/QuizBuilder'
 
 function Page(): ReactElement {
     return (

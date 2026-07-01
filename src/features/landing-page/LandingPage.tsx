@@ -1,7 +1,5 @@
 'use client'
 
-import React, { ReactElement } from 'react'
-import { Heading, LinkCard } from '@navikt/ds-react'
 import {
     BandageIcon,
     Buildings3Icon,
@@ -11,11 +9,13 @@ import {
     PadlockLockedIcon,
     SandboxIcon,
 } from '@navikt/aksel-icons'
+import { Heading, LinkCard } from '@navikt/ds-react'
 import Link from 'next/link'
+import React, { ReactElement } from 'react'
 
-import { type ZaraFeatures } from '@services/auth/access-control'
-import { cn } from '@lib/tw'
-import { produksjonsFeatureList } from '@features/vakt/produksjons-feature-list'
+import { produksjonsFeatureList } from '#features/vakt/produksjons-feature-list'
+import { cn } from '#lib/tw'
+import { type ZaraFeatures } from '#services/auth/access-control'
 
 type Props = {
     features: ZaraFeatures[]

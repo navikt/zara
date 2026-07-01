@@ -1,7 +1,7 @@
-import { sseResponse } from '@lib/sse'
-import { validateUserSession } from '@services/auth/auth'
-import { listActiveSessions } from '@services/quiz/quiz-session-service'
-import { subscribeToLobby } from '@services/quiz/quiz-pubsub-client'
+import { sseResponse } from '#lib/sse'
+import { validateUserSession } from '#services/auth/auth'
+import { subscribeToLobby } from '#services/quiz/quiz-pubsub-client'
+import { listActiveSessions } from '#services/quiz/quiz-session-service'
 
 export async function GET(): Promise<Response> {
     await validateUserSession('TEAM_MEMBER')

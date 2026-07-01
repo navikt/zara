@@ -1,10 +1,10 @@
 import { logger } from '@navikt/next-logger'
 
-import { DefaultWeekSchedule, Location, OfficeUser } from '@services/team-office/common/types'
-import { validateUserSession } from '@services/auth/auth'
-import { pgClient } from '@services/db/postgres/production-pg'
-import { toDefaultSchedule } from '@services/team-office/common/team-office-utils'
-import { getUsersWeek } from '@services/team-office/internal/office-service'
+import { validateUserSession } from '#services/auth/auth'
+import { pgClient } from '#services/db/postgres/production-pg'
+import { toDefaultSchedule } from '#services/team-office/common/team-office-utils'
+import { DefaultWeekSchedule, Location, OfficeUser } from '#services/team-office/common/types'
+import { getUsersWeek } from '#services/team-office/internal/office-service'
 
 /**
  * Authorized: TEAM_MEMBER

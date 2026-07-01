@@ -1,11 +1,11 @@
 'use server'
 
-import { unauthorized } from 'next/navigation'
-import { revalidatePath } from 'next/cache'
 import { logger } from '@navikt/next-logger'
+import { revalidatePath } from 'next/cache'
+import { unauthorized } from 'next/navigation'
 
-import { getFeedbackClient } from '@services/feedback/feedback-client'
-import { validateUserSession } from '@services/auth/auth'
+import { validateUserSession } from '#services/auth/auth'
+import { getFeedbackClient } from '#services/feedback/feedback-client'
 
 import { feedbackToWordsByLines } from '../utils'
 

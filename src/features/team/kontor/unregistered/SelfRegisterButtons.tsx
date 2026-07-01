@@ -1,10 +1,10 @@
 'use client'
 
+import { BedIcon, Buildings3Icon } from '@navikt/aksel-icons'
 import { Button } from '@navikt/ds-react'
 import { ReactElement, useTransition } from 'react'
-import { BedIcon, Buildings3Icon } from '@navikt/aksel-icons'
 
-import { registerKontor } from '@features/team/kontor/kontor-actions'
+import { registerKontor } from '#features/team/kontor/kontor-actions'
 
 function SelfRegisterButtons(): ReactElement {
     const [isPending, startTransition] = useTransition()

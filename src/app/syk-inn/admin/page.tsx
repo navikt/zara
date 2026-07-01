@@ -1,10 +1,10 @@
-import React, { ReactElement } from 'react'
 import { Heading } from '@navikt/ds-react'
 import { PageBlock } from '@navikt/ds-react/Page'
+import React, { ReactElement } from 'react'
 
-import SykInnApiJobs from '@features/syk-inn/admin/SykInnApiJobs'
-import LiveUsersList from '@components/live-view/LiveUsersList'
-import { validateUserSession } from '@services/auth/auth'
+import LiveUsersList from '#components/live-view/LiveUsersList'
+import SykInnApiJobs from '#features/syk-inn/admin/SykInnApiJobs'
+import { validateUserSession } from '#services/auth/auth'
 
 async function Page(): Promise<ReactElement> {
     const user = await validateUserSession('UTVIKLER')

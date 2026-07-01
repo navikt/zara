@@ -1,10 +1,10 @@
-import React, { Fragment, ReactElement, useState, useTransition } from 'react'
 import { BodyShort, Button } from '@navikt/ds-react'
-import * as R from 'remeda'
 import { logger } from '@navikt/next-logger'
 import { Feedback } from '@navikt/syk-zara/feedback'
+import React, { Fragment, ReactElement, useState, useTransition } from 'react'
+import * as R from 'remeda'
 
-import { cn } from '@lib/tw'
+import { cn } from '#lib/tw'
 
 import { redactFeedbackContent } from './redaction-actions'
 import { RedactedWord } from './Words'

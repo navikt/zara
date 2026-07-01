@@ -2,8 +2,8 @@
 
 import React, { ReactElement } from 'react'
 
-import { cn } from '@lib/tw'
-import { RevealProps } from '@features/quiz/question-types'
+import { RevealProps } from '#features/quiz/question-types'
+import { cn } from '#lib/tw'
 
 function MultipleChoiceReveal({ question, data, results, myResult }: RevealProps<'multiple-choice'>): ReactElement {
     const myChoiceId = myResult?.answer?.type === 'multiple-choice' ? myResult.answer.choiceId : null

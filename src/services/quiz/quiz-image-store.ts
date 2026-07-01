@@ -1,4 +1,4 @@
-import { pgClient } from '@services/db/postgres/production-pg'
+import { pgClient } from '#services/db/postgres/production-pg'
 
 /**
  * Stores an image attached to a quiz question. Bytes are kept as plain base64 — images aren't

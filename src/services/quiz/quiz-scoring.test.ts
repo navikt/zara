@@ -1,6 +1,6 @@
 import { test, expect } from 'vitest'
 
-import { buildLeaderboard, speedFactor } from '@services/quiz/quiz-scoring'
+import { buildLeaderboard, speedFactor } from '#services/quiz/quiz-scoring'
 
 test('speedFactor is 1 for an instant answer', () => {
     expect(speedFactor(0, 20_000)).toBe(1)

@@ -2,9 +2,9 @@
 
 import { revalidatePath } from 'next/cache'
 
-import { validateUserSession } from '@services/auth/auth'
-import { createQuiz, deleteQuiz, getQuizContent, LoadContentResult, updateQuiz } from '@services/quiz/quiz-store'
-import { DefaultTimeLimitSchema, QuizContent, QuizContentSchema } from '@services/quiz/quiz-schema'
+import { validateUserSession } from '#services/auth/auth'
+import { DefaultTimeLimitSchema, QuizContent, QuizContentSchema } from '#services/quiz/quiz-schema'
+import { createQuiz, deleteQuiz, getQuizContent, LoadContentResult, updateQuiz } from '#services/quiz/quiz-store'
 
 export async function saveNewQuiz(
     content: QuizContent,

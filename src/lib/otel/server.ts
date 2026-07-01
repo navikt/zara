@@ -1,6 +1,6 @@
+import { logger } from '@navikt/next-logger'
 import { context, Span, SpanStatusCode, trace } from '@opentelemetry/api'
 import { suppressTracing } from '@opentelemetry/core'
-import { logger } from '@navikt/next-logger'
 
 export const APP_NAME = 'zara'
 

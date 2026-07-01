@@ -1,12 +1,12 @@
-import React, { ReactElement } from 'react'
 import { BodyShort, Heading } from '@navikt/ds-react'
+import React, { ReactElement } from 'react'
 
-import { Location } from '@services/team-office/common/types'
-import { getTeam } from '@services/team-office/team-office-service'
-import Unregistered from '@features/team/kontor/unregistered/Unregistered'
-import { EntireTeamView } from '@features/team/kontor/settings/EntireTeamView'
-import MyModeButtons from '@features/team/kontor/settings/MyModeButtons'
-import { getMyself } from '@services/team-office/me-office-service'
+import { EntireTeamView } from '#features/team/kontor/settings/EntireTeamView'
+import MyModeButtons from '#features/team/kontor/settings/MyModeButtons'
+import Unregistered from '#features/team/kontor/unregistered/Unregistered'
+import { Location } from '#services/team-office/common/types'
+import { getMyself } from '#services/team-office/me-office-service'
+import { getTeam } from '#services/team-office/team-office-service'
 
 async function KontorSettings(): Promise<ReactElement> {
     const me = await getMyself()

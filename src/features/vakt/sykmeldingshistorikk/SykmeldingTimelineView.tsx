@@ -1,15 +1,15 @@
 'use client'
 
-import * as R from 'remeda'
-import { Heading, InfoCard, Timeline, TimelinePeriodProps } from '@navikt/ds-react'
-import React, { ReactElement } from 'react'
 import { CloudIcon, CodeIcon, EarthIcon, NewsletterIcon } from '@navikt/aksel-icons'
+import { Heading, InfoCard, Timeline, TimelinePeriodProps } from '@navikt/ds-react'
 import { isAfter, subYears } from 'date-fns'
+import React, { ReactElement } from 'react'
+import * as R from 'remeda'
 
-import { SykmeldingRecord, SykmeldingRecordValidationResult } from '@services/apps/regulus-maximus/types'
-import { ValidTimelineRanges } from '@features/vakt/sykmeldingshistorikk/RangePicker'
-import { useSelected } from '@features/vakt/sykmeldingshistorikk/useSelected'
-import { toReadableDate } from '@lib/date'
+import { ValidTimelineRanges } from '#features/vakt/sykmeldingshistorikk/RangePicker'
+import { useSelected } from '#features/vakt/sykmeldingshistorikk/useSelected'
+import { toReadableDate } from '#lib/date'
+import { SykmeldingRecord, SykmeldingRecordValidationResult } from '#services/apps/regulus-maximus/types'
 
 type Props = {
     history: SykmeldingRecord[]

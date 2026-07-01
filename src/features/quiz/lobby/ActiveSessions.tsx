@@ -1,11 +1,11 @@
 'use client'
 
-import React, { ReactElement, useState, useSyncExternalStore } from 'react'
 import { BodyShort, Button, Heading, Tag } from '@navikt/ds-react'
 import Link from 'next/link'
+import React, { ReactElement, useState, useSyncExternalStore } from 'react'
 
-import { ActiveSession, LobbyEvent, SessionStatus } from '@services/quiz/quiz-schema'
-import { joinAndEnter } from '@features/quiz/play-actions'
+import { joinAndEnter } from '#features/quiz/play-actions'
+import { ActiveSession, LobbyEvent, SessionStatus } from '#services/quiz/quiz-schema'
 
 type Props = {
     sessions: ActiveSession[]

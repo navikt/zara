@@ -1,6 +1,6 @@
-import { levenshtein } from '@lib/levenshtein'
-import { MAX_POINTS, speedFactor } from '@services/quiz/quiz-scoring'
-import { AnswerPayload, Question } from '@services/quiz/quiz-schema'
+import { levenshtein } from '#lib/levenshtein'
+import { AnswerPayload, Question } from '#services/quiz/quiz-schema'
+import { MAX_POINTS, speedFactor } from '#services/quiz/quiz-scoring'
 
 export type GradeResult = { accuracy: number; correct: boolean; points: number }
 

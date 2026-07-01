@@ -1,8 +1,8 @@
 'use client'
 
 import { Button, ButtonProps, Link as AkselLink, Tooltip } from '@navikt/ds-react'
-import React, { PropsWithChildren, ReactElement } from 'react'
 import Link from 'next/link'
+import React, { PropsWithChildren, ReactElement } from 'react'
 
 export function AkselNextLink({
     children,

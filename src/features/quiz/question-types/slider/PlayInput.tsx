@@ -1,9 +1,9 @@
 'use client'
 
-import React, { ReactElement, useState } from 'react'
 import { Button } from '@navikt/ds-react'
+import React, { ReactElement, useState } from 'react'
 
-import { PlayInputProps } from '@features/quiz/question-types'
+import { PlayInputProps } from '#features/quiz/question-types'
 
 function SliderPlayInput({ question, onAnswer, disabled }: PlayInputProps<'slider'>): ReactElement {
     const { min, max, step } = question.slider

@@ -1,7 +1,7 @@
 import { test, expect } from 'vitest'
 
-import { getZeroIndexedWeekday } from '@lib/date'
-import { isWeekday } from '@services/team-office/common/day-utils'
+import { getZeroIndexedWeekday } from '#lib/date'
+import { isWeekday } from '#services/team-office/common/day-utils'
 
 test("isToday should return true for today's date", () => {
     const monday = getZeroIndexedWeekday(new Date('2026-05-25'))

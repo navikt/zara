@@ -1,6 +1,6 @@
 import { test, expect } from 'vitest'
 
-import { decryptWithPassphrase, encryptWithPassphrase } from '@services/quiz/quiz-passphrase-crypto'
+import { decryptWithPassphrase, encryptWithPassphrase } from '#services/quiz/quiz-passphrase-crypto'
 
 test('round-trips a value with the correct passphrase', async () => {
     const value = { title: 'Min quiz', questions: [1, 2, 3] }

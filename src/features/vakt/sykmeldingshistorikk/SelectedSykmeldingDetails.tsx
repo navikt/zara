@@ -1,20 +1,20 @@
 'use client'
 
-import React, { ReactElement } from 'react'
 import { BodyShort, ExpansionCard, Heading } from '@navikt/ds-react'
+import React, { ReactElement } from 'react'
 
+import { Adresse } from '#components/info/Adresse'
+import { Aktivitet } from '#components/info/Aktivitet'
+import { Arbeidsgiver } from '#components/info/Arbeidsgiver'
+import { DescriptiveList, DescriptiveItem, DescriptiveJson } from '#components/info/DescriptiveItems'
+import { diagnose, navn } from '#components/info/format'
+import { toReadableDate } from '#lib/date'
 import {
     IArbeid,
     Prognose,
     SykmeldingRecord,
     SykmeldingRecordValidationResult,
-} from '@services/apps/regulus-maximus/types'
-import { toReadableDate } from '@lib/date'
-import { diagnose, navn } from '@components/info/format'
-import { DescriptiveList, DescriptiveItem, DescriptiveJson } from '@components/info/DescriptiveItems'
-import { Adresse } from '@components/info/Adresse'
-import { Aktivitet } from '@components/info/Aktivitet'
-import { Arbeidsgiver } from '@components/info/Arbeidsgiver'
+} from '#services/apps/regulus-maximus/types'
 
 import { useSelected } from './useSelected'
 

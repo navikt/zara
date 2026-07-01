@@ -1,13 +1,13 @@
 'use client'
 
-import React, { ReactElement } from 'react'
-import { BodyShort, Button, Heading } from '@navikt/ds-react'
-import Image from 'next/image'
-import * as R from 'remeda'
-import { isToday } from 'date-fns'
 import { GavelFillIcon } from '@navikt/aksel-icons'
-import Link from 'next/link'
+import { BodyShort, Button, Heading } from '@navikt/ds-react'
 import { Feedback } from '@navikt/syk-zara/feedback'
+import { isToday } from 'date-fns'
+import Image from 'next/image'
+import Link from 'next/link'
+import React, { ReactElement } from 'react'
+import * as R from 'remeda'
 
 import { zaraImages } from '../../images/zaras'
 

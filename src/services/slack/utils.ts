@@ -1,6 +1,6 @@
-import { bundledEnv, getServerEnv } from '@lib/env'
-import { SlackPostMessagePayload, SlackResponsePayload, SlackUpdateMessagePayload } from '@services/slack/types'
-import { spanServerAsync, squelchTracing } from '@lib/otel/server'
+import { bundledEnv, getServerEnv } from '#lib/env'
+import { spanServerAsync, squelchTracing } from '#lib/otel/server'
+import { SlackPostMessagePayload, SlackResponsePayload, SlackUpdateMessagePayload } from '#services/slack/types'
 
 const SLACK_API = 'https://api.slack.com/api'
 

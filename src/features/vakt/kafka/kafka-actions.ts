@@ -1,11 +1,11 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
 import { logger } from '@navikt/next-logger'
+import { revalidatePath } from 'next/cache'
 
-import { validateUserSession } from '@services/auth/auth'
-import { deleteConsumerGroup, resetConsumerGroupOffsets } from '@services/kafka/kafka-admin-service'
-import { ResetOffsetTarget } from '@services/kafka/types'
+import { validateUserSession } from '#services/auth/auth'
+import { deleteConsumerGroup, resetConsumerGroupOffsets } from '#services/kafka/kafka-admin-service'
+import { ResetOffsetTarget } from '#services/kafka/types'
 
 export type KafkaActionResult<T = undefined> = { ok: true; value: T } | { ok: false; error: string }
 

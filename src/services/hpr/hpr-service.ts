@@ -1,7 +1,7 @@
 import { logger } from '@navikt/next-logger'
 
-import { ApiFetchErrors, fetchInternalAPI } from '@services/shared/api-fetcher'
-import { bundledEnv } from '@lib/env'
+import { bundledEnv } from '#lib/env'
+import { ApiFetchErrors, fetchInternalAPI } from '#services/shared/api-fetcher'
 
 import { createHprPersonMock } from './hpr-mock-data'
 import { Behandler, BehandlerSchema } from './hpr-schema'

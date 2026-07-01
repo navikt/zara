@@ -1,4 +1,4 @@
-import { LeaderboardEntry } from '@services/quiz/quiz-schema'
+import { LeaderboardEntry } from '#services/quiz/quiz-schema'
 
 export const MAX_POINTS = 1000
 /** A correct (fully accurate) answer at the very last moment still earns this fraction of the max. */

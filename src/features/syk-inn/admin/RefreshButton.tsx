@@ -1,10 +1,10 @@
 'use client'
 
-import React, { ReactElement, startTransition } from 'react'
-import { Button } from '@navikt/ds-react'
 import { ArrowsCirclepathIcon } from '@navikt/aksel-icons'
+import { Button } from '@navikt/ds-react'
+import React, { ReactElement, startTransition } from 'react'
 
-import { refetchJobs } from '@features/syk-inn/admin/syk-inn-api-admin-actions'
+import { refetchJobs } from '#features/syk-inn/admin/syk-inn-api-admin-actions'
 
 function RefreshButton(): ReactElement {
     return (

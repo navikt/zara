@@ -8,7 +8,7 @@ export function levenshtein(a: string, b: string): number {
     if (b.length === 0) return a.length
 
     let prev = Array.from({ length: b.length + 1 }, (_, i) => i)
-    let curr = new Array<number>(b.length + 1)
+    let curr = Array.from<number>({ length: b.length + 1 })
 
     for (let i = 1; i <= a.length; i++) {
         curr[0] = i

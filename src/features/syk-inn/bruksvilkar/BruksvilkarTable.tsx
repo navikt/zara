@@ -1,11 +1,11 @@
 'use client'
 
-import * as R from 'remeda'
+import { SortState, Table, Link, Heading } from '@navikt/ds-react'
 import { type Bruksvilkar } from '@navikt/syk-zara/bruksvilkar'
 import React, { ReactElement, useState } from 'react'
-import { SortState, Table, Link, Heading } from '@navikt/ds-react'
+import * as R from 'remeda'
 
-import { toReadableDateTime } from '@lib/date'
+import { toReadableDateTime } from '#lib/date'
 
 type Props = {
     bruksvilkar: Bruksvilkar[]

@@ -1,11 +1,11 @@
 'use client'
 
-import React, { ReactElement, useState } from 'react'
+import { Detail } from '@navikt/ds-react'
 import { differenceInSeconds, formatDistanceToNowStrict } from 'date-fns'
 import { nb } from 'date-fns/locale/nb'
-import { Detail } from '@navikt/ds-react'
+import React, { ReactElement, useState } from 'react'
 
-import useInterval from '@lib/hooks/useInterval'
+import useInterval from '#lib/hooks/useInterval'
 
 export function AutoUpdatingDistance({ prefix, time }: { prefix?: string; time: string }): ReactElement {
     const [rerernderino, triggerino] = useState(0)

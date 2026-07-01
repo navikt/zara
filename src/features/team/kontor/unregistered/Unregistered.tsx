@@ -1,9 +1,9 @@
-import React, { ReactElement } from 'react'
-import Image from 'next/image'
 import { Heading } from '@navikt/ds-react'
+import Image from 'next/image'
+import React, { ReactElement } from 'react'
 
-import { zaraImages } from '@images/zaras'
-import SelfRegisterButtons from '@features/team/kontor/unregistered/SelfRegisterButtons'
+import SelfRegisterButtons from '#features/team/kontor/unregistered/SelfRegisterButtons'
+import { zaraImages } from '#images/zaras'
 
 function Unregistered(): ReactElement {
     return (

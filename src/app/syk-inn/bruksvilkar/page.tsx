@@ -1,11 +1,11 @@
-import React, { ReactElement } from 'react'
-import { PageBlock } from '@navikt/ds-react/Page'
 import { Heading } from '@navikt/ds-react'
+import { PageBlock } from '@navikt/ds-react/Page'
+import React, { ReactElement } from 'react'
 
-import { validateUserSession } from '@services/auth/auth'
-import LiveUsersList from '@components/live-view/LiveUsersList'
-import { getBruksvilkarClient } from '@services/bruksvilkar/bruksvilkar-client'
-import BruksvilkarTable from '@features/syk-inn/bruksvilkar/BruksvilkarTable'
+import LiveUsersList from '#components/live-view/LiveUsersList'
+import BruksvilkarTable from '#features/syk-inn/bruksvilkar/BruksvilkarTable'
+import { validateUserSession } from '#services/auth/auth'
+import { getBruksvilkarClient } from '#services/bruksvilkar/bruksvilkar-client'
 
 async function Page(): Promise<ReactElement> {
     /**

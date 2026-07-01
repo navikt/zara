@@ -1,5 +1,5 @@
-import { Pool, PoolClient } from 'pg'
 import { logger } from '@navikt/next-logger'
+import { Pool, PoolClient } from 'pg'
 
 export async function initial_v1(client: Pool | PoolClient): Promise<void> {
     logger.info('Running initial_v1 migration...')

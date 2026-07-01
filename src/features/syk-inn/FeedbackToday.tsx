@@ -1,10 +1,10 @@
 'use client'
 
-import React, { ReactElement, useCallback, useEffect, useState } from 'react'
 import { BodyShort, Heading, Switch, Tooltip } from '@navikt/ds-react'
-import Image from 'next/image'
-import { AnimatePresence, motion } from 'motion/react'
 import { Feedback } from '@navikt/syk-zara/feedback'
+import { AnimatePresence, motion } from 'motion/react'
+import Image from 'next/image'
+import React, { ReactElement, useCallback, useEffect, useState } from 'react'
 
 import { zaraImages } from '../../images/zaras'
 

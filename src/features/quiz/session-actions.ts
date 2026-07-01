@@ -1,17 +1,17 @@
 'use server'
 
-import { after } from 'next/server'
 import { logger } from '@navikt/next-logger'
+import { after } from 'next/server'
 
-import { validateUserSession } from '@services/auth/auth'
-import { getQuizContent, openQuizAfterSession, saveSessionStats } from '@services/quiz/quiz-store'
+import { validateUserSession } from '#services/auth/auth'
 import {
     advanceToNextQuestion,
     cancelSession,
     createSession,
     endSession,
     revealQuestion,
-} from '@services/quiz/quiz-session-service'
+} from '#services/quiz/quiz-session-service'
+import { getQuizContent, openQuizAfterSession, saveSessionStats } from '#services/quiz/quiz-store'
 
 export async function hostStartSession(
     quizId: string,

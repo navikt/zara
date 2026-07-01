@@ -1,12 +1,12 @@
-import * as R from 'remeda'
-import { ContactableUserFeedback } from '@navikt/syk-zara/feedback'
 import { logger } from '@navikt/next-logger'
+import { ContactableUserFeedback } from '@navikt/syk-zara/feedback'
 import { isAfter, startOfYesterday } from 'date-fns'
+import * as R from 'remeda'
 
-import { bundledEnv, getServerEnv } from '@lib/env'
-import { spanServerAsync } from '@lib/otel/server'
-import { createPermalink, slackChatPostMessage } from '@services/slack/utils'
-import { getFeedbackClient } from '@services/feedback/feedback-client'
+import { bundledEnv, getServerEnv } from '#lib/env'
+import { spanServerAsync } from '#lib/otel/server'
+import { getFeedbackClient } from '#services/feedback/feedback-client'
+import { createPermalink, slackChatPostMessage } from '#services/slack/utils'
 
 const angryZaraPublicUrl = 'https://cdn.nav.no/tsm/zara/_next/static/media/sara-mad.1858972f.webp'
 

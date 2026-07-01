@@ -1,5 +1,5 @@
-import { CronPost, OfficeUser } from '@services/team-office/common/types'
-import { pgClient } from '@services/db/postgres/production-pg'
+import { pgClient } from '#services/db/postgres/production-pg'
+import { CronPost, OfficeUser } from '#services/team-office/common/types'
 
 import { DEFAULT_OFFICE_DAYS, WEEK_DAYS } from '../common/day-utils'
 

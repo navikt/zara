@@ -1,13 +1,13 @@
-import { lazyNextleton } from 'nextleton'
 import { logger } from '@navikt/next-logger'
-import * as R from 'remeda'
 import { Kafka, logLevel, type Admin, type KafkaConfig } from 'kafkajs'
+import { lazyNextleton } from 'nextleton'
+import * as R from 'remeda'
 
-import { getServerEnv } from '@lib/env'
-import { User } from '@services/auth/user'
+import { getServerEnv } from '#lib/env'
+import { User } from '#services/auth/user'
 
-import { ConsumerGroupDetails, ConsumerGroupState, ResetOffsetTarget, TopicLag } from './types'
 import { computeTopicLag } from './kafka-utils'
+import { ConsumerGroupDetails, ConsumerGroupState, ResetOffsetTarget, TopicLag } from './types'
 
 const KNOWN_STATES: ReadonlySet<string> = new Set<ConsumerGroupState>([
     'Unknown',
@@ -57,7 +57,7 @@ async function getAdmin(): Promise<Admin> {
     try {
         return await cachedAdmin()
     } catch (error) {
-        logger.warn(`Kafka admin connection failed, retrying with a fresh client: ${error}`)
+        logger.warn(new Error(`Kafka admin connection failed, retrying with a fresh client`, { cause: error }))
         cachedAdmin.reset()
         return cachedAdmin()
     }

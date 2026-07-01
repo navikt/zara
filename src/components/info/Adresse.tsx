@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react'
 
-import { Adresse as AdresseType } from '@services/apps/regulus-maximus/types'
+import { Adresse as AdresseType } from '#services/apps/regulus-maximus/types'
 
 /**
  * Completely vibe coded component:

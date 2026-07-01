@@ -1,9 +1,9 @@
 'use client'
 
-import React, { FormEvent, ReactElement, useState } from 'react'
 import { Button, TextField } from '@navikt/ds-react'
+import React, { FormEvent, ReactElement, useState } from 'react'
 
-import { PlayInputProps } from '@features/quiz/question-types'
+import { PlayInputProps } from '#features/quiz/question-types'
 
 function TextPlayInput({ onAnswer, disabled }: PlayInputProps<'text'>): ReactElement {
     const [text, setText] = useState('')

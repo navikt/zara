@@ -1,10 +1,10 @@
 import { logger } from '@navikt/next-logger'
 
-import { JobStatusResponse, UpdateJobPayload } from '@services/apps/syk-inn-api/types'
-import { bundledEnv } from '@lib/env'
-import { User } from '@services/auth/user'
-import { raise } from '@lib/ts'
-import { getOboToken } from '@services/apps/common/obo'
+import { bundledEnv } from '#lib/env'
+import { raise } from '#lib/ts'
+import { getOboToken } from '#services/apps/common/obo'
+import { JobStatusResponse, UpdateJobPayload } from '#services/apps/syk-inn-api/types'
+import { User } from '#services/auth/user'
 
 const SYK_INN_API_ADMIN = 'http://syk-inn-api/internal/admin'
 

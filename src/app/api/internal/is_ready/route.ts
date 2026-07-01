@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server'
 import { logger } from '@navikt/next-logger'
+import { NextResponse } from 'next/server'
 import { nextleton } from 'nextleton'
 
-import { getServerEnv } from '@lib/env'
-import { setupDailyOfficeCron, setupDailySummaryCron, setupWeeklyOfficeCron } from '@services/cron/setup-cron'
-import { runMigrations } from '@services/db/postgres/migrations'
-import { initializeBot } from '@services/slack/bot/bot'
+import { getServerEnv } from '#lib/env'
+import { setupDailyOfficeCron, setupDailySummaryCron, setupWeeklyOfficeCron } from '#services/cron/setup-cron'
+import { runMigrations } from '#services/db/postgres/migrations'
+import { initializeBot } from '#services/slack/bot/bot'
 
 const migrationStatus = nextleton('migration-status', () => ({
     doing: false,

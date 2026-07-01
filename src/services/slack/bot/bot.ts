@@ -1,8 +1,8 @@
+import { logger } from '@navikt/next-logger'
 import { App as BoltApp } from '@slack/bolt'
 import { lazyNextleton } from 'nextleton'
-import { logger } from '@navikt/next-logger'
 
-import { bundledEnv, getServerEnv } from '@lib/env'
+import { bundledEnv, getServerEnv } from '#lib/env'
 
 import { loggerAdapter } from './bot-logger'
 import { configureOfficeUpdatesListeners } from './office-updates-events'

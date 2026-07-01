@@ -1,8 +1,8 @@
 'use client'
 
-import React, { ReactElement, useState, useTransition } from 'react'
-import { BodyShort, Button, LocalAlert, Modal, TextField } from '@navikt/ds-react'
 import { ExclamationmarkTriangleIcon } from '@navikt/aksel-icons'
+import { BodyShort, Button, LocalAlert, Modal, TextField } from '@navikt/ds-react'
+import React, { ReactElement, useState, useTransition } from 'react'
 
 import { markSykmeldingPoisonPill } from './poison-pill-actions'
 

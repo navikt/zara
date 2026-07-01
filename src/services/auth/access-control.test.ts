@@ -1,10 +1,10 @@
 import { vi, test, expect } from 'vitest'
 
-import { userInfo } from '@services/auth/auth'
-import { userHasAccess } from '@services/auth/access-control'
+import { userHasAccess } from '#services/auth/access-control'
+import { userInfo } from '#services/auth/auth'
 
-vi.mock('@services/auth/auth', () => ({
-    userInfo: vi.fn(),
+vi.mock('#services/auth/auth', () => ({
+    userInfo: vi.fn<never>(),
 }))
 
 const mockedUserInfo = vi.mocked(userInfo)

@@ -1,7 +1,7 @@
-import { sseResponse } from '@lib/sse'
-import { validateUserSession } from '@services/auth/auth'
-import { getClientState } from '@services/quiz/quiz-session-service'
-import { subscribeToQuizSession } from '@services/quiz/quiz-pubsub-client'
+import { sseResponse } from '#lib/sse'
+import { validateUserSession } from '#services/auth/auth'
+import { subscribeToQuizSession } from '#services/quiz/quiz-pubsub-client'
+import { getClientState } from '#services/quiz/quiz-session-service'
 
 export async function GET(_: Request, { params }: RouteContext<'/quiz/session/[sessionId]/live'>): Promise<Response> {
     await validateUserSession('TEAM_MEMBER')

@@ -1,11 +1,11 @@
 'use client'
 
-import React, { ReactElement, useState, useTransition } from 'react'
 import { Alert, Button, TextField } from '@navikt/ds-react'
+import React, { ReactElement, useState, useTransition } from 'react'
 
-import { QuizContent } from '@services/quiz/quiz-schema'
-import { loadQuizForEdit } from '@features/quiz/quiz-actions'
-import QuizBuilder from '@features/quiz/builder/QuizBuilder'
+import QuizBuilder from '#features/quiz/builder/QuizBuilder'
+import { loadQuizForEdit } from '#features/quiz/quiz-actions'
+import { QuizContent } from '#services/quiz/quiz-schema'
 
 type Props = {
     quizId: string

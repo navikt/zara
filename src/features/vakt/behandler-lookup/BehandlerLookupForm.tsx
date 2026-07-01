@@ -1,8 +1,8 @@
 'use client'
 
-import React, { ReactElement, useState } from 'react'
 import { Button, TextField } from '@navikt/ds-react'
 import { useQueryState } from 'nuqs'
+import React, { ReactElement, useState } from 'react'
 
 function BehandlerLookupForm(): ReactElement {
     const [initialValue, setQuery] = useQueryState('hpr', { shallow: false })
@@ -17,7 +17,7 @@ function BehandlerLookupForm(): ReactElement {
                 onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                         if (value.length > 3) {
-                            setQuery(value)
+                            void setQuery(value)
                         }
                     }
                 }}
@@ -26,7 +26,7 @@ function BehandlerLookupForm(): ReactElement {
                 <Button
                     onClick={() => {
                         if (value.length > 3) {
-                            setQuery(value)
+                            void setQuery(value)
                         }
                     }}
                 >

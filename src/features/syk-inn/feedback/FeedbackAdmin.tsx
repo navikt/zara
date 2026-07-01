@@ -1,18 +1,18 @@
 'use client'
 
-import React, { ReactElement, useState } from 'react'
 import { ScissorsIcon } from '@navikt/aksel-icons'
 import { Button, Detail, Heading, Tooltip } from '@navikt/ds-react'
 import { Feedback } from '@navikt/syk-zara/feedback'
+import React, { ReactElement, useState } from 'react'
 
+import ActivityLog from './ActivityLog'
+import AdminSection from './AdminSection'
 import { UserContact } from './contact/UserContact'
+import DangerAdminSection from './danger/DangerAdminSection'
+import FeedbackDetails from './FeedbackDetails'
+import { StatusBar } from './FeedbackStatusBar'
 import { UserFeedback } from './message/UserFeedback'
 import RedactableUserFeedback from './redaction/RedactableUserFeedback'
-import AdminSection from './AdminSection'
-import ActivityLog from './ActivityLog'
-import DangerAdminSection from './danger/DangerAdminSection'
-import { StatusBar } from './FeedbackStatusBar'
-import FeedbackDetails from './FeedbackDetails'
 
 type Props = {
     feedback: Feedback

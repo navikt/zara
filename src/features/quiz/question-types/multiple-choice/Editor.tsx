@@ -1,11 +1,11 @@
 'use client'
 
-import React, { ReactElement } from 'react'
-import { Button, Radio, RadioGroup, TextField } from '@navikt/ds-react'
 import { PlusIcon, TrashIcon } from '@navikt/aksel-icons'
+import { Button, Radio, RadioGroup, TextField } from '@navikt/ds-react'
+import React, { ReactElement } from 'react'
 
-import { Choice } from '@services/quiz/quiz-schema'
-import { EditorProps } from '@features/quiz/question-types'
+import { EditorProps } from '#features/quiz/question-types'
+import { Choice } from '#services/quiz/quiz-schema'
 
 function blankChoice(correct = false): Choice {
     return { id: crypto.randomUUID(), text: '', correct }

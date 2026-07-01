@@ -1,10 +1,10 @@
 'use client'
 
-import React, { ReactElement, useState, useTransition } from 'react'
 import { Button, Label, Switch } from '@navikt/ds-react'
+import React, { ReactElement, useState, useTransition } from 'react'
 
-import { nukeMe, registerKontor } from '@features/team/kontor/kontor-actions'
-import { OfficeUser } from '@services/team-office/common/types'
+import { nukeMe, registerKontor } from '#features/team/kontor/kontor-actions'
+import { OfficeUser } from '#services/team-office/common/types'
 
 type Props = {
     me: OfficeUser

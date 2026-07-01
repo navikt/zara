@@ -1,12 +1,12 @@
-import React, { ReactElement } from 'react'
-import { notFound } from 'next/navigation'
 import { SandboxIcon } from '@navikt/aksel-icons'
+import { notFound } from 'next/navigation'
+import React, { ReactElement } from 'react'
 
-import { validateUserSession } from '@services/auth/auth'
-import { getQuizContent, getQuizMeta } from '@services/quiz/quiz-store'
-import PageHeader from '@components/page/PageHeader'
-import QuizBuilder from '@features/quiz/builder/QuizBuilder'
-import QuizEditGate from '@features/quiz/builder/QuizEditGate'
+import PageHeader from '#components/page/PageHeader'
+import QuizBuilder from '#features/quiz/builder/QuizBuilder'
+import QuizEditGate from '#features/quiz/builder/QuizEditGate'
+import { validateUserSession } from '#services/auth/auth'
+import { getQuizContent, getQuizMeta } from '#services/quiz/quiz-store'
 
 async function Page({ params }: PageProps<'/quiz/[quizId]/edit'>): Promise<ReactElement> {
     const user = await validateUserSession('TEAM_MEMBER')

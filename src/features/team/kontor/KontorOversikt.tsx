@@ -1,16 +1,16 @@
-import React, { ReactElement } from 'react'
+import { TZDate } from '@date-fns/tz'
 import { BodyShort, Detail, Heading, Tag } from '@navikt/ds-react'
 import { getISOWeek, setISODay, setISOWeek, startOfWeek, set, isAfter, isSameDay } from 'date-fns'
-import { TZDate } from '@date-fns/tz'
-import * as R from 'remeda'
 import { nb } from 'date-fns/locale'
+import React, { ReactElement } from 'react'
+import * as R from 'remeda'
 
-import { getZeroIndexedWeekday, toReadableDate } from '@lib/date'
-import { getTeamWeek } from '@services/team-office/team-office-service'
-import { getMyself, getMyWeek } from '@services/team-office/me-office-service'
-import { OfficeUser, TeamWeek, WeekSchedule } from '@services/team-office/common/types'
-import WeekToggleView from '@features/team/kontor/WeekToggleView'
-import Unregistered from '@features/team/kontor/unregistered/Unregistered'
+import Unregistered from '#features/team/kontor/unregistered/Unregistered'
+import WeekToggleView from '#features/team/kontor/WeekToggleView'
+import { getZeroIndexedWeekday, toReadableDate } from '#lib/date'
+import { OfficeUser, TeamWeek, WeekSchedule } from '#services/team-office/common/types'
+import { getMyself, getMyWeek } from '#services/team-office/me-office-service'
+import { getTeamWeek } from '#services/team-office/team-office-service'
 
 async function KontorOversikt(): Promise<ReactElement> {
     const me = await getMyself()

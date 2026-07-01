@@ -1,10 +1,10 @@
-import React, { ReactElement, Suspense } from 'react'
 import { Heading, Skeleton } from '@navikt/ds-react'
+import React, { ReactElement, Suspense } from 'react'
 
-import { produksjonsFeatures } from '@features/vakt/produksjons-feature-list'
-import VaktFeaturePage from '@features/vakt/shared/VaktFeaturePage'
-import BehandlerLookupForm from '@features/vakt/behandler-lookup/BehandlerLookupForm'
-import BehandlerSearchInfo from '@features/vakt/behandler-lookup/BehandlerSearchInfo'
+import BehandlerLookupForm from '#features/vakt/behandler-lookup/BehandlerLookupForm'
+import BehandlerSearchInfo from '#features/vakt/behandler-lookup/BehandlerSearchInfo'
+import { produksjonsFeatures } from '#features/vakt/produksjons-feature-list'
+import VaktFeaturePage from '#features/vakt/shared/VaktFeaturePage'
 
 async function Page({ searchParams }: PageProps<'/vakt/hpr-lookup'>): Promise<ReactElement> {
     const { hpr } = await searchParams

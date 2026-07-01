@@ -1,9 +1,9 @@
 'use client'
 
-import React, { ReactElement } from 'react'
 import { BodyShort, Detail, Heading, Table, Tag } from '@navikt/ds-react'
+import React, { ReactElement } from 'react'
 
-import { ConsumerGroupDetails } from '@services/kafka/types'
+import { ConsumerGroupDetails } from '#services/kafka/types'
 
 import ConsumerGroupActions from './ConsumerGroupActions'
 

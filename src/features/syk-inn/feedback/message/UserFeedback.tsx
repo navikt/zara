@@ -1,10 +1,10 @@
-import React, { ReactElement, useTransition } from 'react'
-import { BodyShort, Button, Detail } from '@navikt/ds-react'
 import { CheckmarkHeavyIcon } from '@navikt/aksel-icons'
+import { BodyShort, Button, Detail } from '@navikt/ds-react'
 import { Feedback } from '@navikt/syk-zara/feedback'
+import React, { ReactElement, useTransition } from 'react'
 
-import { MultilineUserFeedback } from '@components/feedback/MultilineUserFeedback'
-import { toReadableDateTime } from '@lib/date'
+import { MultilineUserFeedback } from '#components/feedback/MultilineUserFeedback'
+import { toReadableDateTime } from '#lib/date'
 
 import { setFeedbackVerified } from './feedback-actions'
 

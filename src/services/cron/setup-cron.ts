@@ -1,10 +1,10 @@
-import { lazyNextleton } from 'nextleton'
-import { Cron } from 'croner'
 import { logger } from '@navikt/next-logger'
+import { Cron } from 'croner'
+import { lazyNextleton } from 'nextleton'
 
-import { isLeader } from '@services/leader'
-import { postDailySummary } from '@services/slack/summary-to-slack'
-import { postDailyOfficeSummary, postWeeklyRememberToUpdatePost } from '@services/slack/office-to-slack'
+import { isLeader } from '#services/leader'
+import { postDailyOfficeSummary, postWeeklyRememberToUpdatePost } from '#services/slack/office-to-slack'
+import { postDailySummary } from '#services/slack/summary-to-slack'
 
 export const setupDailySummaryCron = lazyNextleton('daily-summary-cron', () => {
     const MORNING_9_00 = '0 8 * * *'

@@ -1,10 +1,10 @@
 import * as R from 'remeda'
 
-import { pgClient } from '@services/db/postgres/production-pg'
-import { validateUserSession } from '@services/auth/auth'
+import { validateUserSession } from '#services/auth/auth'
+import { pgClient } from '#services/db/postgres/production-pg'
 
-import { OfficeUser, TeamWeek, WeekSchedule } from './common/types'
 import { toDefaultSchedule } from './common/team-office-utils'
+import { OfficeUser, TeamWeek, WeekSchedule } from './common/types'
 
 export async function getTeamWeek(week: number): Promise<TeamWeek> {
     await validateUserSession('TEAM_MEMBER')

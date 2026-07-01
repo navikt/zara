@@ -2,7 +2,7 @@
 
 import { useMemo, useSyncExternalStore } from 'react'
 
-import { ClientSessionState, QuizEvent } from '@services/quiz/quiz-schema'
+import { ClientSessionState, QuizEvent } from '#services/quiz/quiz-schema'
 
 type SessionStore = {
     subscribe: (onChange: () => void) => () => void

@@ -1,8 +1,8 @@
-import React, { ReactElement, useEffect, useState, useTransition } from 'react'
-import { logger } from '@navikt/next-logger'
-import { BodyShort, Button, Detail, Loader, Modal } from '@navikt/ds-react'
-import Link from 'next/link'
 import { TrashIcon } from '@navikt/aksel-icons'
+import { BodyShort, Button, Detail, Loader, Modal } from '@navikt/ds-react'
+import { logger } from '@navikt/next-logger'
+import Link from 'next/link'
+import React, { ReactElement, useEffect, useState, useTransition } from 'react'
 
 import { feedbackUpdated } from './live-actions'
 

@@ -1,16 +1,16 @@
 import { logger } from '@navikt/next-logger'
 
-import { pgClient } from '@services/db/postgres/production-pg'
-import { decryptJson } from '@services/quiz/quiz-crypto'
-import { decryptWithPassphrase, encryptWithPassphrase } from '@services/quiz/quiz-passphrase-crypto'
-import { LeaderboardEntry, QuizContent, QuizContentSchema, QuizSummary } from '@services/quiz/quiz-schema'
+import { pgClient } from '#services/db/postgres/production-pg'
+import { decryptJson } from '#services/quiz/quiz-crypto'
+import { decryptWithPassphrase, encryptWithPassphrase } from '#services/quiz/quiz-passphrase-crypto'
+import { LeaderboardEntry, QuizContent, QuizContentSchema, QuizSummary } from '#services/quiz/quiz-schema'
 
 type QuizRow = {
     id: string
     owner_user_id: string
     is_encrypted: boolean
     content_encrypted: string | null
-    content_plain: unknown | null
+    content_plain: Record<string, unknown> | null
     salt: string | null
     title: string | null
     question_count: number | null

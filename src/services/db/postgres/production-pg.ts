@@ -1,8 +1,8 @@
+import { logger } from '@navikt/next-logger'
 import { lazyNextleton } from 'nextleton'
 import { Pool } from 'pg'
-import { logger } from '@navikt/next-logger'
 
-import { bundledEnv, getServerEnv } from '@lib/env'
+import { bundledEnv, getServerEnv } from '#lib/env'
 
 export const pgClient = lazyNextleton('postgres-client', () => initializePostgres())
 

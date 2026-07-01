@@ -3,8 +3,8 @@ import { getToken, requestAzureOboToken } from '@navikt/oasis'
 import { headers } from 'next/headers'
 import { unauthorized } from 'next/navigation'
 
-import { bundledEnv } from '@lib/env'
-import { devAvatarBase64 } from '@dev/dev-image'
+import { devAvatarBase64 } from '#dev/dev-image'
+import { bundledEnv } from '#lib/env'
 
 /**
  * Proxies any user's (using UPN) profile picture using a authenticated request to the MS Graph API.

@@ -1,9 +1,9 @@
 'use client'
 
-import React, { ReactElement } from 'react'
 import { BodyShort, Heading } from '@navikt/ds-react'
+import React, { ReactElement } from 'react'
 
-import { RevealProps } from '@features/quiz/question-types'
+import { RevealProps } from '#features/quiz/question-types'
 
 function TextReveal({ data, myResult }: RevealProps<'text'>): ReactElement {
     const myText = myResult?.answer?.type === 'text' ? myResult.answer.text : null

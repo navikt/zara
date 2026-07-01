@@ -1,12 +1,12 @@
 'use client'
 
-import React, { ReactElement } from 'react'
-import { BodyShort, Button, TextField } from '@navikt/ds-react'
 import { ChevronDownIcon, ChevronUpIcon, PlusIcon, TrashIcon } from '@navikt/aksel-icons'
+import { BodyShort, Button, TextField } from '@navikt/ds-react'
+import React, { ReactElement } from 'react'
 
-import { OrderingItem } from '@services/quiz/quiz-schema'
-import { EditorProps } from '@features/quiz/question-types'
-import { move } from '@features/quiz/question-types/ordering/move'
+import { EditorProps } from '#features/quiz/question-types'
+import { move } from '#features/quiz/question-types/ordering/move'
+import { OrderingItem } from '#services/quiz/quiz-schema'
 
 function OrderingEditor({ draft, onChange }: EditorProps<'ordering'>): ReactElement {
     const { items } = draft

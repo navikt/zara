@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 
-import { validateUserSession } from '@services/auth/auth'
-import { createUserActivityClient } from '@services/live-service/user-activity-pubsub-client'
+import { validateUserSession } from '#services/auth/auth'
+import { createUserActivityClient } from '#services/live-service/user-activity-pubsub-client'
 
 export async function GET(request: NextRequest): Promise<Response> {
     const pageToGetEventsFor = request.nextUrl.searchParams.get('page')

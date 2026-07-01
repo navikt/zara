@@ -1,14 +1,14 @@
 'use client'
 
-import React, { ReactElement, useState, useTransition } from 'react'
-import { Alert, BodyShort, Button, Heading, Tag, TextField } from '@navikt/ds-react'
 import { BarChartIcon, PencilIcon, PlayIcon, TrashIcon } from '@navikt/aksel-icons'
-import { useRouter } from 'next/navigation'
+import { Alert, BodyShort, Button, Heading, Tag, TextField } from '@navikt/ds-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import React, { ReactElement, useState, useTransition } from 'react'
 
-import { QuizSummary } from '@services/quiz/quiz-schema'
-import { hostStartSession } from '@features/quiz/session-actions'
-import { removeQuiz } from '@features/quiz/quiz-actions'
+import { removeQuiz } from '#features/quiz/quiz-actions'
+import { hostStartSession } from '#features/quiz/session-actions'
+import { QuizSummary } from '#services/quiz/quiz-schema'
 
 type Props = {
     quizzes: QuizSummary[]

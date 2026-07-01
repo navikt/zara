@@ -1,16 +1,16 @@
 'use server'
 
+import { logger } from '@navikt/next-logger'
 import { revalidatePath } from 'next/cache'
 import { after } from 'next/server'
-import { logger } from '@navikt/next-logger'
 
-import { validateUserSession } from '@services/auth/auth'
-import { pgClient } from '@services/db/postgres/production-pg'
-import { updateTodaysOfficeSummaryIfNeeded } from '@services/slack/office-to-slack'
-import { setAllDays } from '@services/team-office/internal/office-service'
-import { getMyself } from '@services/team-office/me-office-service'
-import { Location } from '@services/team-office/common/types'
-import { raise } from '@lib/ts'
+import { raise } from '#lib/ts'
+import { validateUserSession } from '#services/auth/auth'
+import { pgClient } from '#services/db/postgres/production-pg'
+import { updateTodaysOfficeSummaryIfNeeded } from '#services/slack/office-to-slack'
+import { Location } from '#services/team-office/common/types'
+import { setAllDays } from '#services/team-office/internal/office-service'
+import { getMyself } from '#services/team-office/me-office-service'
 
 export async function registerKontor(newLocation: Location): Promise<void> {
     const user = await validateUserSession('TEAM_MEMBER')
@@ -53,8 +53,8 @@ export async function toggleWeekDay(week: number, daysOn: string[]): Promise<voi
         daysOn.map((it) => +it),
     )
 
-    after(() => {
-        updateTodaysOfficeSummaryIfNeeded()
+    after(async () => {
+        await updateTodaysOfficeSummaryIfNeeded()
     })
 
     revalidatePath('/team/kontor')

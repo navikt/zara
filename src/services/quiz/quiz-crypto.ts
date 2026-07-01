@@ -1,4 +1,4 @@
-import { encryptQueryParam, decryptQueryParam } from '@lib/crypto/query-param-encryption'
+import { encryptQueryParam, decryptQueryParam } from '#lib/crypto/query-param-encryption'
 
 /**
  * Quiz content is stored encrypted at rest. We reuse the app's AES-256-GCM helpers

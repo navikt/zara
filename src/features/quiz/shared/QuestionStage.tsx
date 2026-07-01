@@ -2,7 +2,7 @@
 
 import React, { ReactElement } from 'react'
 
-import { PublicQuestion } from '@services/quiz/quiz-schema'
+import { PublicQuestion } from '#services/quiz/quiz-schema'
 
 type Props = {
     question: PublicQuestion

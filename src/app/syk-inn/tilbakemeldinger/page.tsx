@@ -1,10 +1,10 @@
-import React, { ReactElement } from 'react'
 import { Heading } from '@navikt/ds-react'
 import { PageBlock } from '@navikt/ds-react/Page'
+import React, { ReactElement } from 'react'
 
-import { validateUserSession } from '@services/auth/auth'
-import { getFeedbackClient } from '@services/feedback/feedback-client'
-import LiveUsersList from '@components/live-view/LiveUsersList'
+import LiveUsersList from '#components/live-view/LiveUsersList'
+import { validateUserSession } from '#services/auth/auth'
+import { getFeedbackClient } from '#services/feedback/feedback-client'
 
 import FeedbackList from '../../../features/syk-inn/FeedbackList'
 

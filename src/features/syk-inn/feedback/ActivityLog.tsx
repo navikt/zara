@@ -1,11 +1,11 @@
+import { EyeWithPupilIcon, InboxDownIcon, PersonGavelIcon, ScissorsIcon, TasklistSendIcon } from '@navikt/aksel-icons'
 import { BodyShort, Process } from '@navikt/ds-react'
+import { Link as AkselLink } from '@navikt/ds-react/Link'
+import { Feedback } from '@navikt/syk-zara/feedback'
 import React, { ReactElement, ReactNode } from 'react'
 import * as R from 'remeda'
-import { EyeWithPupilIcon, InboxDownIcon, PersonGavelIcon, ScissorsIcon, TasklistSendIcon } from '@navikt/aksel-icons'
-import { Feedback } from '@navikt/syk-zara/feedback'
-import { Link as AkselLink } from '@navikt/ds-react/Link'
 
-import { toReadableDateTime } from '@lib/date'
+import { toReadableDateTime } from '#lib/date'
 
 type Props = {
     feedback: Feedback

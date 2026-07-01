@@ -1,14 +1,14 @@
 'use client'
 
-import React, { ReactElement } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { Detail, Heading } from '@navikt/ds-react'
-import { useSelectedLayoutSegment } from 'next/dist/client/components/navigation'
 import { ArrowLeftIcon } from '@navikt/aksel-icons'
+import { Detail, Heading } from '@navikt/ds-react'
 import { AnimatePresence, motion } from 'motion/react'
+import { useSelectedLayoutSegment } from 'next/dist/client/components/navigation'
+import Image from 'next/image'
+import Link from 'next/link'
+import React, { ReactElement } from 'react'
 
-import { zaraImages } from '@images/zaras'
+import { zaraImages } from '#images/zaras'
 
 function LinkHeader(): ReactElement {
     const selectedLayoutSegment = useSelectedLayoutSegment()

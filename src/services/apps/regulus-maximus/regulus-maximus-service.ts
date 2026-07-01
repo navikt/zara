@@ -1,13 +1,13 @@
-import * as R from 'remeda'
 import { logger } from '@navikt/next-logger'
 import { isBefore, subYears } from 'date-fns'
+import * as R from 'remeda'
 
-import { bundledEnv } from '@lib/env'
-import { getOboToken } from '@services/apps/common/obo'
-import { raise } from '@lib/ts'
-import { mockHistory } from '@services/apps/regulus-maximus/mock-data'
-import { SykmeldingRecord } from '@services/apps/regulus-maximus/types'
-import { ValidTimelineRanges } from '@features/vakt/sykmeldingshistorikk/RangePicker'
+import { ValidTimelineRanges } from '#features/vakt/sykmeldingshistorikk/RangePicker'
+import { bundledEnv } from '#lib/env'
+import { raise } from '#lib/ts'
+import { getOboToken } from '#services/apps/common/obo'
+import { mockHistory } from '#services/apps/regulus-maximus/mock-data'
+import { SykmeldingRecord } from '#services/apps/regulus-maximus/types'
 
 const REGULUS_MAXIMUS_ADMIN = 'http://regulus-maximus/internal/admin'
 

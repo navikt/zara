@@ -1,6 +1,6 @@
 import { pino, transport } from 'pino'
 
-import { bundledEnv } from '@lib/env'
+import { bundledEnv } from '#lib/env'
 
 const APP_NAME = 'zara'
 

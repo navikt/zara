@@ -1,7 +1,7 @@
 import { logger } from '@navikt/next-logger'
 
-import { createValkeySubscriber, valkeyClient } from '@services/db/valkey/production-valkey'
-import { QuizEvent } from '@services/quiz/quiz-schema'
+import { createValkeySubscriber, valkeyClient } from '#services/db/valkey/production-valkey'
+import { QuizEvent } from '#services/quiz/quiz-schema'
 
 const LOBBY_CHANNEL = 'channel:quiz:lobby'
 

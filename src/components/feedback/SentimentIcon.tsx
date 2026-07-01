@@ -1,4 +1,3 @@
-import React, { ReactElement } from 'react'
 import {
     FaceCryIcon,
     FaceFrownIcon,
@@ -7,8 +6,9 @@ import {
     FaceSmileIcon,
     QuestionmarkIcon,
 } from '@navikt/aksel-icons'
+import React, { ReactElement } from 'react'
 
-import { cn } from '@lib/tw'
+import { cn } from '#lib/tw'
 
 type Props = {
     sentiment: number

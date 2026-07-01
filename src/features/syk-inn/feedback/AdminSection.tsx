@@ -1,7 +1,7 @@
-import React, { PropsWithChildren, ReactElement, ReactNode } from 'react'
 import { Heading } from '@navikt/ds-react'
+import React, { PropsWithChildren, ReactElement, ReactNode } from 'react'
 
-import { cn } from '@lib/tw'
+import { cn } from '#lib/tw'
 
 function AdminSection({
     heading,

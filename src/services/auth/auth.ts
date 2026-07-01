@@ -2,10 +2,10 @@ import { getToken, parseAzureUserToken, validateToken } from '@navikt/oasis'
 import { headers } from 'next/headers'
 import { unauthorized } from 'next/navigation'
 
-import { bundledEnv } from '@lib/env'
-import { User } from '@services/auth/user'
-import { LocalMockUser } from '@services/auth/mock'
-import { userHasAccess, ZaraFeatures } from '@services/auth/access-control'
+import { bundledEnv } from '#lib/env'
+import { userHasAccess, ZaraFeatures } from '#services/auth/access-control'
+import { LocalMockUser } from '#services/auth/mock'
+import { User } from '#services/auth/user'
 
 /**
  * Throws auth interrupt if token is missing or invalid

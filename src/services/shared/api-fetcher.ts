@@ -1,9 +1,9 @@
-import * as z from 'zod'
 import { logger } from '@navikt/next-logger'
 import { requestAzureClientCredentialsToken } from '@navikt/oasis'
+import * as z from 'zod'
 
-import { bundledEnv } from '@lib/env'
-import { failSpan, spanServerAsync } from '@lib/otel/server'
+import { bundledEnv } from '#lib/env'
+import { failSpan, spanServerAsync } from '#lib/otel/server'
 
 type ValidAPI = 'syfohelsenettproxy' | 'tsm-pdl-cache'
 
@@ -49,7 +49,7 @@ export async function fetchInternalAPI<
 }: FetchInternalAPIOptionsWithSchema<Schema, AdditionalErrors>): Promise<
     InferredReturnValue | ApiFetchErrors<AdditionalErrors>
 > {
-    const pathWithoutIds = path.replace(/[a-f0-9\-]{36}/g, '<uuid>')
+    const pathWithoutIds = path.replace(/[a-f0-9-]{36}/g, '<uuid>')
 
     return spanServerAsync(`InternalAPIs.${api}${pathWithoutIds}`, async (span) => {
         const apiConfig = await getApi(api)

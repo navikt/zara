@@ -1,9 +1,9 @@
-import React, { ReactElement } from 'react'
 import { Heading } from '@navikt/ds-react'
 import { PageBlock } from '@navikt/ds-react/Page'
+import React, { ReactElement } from 'react'
 
-import { userFeatures } from '@services/auth/access-control'
-import LandingPage from '@features/landing-page/LandingPage'
+import LandingPage from '#features/landing-page/LandingPage'
+import { userFeatures } from '#services/auth/access-control'
 
 async function Page(): Promise<ReactElement> {
     const features = await userFeatures()

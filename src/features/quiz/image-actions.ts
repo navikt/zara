@@ -1,7 +1,7 @@
 'use server'
 
-import { validateUserSession } from '@services/auth/auth'
-import { saveImage } from '@services/quiz/quiz-image-store'
+import { validateUserSession } from '#services/auth/auth'
+import { saveImage } from '#services/quiz/quiz-image-store'
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 const MAX_SIZE_BYTES = 2 * 1024 * 1024

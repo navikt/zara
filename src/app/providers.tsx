@@ -1,7 +1,7 @@
 'use client'
 
-import React, { PropsWithChildren, ReactElement } from 'react'
 import { ThemeProvider } from 'next-themes'
+import React, { PropsWithChildren, ReactElement } from 'react'
 import { Toaster } from 'sonner'
 
 function Providers({ children }: PropsWithChildren): ReactElement {

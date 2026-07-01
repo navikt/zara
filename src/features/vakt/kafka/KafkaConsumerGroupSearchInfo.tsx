@@ -1,10 +1,10 @@
-import React, { ReactElement, ReactNode } from 'react'
-import { logger } from '@navikt/next-logger'
 import { LocalAlert } from '@navikt/ds-react'
 import { LocalAlertContent, LocalAlertHeader, LocalAlertTitle } from '@navikt/ds-react/LocalAlert'
+import { logger } from '@navikt/next-logger'
+import React, { ReactElement, ReactNode } from 'react'
 
-import { validateUserSession } from '@services/auth/auth'
-import { getConsumerGroupDetails } from '@services/kafka/kafka-admin-service'
+import { validateUserSession } from '#services/auth/auth'
+import { getConsumerGroupDetails } from '#services/kafka/kafka-admin-service'
 
 import ConsumerGroupDetailsView from './ConsumerGroupDetailsView'
 
@@ -19,7 +19,7 @@ async function KafkaConsumerGroupSearchInfo({ groupId }: Props): Promise<ReactEl
     try {
         details = await getConsumerGroupDetails(groupId)
     } catch (error) {
-        logger.error(`Unable to look up consumer group ${groupId}: ${error}`)
+        logger.error(new Error(`Unable to look up consumer group ${groupId}`, { cause: error }))
 
         return (
             <KafkaConsumerGroupError

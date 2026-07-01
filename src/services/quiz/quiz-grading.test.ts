@@ -1,9 +1,9 @@
 import { test, expect } from 'vitest'
 
-import { levenshtein } from '@lib/levenshtein'
-import { gradeAnswer } from '@services/quiz/quiz-grading'
-import { MAX_POINTS } from '@services/quiz/quiz-scoring'
-import { MultipleChoiceQuestion, OrderingQuestion, SliderQuestion, TextQuestion } from '@services/quiz/quiz-schema'
+import { levenshtein } from '#lib/levenshtein'
+import { gradeAnswer } from '#services/quiz/quiz-grading'
+import { MultipleChoiceQuestion, OrderingQuestion, SliderQuestion, TextQuestion } from '#services/quiz/quiz-schema'
+import { MAX_POINTS } from '#services/quiz/quiz-scoring'
 
 const base = { id: 'q1', text: 'Spørsmål', timeLimitSeconds: null, imageId: null }
 

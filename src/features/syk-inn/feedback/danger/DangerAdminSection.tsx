@@ -1,11 +1,11 @@
-import React, { ReactElement, useRef, useTransition } from 'react'
-import { BodyShort, Button, Detail, Link as AkselLink, LocalAlert, Modal } from '@navikt/ds-react'
 import { ExclamationmarkTriangleIcon, TrashIcon } from '@navikt/aksel-icons'
+import { BodyShort, Button, Detail, Link as AkselLink, LocalAlert, Modal } from '@navikt/ds-react'
 import { Feedback } from '@navikt/syk-zara/feedback'
+import React, { ReactElement, useRef, useTransition } from 'react'
 import { toast } from 'sonner'
 
-import { MultilineUserFeedback } from '@components/feedback/MultilineUserFeedback'
-import { toReadableDateTime } from '@lib/date'
+import { MultilineUserFeedback } from '#components/feedback/MultilineUserFeedback'
+import { toReadableDateTime } from '#lib/date'
 
 import { deleteFeedbackPermanently, shareToSlack } from './danger-actions'
 

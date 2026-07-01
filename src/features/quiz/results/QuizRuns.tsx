@@ -1,9 +1,9 @@
-import React, { ReactElement } from 'react'
 import { BodyShort, Heading, Tag } from '@navikt/ds-react'
+import React, { ReactElement } from 'react'
 
-import { toReadableDateTime } from '@lib/date'
-import { QuizRun } from '@services/quiz/quiz-store'
-import { medalFor } from '@features/quiz/shared/medal'
+import { medalFor } from '#features/quiz/shared/medal'
+import { toReadableDateTime } from '#lib/date'
+import { QuizRun } from '#services/quiz/quiz-store'
 
 type Props = {
     runs: QuizRun[]

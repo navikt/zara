@@ -1,8 +1,8 @@
 'use server'
 
-import { userInfo } from '@services/auth/auth'
-import { Pages } from '@services/live-service/pages'
-import { createUserActivityClient } from '@services/live-service/user-activity-pubsub-client'
+import { userInfo } from '#services/auth/auth'
+import { Pages } from '#services/live-service/pages'
+import { createUserActivityClient } from '#services/live-service/user-activity-pubsub-client'
 
 export async function meActive(page: Pages): Promise<'pong' | 'no'> {
     const user = await userInfo()

@@ -1,5 +1,5 @@
-import { validateUserSession } from '@services/auth/auth'
-import { getImage } from '@services/quiz/quiz-image-store'
+import { validateUserSession } from '#services/auth/auth'
+import { getImage } from '#services/quiz/quiz-image-store'
 
 /**
  * Serves a quiz question image. Auth-gated to TEAM_MEMBER; streams the decrypted bytes

@@ -1,14 +1,11 @@
 'use client'
 
-import React, { ReactElement, useRef, useState, useTransition } from 'react'
-import { Alert, Button, Heading, Select, TextField } from '@navikt/ds-react'
 import { ImageIcon, PlusIcon, TrashIcon } from '@navikt/aksel-icons'
+import { Alert, Button, Heading, Select, TextField } from '@navikt/ds-react'
 import { useRouter } from 'next/navigation'
+import React, { ReactElement, useRef, useState, useTransition } from 'react'
 
-import { QuestionType, QuizContent } from '@services/quiz/quiz-schema'
-import { saveExistingQuiz, saveNewQuiz } from '@features/quiz/quiz-actions'
-import { uploadQuizImage } from '@features/quiz/image-actions'
-import { resizeImageForUpload } from '@features/quiz/resize-image'
+import { uploadQuizImage } from '#features/quiz/image-actions'
 import {
     DraftBase,
     DraftQuestion,
@@ -16,7 +13,10 @@ import {
     QUESTION_TYPE_ORDER,
     draftToQuestion,
     questionToDraft,
-} from '@features/quiz/question-types'
+} from '#features/quiz/question-types'
+import { saveExistingQuiz, saveNewQuiz } from '#features/quiz/quiz-actions'
+import { resizeImageForUpload } from '#features/quiz/resize-image'
+import { QuestionType, QuizContent } from '#services/quiz/quiz-schema'
 
 const TIME_LIMIT_OPTIONS = [10, 15, 20, 30, 45, 60, 90, 120]
 

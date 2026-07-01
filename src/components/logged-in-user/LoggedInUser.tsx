@@ -1,8 +1,8 @@
 import { BodyShort, Detail, Skeleton, Tooltip } from '@navikt/ds-react'
 import React, { ReactElement } from 'react'
 
-import { userInfo } from '@services/auth/auth'
-import LoggedInUserAvatar from '@components/logged-in-user/LoggedInUserAvatar'
+import LoggedInUserAvatar from '#components/logged-in-user/LoggedInUserAvatar'
+import { userInfo } from '#services/auth/auth'
 
 export async function LoggedInUser(): Promise<ReactElement> {
     const user = await userInfo()

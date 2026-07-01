@@ -1,15 +1,15 @@
-import React, { ReactElement } from 'react'
+import { ArrowLeftIcon } from '@navikt/aksel-icons'
 import { Detail, Heading } from '@navikt/ds-react'
 import { PageBlock } from '@navikt/ds-react/Page'
-import { ArrowLeftIcon } from '@navikt/aksel-icons'
-import * as R from 'remeda'
 import Image from 'next/image'
+import React, { ReactElement } from 'react'
+import * as R from 'remeda'
 
-import LiveUsersList from '@components/live-view/LiveUsersList'
-import { validateUserSession } from '@services/auth/auth'
-import { AkselNextLink } from '@components/AkselNextLink'
-import { getFeedbackClient } from '@services/feedback/feedback-client'
-import PrivacyMode from '@components/privacy-mode/PrivacyMode'
+import { AkselNextLink } from '#components/AkselNextLink'
+import LiveUsersList from '#components/live-view/LiveUsersList'
+import PrivacyMode from '#components/privacy-mode/PrivacyMode'
+import { validateUserSession } from '#services/auth/auth'
+import { getFeedbackClient } from '#services/feedback/feedback-client'
 
 import { zaraImages } from '../../../../images/zaras'
 

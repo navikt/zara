@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react'
 
-import { ArbeidsgiverInfo } from '@services/apps/regulus-maximus/types'
+import { ArbeidsgiverInfo } from '#services/apps/regulus-maximus/types'
 
 import { DescriptiveItem } from './DescriptiveItems'
 

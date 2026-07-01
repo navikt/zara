@@ -1,11 +1,11 @@
 'use client'
 
-import React, { ReactElement } from 'react'
 import { Heading } from '@navikt/ds-react'
+import React, { ReactElement } from 'react'
 
-import { cn } from '@lib/tw'
-import { LeaderboardEntry } from '@services/quiz/quiz-schema'
-import { medalFor } from '@features/quiz/shared/medal'
+import { medalFor } from '#features/quiz/shared/medal'
+import { cn } from '#lib/tw'
+import { LeaderboardEntry } from '#services/quiz/quiz-schema'
 
 type Props = {
     entries: LeaderboardEntry[]

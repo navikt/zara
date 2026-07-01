@@ -2,8 +2,8 @@
 
 import { revalidatePath } from 'next/cache'
 
-import { changeJobStatus } from '@services/apps/syk-inn-api/syk-inn-api-service'
-import { validateUserSession } from '@services/auth/auth'
+import { changeJobStatus } from '#services/apps/syk-inn-api/syk-inn-api-service'
+import { validateUserSession } from '#services/auth/auth'
 
 export async function startJob(jobName: string): Promise<void> {
     const user = await validateUserSession('UTVIKLER')

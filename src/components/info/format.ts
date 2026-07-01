@@ -1,4 +1,4 @@
-import type { DiagnoseInfo, Navn } from '@services/apps/regulus-maximus/types'
+import type { DiagnoseInfo, Navn } from '#services/apps/regulus-maximus/types'
 
 export function navn(navn: Navn | null): string {
     if (navn == null) return 'Ukjent navn'

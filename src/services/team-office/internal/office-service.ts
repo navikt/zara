@@ -1,7 +1,7 @@
 import { getISOWeekYear } from 'date-fns'
 
-import { pgClient } from '@services/db/postgres/production-pg'
-import { DefaultWeekSchedule, OfficeUser } from '@services/team-office/common/types'
+import { pgClient } from '#services/db/postgres/production-pg'
+import { DefaultWeekSchedule, OfficeUser } from '#services/team-office/common/types'
 
 const days = ['mon', 'tue', 'wed', 'thu', 'fri']
 

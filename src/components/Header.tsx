@@ -1,9 +1,9 @@
 import { ReactElement, Suspense } from 'react'
 
-import { ThemeChanger } from '@components/theme'
+import { ThemeChanger } from '#components/theme'
 
-import { LoggedInUser, LoggedInUserSkeleton } from './logged-in-user/LoggedInUser'
 import LinkHeader from './LinkHeader'
+import { LoggedInUser, LoggedInUserSkeleton } from './logged-in-user/LoggedInUser'
 
 function Header(): ReactElement {
     return (

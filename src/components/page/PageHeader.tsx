@@ -1,11 +1,11 @@
 'use client'
 
-import React, { PropsWithChildren, ReactElement } from 'react'
-import { Heading } from '@navikt/ds-react'
 import { ArrowLeftIcon, Buildings3Icon } from '@navikt/aksel-icons'
+import { Heading } from '@navikt/ds-react'
 import { AnimatePresence, motion } from 'motion/react'
+import React, { PropsWithChildren, ReactElement } from 'react'
 
-import { AkselNextLink } from '@components/AkselNextLink'
+import { AkselNextLink } from '#components/AkselNextLink'
 
 type Props = {
     heading: string

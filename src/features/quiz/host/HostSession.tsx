@@ -1,18 +1,18 @@
 'use client'
 
-import React, { ReactElement, useTransition } from 'react'
 import { Alert, BodyShort, Button, Heading, Loader } from '@navikt/ds-react'
 import { useRouter } from 'next/navigation'
+import React, { ReactElement, useTransition } from 'react'
 
-import { PublicQuestion, SessionStatus } from '@services/quiz/quiz-schema'
-import { averagePercent } from '@services/quiz/quiz-scoring'
-import { useQuizSession } from '@features/quiz/shared/useQuizSession'
-import { hostCancelSession, hostEndSession, hostNextQuestion, hostRevealQuestion } from '@features/quiz/session-actions'
-import { QUESTION_TYPES } from '@features/quiz/question-types'
-import PlayerGrid from '@features/quiz/host/PlayerGrid'
-import Leaderboard from '@features/quiz/shared/Leaderboard'
-import Countdown from '@features/quiz/shared/Countdown'
-import QuestionStage from '@features/quiz/shared/QuestionStage'
+import PlayerGrid from '#features/quiz/host/PlayerGrid'
+import { QUESTION_TYPES } from '#features/quiz/question-types'
+import { hostCancelSession, hostEndSession, hostNextQuestion, hostRevealQuestion } from '#features/quiz/session-actions'
+import Countdown from '#features/quiz/shared/Countdown'
+import Leaderboard from '#features/quiz/shared/Leaderboard'
+import QuestionStage from '#features/quiz/shared/QuestionStage'
+import { useQuizSession } from '#features/quiz/shared/useQuizSession'
+import { PublicQuestion, SessionStatus } from '#services/quiz/quiz-schema'
+import { averagePercent } from '#services/quiz/quiz-scoring'
 
 type Props = {
     sessionId: string
