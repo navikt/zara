@@ -31,7 +31,7 @@ function BruksvilkarTable({ bruksvilkar }: Props): ReactElement {
     const sortedData =
         sort == null || sort.direction === 'none'
             ? R.sortBy(bruksvilkar, [(it) => it.acceptedAt, 'desc'])
-            : R.sortBy(bruksvilkar, [(it) => it[sort.orderBy], sort.direction === 'ascending' ? 'asc' : 'desc'])
+            : R.sortBy(bruksvilkar, [(it) => it[sort.orderBy] ?? '', sort.direction === 'ascending' ? 'asc' : 'desc'])
 
     return (
         <div>
