@@ -5380,13 +5380,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pica@npm:^10.0.1":
-  version: 10.0.1
-  resolution: "pica@npm:10.0.1"
+"pica@npm:^10.0.2":
+  version: 10.0.2
+  resolution: "pica@npm:10.0.2"
   dependencies:
     glur: "npm:^2.0.0"
     multimath: "npm:^3.0.0"
-  checksum: 10c0/c953ff047edd451fb9a53a42086c5071eda04a01347d010ed525d2cffd92d17a2c6a249462c6f9208e4f090cc1d9c0ddbb0eea40d0b133bd7a123f9fb2df7d0a
+  checksum: 10c0/06e63de147a89fdd597c27d0b563eb6d4240830e5eef50812b4a67899df5ba2cad06c4b657f7b9958175f74c55c4f42063121da9f002c47079ac12e13365e584
   languageName: node
   linkType: hard
 
@@ -7349,7 +7349,7 @@ __metadata:
     nextleton: "npm:^0.6.1"
     nuqs: "npm:^2.8.9"
     pg: "npm:^8.21.0"
-    pica: "npm:^10.0.1"
+    pica: "npm:^10.0.2"
     pino: "npm:^10.3.1"
     pino-pretty: "npm:^13.1.3"
     pino-socket: "npm:^8.0.0"
