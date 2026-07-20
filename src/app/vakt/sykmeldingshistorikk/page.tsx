@@ -14,7 +14,7 @@ async function Page({ searchParams }: PageProps<'/vakt/sykmeldingshistorikk'>): 
     const selectedRange = (typeof range === 'string' ? range : 'LAST_1_YEARS') as ValidTimelineRanges
 
     return (
-        <VaktFeaturePage feature={produksjonsFeatures.sykmeldingshistorikk}>
+        <VaktFeaturePage feature={produksjonsFeatures.functional.sykmeldingshistorikk}>
             <PersonLookupForm
                 label="Søk på ident (fnr eller dnr)"
                 defaultIdent={plainIdent ?? undefined}

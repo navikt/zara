@@ -5,6 +5,8 @@ import {
     Buildings3Icon,
     GavelSoundBlockIcon,
     GlassesIcon,
+    HandBandageIcon,
+    LaptopTriangleIcon,
     NotePencilDashIcon,
     PadlockLockedIcon,
     SandboxIcon,
@@ -13,7 +15,10 @@ import { Heading, LinkCard } from '@navikt/ds-react'
 import Link from 'next/link'
 import React, { ReactElement } from 'react'
 
-import { produksjonsFeatureList } from '#features/vakt/produksjons-feature-list'
+import {
+    functionalProduksjonsFeatureList,
+    technicalProduksjonsFeatureList,
+} from '#features/vakt/produksjons-feature-list'
 import { cn } from '#lib/tw'
 import { type ZaraFeatures } from '#services/auth/access-control'
 
@@ -58,17 +63,41 @@ function LandingPage({ features }: Props): ReactElement {
                     <GlassesIcon aria-hidden className="-mb-0.5" />
                     Produksjonsvakt
                 </Heading>
-                <div className="gap-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                    {produksjonsFeatureList.map((it) => (
-                        <AccessibleFeature
-                            key={it.href}
-                            Icon={it.Icon}
-                            title={it.title}
-                            href={it.href}
-                            description={it.description}
-                            hasAccess={features.includes('TEAM_MEMBER')}
-                        />
-                    ))}
+                <div>
+                    <Heading level="4" size="small" spacing className="flex items-center gap-1 ml-2">
+                        <HandBandageIcon aria-hidden className="-mb-0.5" />
+                        Funksjonelle verktøy
+                    </Heading>
+                    <div className="gap-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                        {functionalProduksjonsFeatureList.map((it) => (
+                            <AccessibleFeature
+                                key={it.href}
+                                Icon={it.Icon}
+                                title={it.title}
+                                href={it.href}
+                                description={it.description}
+                                hasAccess={features.includes('TEAM_MEMBER')}
+                            />
+                        ))}
+                    </div>
+                </div>
+                <div className="mt-4">
+                    <Heading level="4" size="small" spacing className="flex items-center gap-1 ml-2">
+                        <LaptopTriangleIcon aria-hidden className="-mb-0.5" />
+                        Tekniske verktøy
+                    </Heading>
+                    <div className="gap-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                        {technicalProduksjonsFeatureList.map((it) => (
+                            <AccessibleFeature
+                                key={it.href}
+                                Icon={it.Icon}
+                                title={it.title}
+                                href={it.href}
+                                description={it.description}
+                                hasAccess={features.includes('UTVIKLER')}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
             <div className="bg-ax-bg-raised p-4 rounded-md w-full">

@@ -12,7 +12,7 @@ async function Page({ searchParams }: PageProps<'/vakt/person-lookup'>): Promise
     const plainIdent = typeof ident === 'string' ? decryptQueryParam(ident) : null
 
     return (
-        <VaktFeaturePage feature={produksjonsFeatures.personLookup}>
+        <VaktFeaturePage feature={produksjonsFeatures.functional.personLookup}>
             <PersonLookupForm
                 label="Søk på fnr, dnr eller aktør-id"
                 defaultIdent={plainIdent ?? undefined}

@@ -6,7 +6,7 @@ import VaktFeaturePage from '#features/vakt/shared/VaktFeaturePage'
 
 function Page(): ReactElement {
     return (
-        <VaktFeaturePage feature={produksjonsFeatures.poisonPill}>
+        <VaktFeaturePage feature={produksjonsFeatures.technical.poisonPill}>
             <PoisonPillSykmelding />
         </VaktFeaturePage>
     )

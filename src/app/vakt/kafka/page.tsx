@@ -11,7 +11,7 @@ async function Page({ searchParams }: PageProps<'/vakt/kafka'>): Promise<ReactEl
     const groupId = typeof group === 'string' ? group.trim() : ''
 
     return (
-        <VaktFeaturePage feature={produksjonsFeatures.kafkaConsumerGroups}>
+        <VaktFeaturePage feature={produksjonsFeatures.technical.kafkaConsumerGroups}>
             <KafkaConsumerGroupForm />
             {groupId.length > 0 && (
                 <Suspense

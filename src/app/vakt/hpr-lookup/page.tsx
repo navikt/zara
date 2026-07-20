@@ -10,7 +10,7 @@ async function Page({ searchParams }: PageProps<'/vakt/hpr-lookup'>): Promise<Re
     const { hpr } = await searchParams
 
     return (
-        <VaktFeaturePage feature={produksjonsFeatures.behandlerLookup}>
+        <VaktFeaturePage feature={produksjonsFeatures.functional.behandlerLookup}>
             <BehandlerLookupForm />
             {(hpr?.length ?? 0) > 3 && (
                 <Suspense
