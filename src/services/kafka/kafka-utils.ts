@@ -50,23 +50,19 @@ export function cleanAclPrincipal(principal: string): {
     }
 }
 
-export function operationType(operation: AclOperationTypes): 'read' | 'write' | 'read/write' | `unknown: ${number}` {
-    switch (operation) {
-        case AclOperationTypes.READ:
-            return 'read'
-        case AclOperationTypes.WRITE:
-            return 'write'
-        case AclOperationTypes.UNKNOWN:
-        case AclOperationTypes.ANY:
-        case AclOperationTypes.ALL:
-        case AclOperationTypes.CREATE:
-        case AclOperationTypes.DELETE:
-        case AclOperationTypes.ALTER:
-        case AclOperationTypes.DESCRIBE:
-        case AclOperationTypes.CLUSTER_ACTION:
-        case AclOperationTypes.DESCRIBE_CONFIGS:
-        case AclOperationTypes.ALTER_CONFIGS:
-        case AclOperationTypes.IDEMPOTENT_WRITE:
-            return `unknown: ${operation}`
-    }
+export type AclAccess = 'read' | 'write' | 'read/write' | `unknown: ${number}`
+
+/**
+ * Kafka ACLs are atomic, one operation per binding. An app that both produces and consumes has two
+ * separate bindings, so read/write only exists as an aggregate across all bindings for a principal.
+ */
+export function mergeOperationTypes(operations: AclOperationTypes[]): AclAccess {
+    const canRead = operations.some((it) => it === AclOperationTypes.READ || it === AclOperationTypes.ALL)
+    const canWrite = operations.some((it) => it === AclOperationTypes.WRITE || it === AclOperationTypes.ALL)
+
+    if (canRead && canWrite) return 'read/write'
+    if (canRead) return 'read'
+    if (canWrite) return 'write'
+
+    return `unknown: ${operations[0]}`
 }

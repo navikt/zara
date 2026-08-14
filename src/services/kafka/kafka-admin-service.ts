@@ -16,7 +16,7 @@ import * as R from 'remeda'
 import { getServerEnv } from '#lib/env'
 import { User } from '#services/auth/user'
 
-import { cleanAclPrincipal, computeTopicLag, operationType } from './kafka-utils'
+import { AclAccess, cleanAclPrincipal, computeTopicLag, mergeOperationTypes } from './kafka-utils'
 import { ConsumerGroupDetails, ConsumerGroupState, ResetOffsetTarget, TopicDetails, TopicLag } from './types'
 
 const KNOWN_STATES: ReadonlySet<string> = new Set<ConsumerGroupState>([
@@ -84,7 +84,7 @@ export async function getTopicInfo(topic: string): Promise<
     {
         team: string
         app: string
-        access: 'read' | 'write' | 'read/write' | `unknown: ${number}`
+        access: AclAccess
     }[]
 > {
     const admin = await getAdmin()
@@ -101,11 +101,14 @@ export async function getTopicInfo(topic: string): Promise<
 
     return R.pipe(
         topicResource.acls,
-        R.map((it) => ({
-            ...cleanAclPrincipal(it.principal),
-            access: operationType(it.operation),
+        R.map((it) => ({ ...cleanAclPrincipal(it.principal), operation: it.operation })),
+        R.groupBy((it) => `${it.team}:${it.app}`),
+        R.values(),
+        R.map((entries) => ({
+            team: entries[0].team,
+            app: entries[0].app,
+            access: mergeOperationTypes(entries.map((it) => it.operation)),
         })),
-        R.uniqueBy((it) => `${it.team}:${it.app}`),
     )
 }
 
