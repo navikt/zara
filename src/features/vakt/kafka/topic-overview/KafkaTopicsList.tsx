@@ -2,10 +2,12 @@ import { LayersIcon } from '@navikt/aksel-icons'
 import { Heading, Skeleton } from '@navikt/ds-react'
 import { LocalAlert, LocalAlertHeader, LocalAlertTitle } from '@navikt/ds-react/LocalAlert'
 import { Table, TableBody, TableDataCell, TableHeader, TableHeaderCell, TableRow } from '@navikt/ds-react/Table'
+import Image from 'next/image'
 import React, { ReactElement, Suspense } from 'react'
 import * as R from 'remeda'
 
 import { ValidNamespaces } from '#features/vakt/kafka/topic-overview/NamespacePicker'
+import { zaraImages } from '#images/zaras'
 import { validateUserSession } from '#services/auth/auth'
 import { getTopicInfo, getTopics } from '#services/kafka/kafka-admin-service'
 
@@ -67,7 +69,17 @@ async function TopicInfo({ topic }: { topic: string }): Promise<ReactElement> {
         <div>
             {byTeam.map(([team, apps]) => (
                 <div key={team} className="mb-4">
-                    <Heading level="4" size="small">
+                    <Heading level="4" size="small" className="flex items-center gap-1">
+                        {team === 'tsm' && (
+                            <Image
+                                src={zaraImages.happy.src}
+                                width={24}
+                                height={24}
+                                alt="Zara!"
+                                className="-mt-1 animate-bounce"
+                            />
+                        )}
+                        {team === 'sykmelding' && <figure className="text-sm animate-spin">🤒</figure>}
                         {team}
                     </Heading>
                     <Table size="small" className="w-full table-fixed">

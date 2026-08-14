@@ -76,7 +76,7 @@ export async function getTopics(namespace: string): Promise<string[]> {
     const admin = await getAdmin()
     const topics = await admin.listTopics()
 
-    return R.filter(topics, R.startsWith(`${namespace}.`))
+    return R.pipe(topics, R.filter(R.startsWith(`${namespace}.`)), R.sortBy([(it) => it.includes('stream'), 'asc']))
 }
 
 export async function getTopicInfo(topic: string): Promise<
