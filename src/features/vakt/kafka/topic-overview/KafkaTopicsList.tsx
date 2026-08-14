@@ -1,5 +1,5 @@
 import { LayersIcon } from '@navikt/aksel-icons'
-import { Heading } from '@navikt/ds-react'
+import { Heading, Skeleton } from '@navikt/ds-react'
 import { LocalAlert, LocalAlertHeader, LocalAlertTitle } from '@navikt/ds-react/LocalAlert'
 import { Table, TableBody, TableDataCell, TableHeader, TableHeaderCell, TableRow } from '@navikt/ds-react/Table'
 import React, { ReactElement, Suspense } from 'react'
@@ -22,7 +22,14 @@ export async function KafkaTopicsList({ namespace }: { namespace: ValidNamespace
                         <LayersIcon aria-hidden />
                         {it}
                     </Heading>
-                    <Suspense fallback={<div>tihi</div>}>
+                    <Suspense
+                        fallback={
+                            <div>
+                                <Skeleton width={120} height={24} />
+                                <Skeleton variant="rectangle" height={240} />
+                            </div>
+                        }
+                    >
                         <TopicInfo topic={it} />
                     </Suspense>
                 </div>

@@ -1,5 +1,6 @@
-import { Heading, Skeleton } from '@navikt/ds-react'
+import { Skeleton } from '@navikt/ds-react'
 import React, { ReactElement, Suspense } from 'react'
+import * as R from 'remeda'
 
 import { KafkaTopicsList } from '#features/vakt/kafka/topic-overview/KafkaTopicsList'
 import { NamespacePicker, ValidNamespaces } from '#features/vakt/kafka/topic-overview/NamespacePicker'
@@ -17,11 +18,14 @@ async function Page({ searchParams }: PageProps<'/vakt/kafka-topic-overview'>): 
                 <Suspense
                     key={selectedNamespace}
                     fallback={
-                        <div className="max-w-prose mt-4">
-                            <Heading size="small" level="4">
-                                Kafka topics in namespace: {selectedNamespace}
-                            </Heading>
-                            <Skeleton variant="rounded" width="100%" height={300} />
+                        <div>
+                            <Skeleton width={120} height={32} />
+                            {R.range(0, 5).map((it) => (
+                                <div key={it}>
+                                    <Skeleton width={120} height={24} />
+                                    <Skeleton variant="rectangle" height={240} />
+                                </div>
+                            ))}
                         </div>
                     }
                 >
