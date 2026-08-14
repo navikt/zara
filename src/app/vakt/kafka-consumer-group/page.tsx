@@ -1,12 +1,12 @@
 import { Heading, Skeleton } from '@navikt/ds-react'
 import React, { ReactElement, Suspense } from 'react'
 
-import KafkaConsumerGroupForm from '#features/vakt/kafka/KafkaConsumerGroupForm'
-import KafkaConsumerGroupSearchInfo from '#features/vakt/kafka/KafkaConsumerGroupSearchInfo'
+import KafkaConsumerGroupForm from '#features/vakt/kafka/consumer-groups/KafkaConsumerGroupForm'
+import KafkaConsumerGroupSearchInfo from '#features/vakt/kafka/consumer-groups/KafkaConsumerGroupSearchInfo'
 import { produksjonsFeatures } from '#features/vakt/produksjons-feature-list'
 import VaktFeaturePage from '#features/vakt/shared/VaktFeaturePage'
 
-async function Page({ searchParams }: PageProps<'/vakt/kafka'>): Promise<ReactElement> {
+async function Page({ searchParams }: PageProps<'/vakt/kafka-consumer-group'>): Promise<ReactElement> {
     const { group } = await searchParams
     const groupId = typeof group === 'string' ? group.trim() : ''
 

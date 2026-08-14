@@ -1,12 +1,21 @@
 import { logger } from '@navikt/next-logger'
-import { Kafka, logLevel, type Admin, type KafkaConfig } from 'kafkajs'
+import {
+    AclOperationTypes,
+    AclPermissionTypes,
+    AclResourceTypes,
+    type Admin,
+    Kafka,
+    type KafkaConfig,
+    logLevel,
+    ResourcePatternTypes,
+} from 'kafkajs'
 import { lazyNextleton } from 'nextleton'
 import * as R from 'remeda'
 
 import { getServerEnv } from '#lib/env'
 import { User } from '#services/auth/user'
 
-import { computeTopicLag } from './kafka-utils'
+import { cleanAclPrincipal, computeTopicLag, operationType } from './kafka-utils'
 import { ConsumerGroupDetails, ConsumerGroupState, ResetOffsetTarget, TopicLag } from './types'
 
 const KNOWN_STATES: ReadonlySet<string> = new Set<ConsumerGroupState>([
@@ -63,6 +72,42 @@ async function getAdmin(): Promise<Admin> {
     }
 }
 
+export async function getTopics(namespace: string): Promise<string[]> {
+    const admin = await getAdmin()
+    const topics = await admin.listTopics()
+
+    return R.filter(topics, R.startsWith(`${namespace}.`))
+}
+
+export async function getTopicInfo(topic: string): Promise<
+    {
+        team: string
+        app: string
+        access: 'read' | 'write' | 'read/write' | `unknown: ${number}`
+    }[]
+> {
+    const admin = await getAdmin()
+    const acl = await admin.describeAcls({
+        resourceName: topic.replace(/\./g, '\\.').replace(/-/g, '\\-'),
+        resourceType: AclResourceTypes.TOPIC,
+        resourcePatternType: ResourcePatternTypes.ANY,
+        operation: AclOperationTypes.ANY,
+        permissionType: AclPermissionTypes.ANY,
+    })
+
+    if (acl.resources.length === 0) return []
+    const [topicResource] = acl.resources
+
+    return R.pipe(
+        topicResource.acls,
+        R.map((it) => ({
+            ...cleanAclPrincipal(it.principal),
+            access: operationType(it.operation),
+        })),
+        R.uniqueBy((it) => `${it.team}:${it.app}`),
+    )
+}
+
 export async function getConsumerGroupDetails(groupId: string): Promise<ConsumerGroupDetails | null> {
     const admin = await getAdmin()
 
@@ -72,9 +117,8 @@ export async function getConsumerGroupDetails(groupId: string): Promise<Consumer
     const memberCount = group?.members.length ?? 0
 
     const topics: TopicLag[] = await Promise.all(
-        committed.map(
-            async ({ topic, partitions }): Promise<TopicLag> =>
-                computeTopicLag(topic, partitions, await admin.fetchTopicOffsets(topic)),
+        committed.map(async ({ topic, partitions }): Promise<TopicLag> =>
+            computeTopicLag(topic, partitions, await admin.fetchTopicOffsets(topic)),
         ),
     )
 

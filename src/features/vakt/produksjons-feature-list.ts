@@ -33,10 +33,17 @@ export const produksjonsFeatures = {
         } satisfies VaktFeature,
     },
     technical: {
+        kafkaTopicOverview: {
+            Icon: LayersIcon,
+            title: 'Kafka topic overview',
+            href: '/vakt/kafka-topic-overview',
+            description: 'Se teamets topics.',
+            auditlog: false,
+        } satisfies VaktFeature,
         kafkaConsumerGroups: {
             Icon: LayersIcon,
             title: 'Kafka consumer groups',
-            href: '/vakt/kafka',
+            href: '/vakt/kafka-consumer-group',
             description: 'Se teamets consumer groups, aktivitet og lag. Reset offsets og slett consumer groups.',
             auditlog: false,
         } satisfies VaktFeature,
