@@ -3,6 +3,7 @@ import {
     AclOperationTypes,
     AclPermissionTypes,
     AclResourceTypes,
+    ConfigResourceTypes,
     type Admin,
     Kafka,
     type KafkaConfig,
@@ -16,7 +17,7 @@ import { getServerEnv } from '#lib/env'
 import { User } from '#services/auth/user'
 
 import { cleanAclPrincipal, computeTopicLag, operationType } from './kafka-utils'
-import { ConsumerGroupDetails, ConsumerGroupState, ResetOffsetTarget, TopicLag } from './types'
+import { ConsumerGroupDetails, ConsumerGroupState, ResetOffsetTarget, TopicDetails, TopicLag } from './types'
 
 const KNOWN_STATES: ReadonlySet<string> = new Set<ConsumerGroupState>([
     'Unknown',
@@ -106,6 +107,32 @@ export async function getTopicInfo(topic: string): Promise<
         })),
         R.uniqueBy((it) => `${it.team}:${it.app}`),
     )
+}
+
+export async function getTopicDetails(topic: string): Promise<TopicDetails> {
+    const admin = await getAdmin()
+
+    const [metadata, configs] = await Promise.all([
+        admin.fetchTopicMetadata({ topics: [topic] }),
+        admin.describeConfigs({
+            includeSynonyms: false,
+            resources: [{ type: ConfigResourceTypes.TOPIC, name: topic }],
+        }),
+    ])
+
+    const partitions = metadata.topics[0]?.partitions ?? []
+    const entries = configs.resources[0]?.configEntries ?? []
+    const configValue = (name: string): string | null =>
+        entries.find((it) => it.configName === name)?.configValue ?? null
+
+    return {
+        topic,
+        partitions: partitions.length,
+        replicationFactor: partitions[0]?.replicas.length ?? 0,
+        underReplicatedPartitions: partitions.filter((it) => it.isr.length < it.replicas.length).length,
+        retention: configValue('retention.ms'),
+        cleanupPolicy: configValue('cleanup.policy'),
+    }
 }
 
 export async function getConsumerGroupDetails(groupId: string): Promise<ConsumerGroupDetails | null> {

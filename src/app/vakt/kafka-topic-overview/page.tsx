@@ -19,7 +19,8 @@ async function Page({ searchParams }: PageProps<'/vakt/kafka-topic-overview'>): 
                     key={selectedNamespace}
                     fallback={
                         <div>
-                            <Skeleton width={120} height={32} />
+                            <Skeleton width={180} height={32} />
+                            <Skeleton width={140} height={22} />
                             {R.range(0, 5).map((it) => (
                                 <div key={it}>
                                     <Skeleton width={120} height={24} />

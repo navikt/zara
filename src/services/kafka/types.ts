@@ -13,6 +13,15 @@ export type TopicLag = {
     totalLag: number
 }
 
+export type TopicDetails = {
+    topic: string
+    partitions: number
+    replicationFactor: number
+    underReplicatedPartitions: number
+    retention: string | null
+    cleanupPolicy: string | null
+}
+
 export type ConsumerGroupDetails = {
     groupId: string
     state: ConsumerGroupState

@@ -1,5 +1,5 @@
 import { LayersIcon } from '@navikt/aksel-icons'
-import { Heading, Skeleton } from '@navikt/ds-react'
+import { Detail, Heading, Skeleton } from '@navikt/ds-react'
 import { LocalAlert, LocalAlertHeader, LocalAlertTitle } from '@navikt/ds-react/LocalAlert'
 import { Table, TableBody, TableDataCell, TableHeader, TableHeaderCell, TableRow } from '@navikt/ds-react/Table'
 import Image from 'next/image'
@@ -9,21 +9,28 @@ import * as R from 'remeda'
 import { ValidNamespaces } from '#features/vakt/kafka/topic-overview/NamespacePicker'
 import { zaraImages } from '#images/zaras'
 import { validateUserSession } from '#services/auth/auth'
-import { getTopicInfo, getTopics } from '#services/kafka/kafka-admin-service'
+import { getTopicDetails, getTopicInfo, getTopics } from '#services/kafka/kafka-admin-service'
 
 export async function KafkaTopicsList({ namespace }: { namespace: ValidNamespaces }): Promise<ReactElement> {
     await validateUserSession('UTVIKLER')
 
     const topics = await getTopics(namespace)
+    const details = await Promise.all(topics.map((it) => getTopicDetails(it)))
 
     return (
         <div>
-            {topics.map((it) => (
-                <div key={it}>
+            {details.map((it) => (
+                <div key={it.topic}>
                     <Heading level="3" size="medium" className="flex items-center gap-2">
                         <LayersIcon aria-hidden />
-                        {it}
+                        {it.topic}
                     </Heading>
+                    <Detail className="mb-2">
+                        {it.partitions} partisjoner · replikeringsfaktor {it.replicationFactor}
+                        {it.underReplicatedPartitions > 0 && ` · ${it.underReplicatedPartitions} under-replikert`}
+                        {it.cleanupPolicy && ` · ${it.cleanupPolicy}`}
+                        {it.retention && ` · retention ${formatRetention(it.retention)}`}
+                    </Detail>
                     <Suspense
                         fallback={
                             <div>
@@ -32,12 +39,20 @@ export async function KafkaTopicsList({ namespace }: { namespace: ValidNamespace
                             </div>
                         }
                     >
-                        <TopicInfo topic={it} />
+                        <TopicInfo topic={it.topic} />
                     </Suspense>
                 </div>
             ))}
         </div>
     )
+}
+
+function formatRetention(retentionMs: string): string {
+    const ms = Number(retentionMs)
+    if (!Number.isFinite(ms) || ms < 0) return 'uendelig'
+
+    const hours = ms / 1000 / 60 / 60
+    return hours >= 24 ? `${Math.round(hours / 24)}d` : `${Math.round(hours)}t`
 }
 
 async function TopicInfo({ topic }: { topic: string }): Promise<ReactElement> {
