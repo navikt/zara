@@ -36,7 +36,8 @@ export function cleanAclPrincipal(principal: string): {
     const cleaned = principal
         .replace(/^User:/, '')
         .replace(/\\-/g, '-')
-        .replace(/_[^_]*_+[^_]*$/, '')
+        // strips the generated suffix, e.g. "_136f0f43_Z_b" or "_546790b1__C6"
+        .replace(/_[0-9a-f]{8}_.*$/, '')
 
     const separatorIndex = cleaned.indexOf('_')
     if (separatorIndex === -1) {

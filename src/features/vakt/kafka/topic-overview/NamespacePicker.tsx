@@ -19,7 +19,7 @@ export function NamespacePicker(): ReactElement {
 
     return (
         <div className="max-w-sm mb-4">
-            <Select label="Tidsperiode" value={value} onChange={(e) => setValue(e.target.value as ValidNamespaces)}>
+            <Select label="Namespace" value={value} onChange={(e) => setValue(e.target.value as ValidNamespaces)}>
                 <option value={'tsm' satisfies ValidNamespaces}>TSM</option>
                 <option value={'teamsykmelding' satisfies ValidNamespaces}>teamsykmelding</option>
             </Select>
