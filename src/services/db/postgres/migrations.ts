@@ -8,6 +8,7 @@ import {
     add_away_location_v3,
     add_nav_ident_v4,
     quiz_tables_v5,
+    add_vaktable,
 } from '#services/db/postgres/schema'
 
 export async function runMigrations(): Promise<void> {
@@ -31,6 +32,8 @@ export async function runMigrations(): Promise<void> {
             await add_nav_ident_v4(client)
         case 4:
             await quiz_tables_v5(client)
+        case 5:
+            await add_vaktable(client)
     }
     await client.query('COMMIT')
 }

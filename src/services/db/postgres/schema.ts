@@ -119,3 +119,12 @@ export async function quiz_tables_v5(client: Pool | PoolClient): Promise<void> {
 
     await client.query('UPDATE migrations SET version = 5')
 }
+
+export async function add_vaktable(client: Pool | PoolClient): Promise<void> {
+    logger.info('Running add_vaktable migration...')
+    await client.query(`
+        ALTER TABLE users
+            ADD COLUMN vaktable BOOLEAN NOT NULL DEFAULT false;
+    `)
+    await client.query('UPDATE migrations SET version = 6')
+}
