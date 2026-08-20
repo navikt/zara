@@ -32,6 +32,7 @@ export type OfficeUser = {
     nav_ident: string | null
     name: string
     default_loc: Location
+    vaktable: boolean
 }
 
 export type TeamWeek = {

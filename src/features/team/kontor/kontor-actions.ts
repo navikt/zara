@@ -16,6 +16,7 @@ export async function registerKontor(newLocation: Location): Promise<void> {
     const user = await validateUserSession('TEAM_MEMBER')
     const client = await pgClient()
 
+    await client.query('BEGIN')
     const isNewUser = await client
         .query('SELECT 1 FROM users WHERE user_id = $1', [user.userId])
         .then((res) => res.rowCount === 0)
@@ -29,6 +30,11 @@ export async function registerKontor(newLocation: Location): Promise<void> {
     } else {
         await client.query(`UPDATE users SET default_loc = $2 WHERE user_id = $1`, [user.userId, newLocation])
     }
+
+    if (newLocation === 'away') {
+        await client.query(`UPDATE users SET vaktable = FALSE WHERE user_id = $1`, [user.userId])
+    }
+    await client.query('COMMIT')
 
     revalidatePath('/team/kontor')
     revalidatePath('/team/kontor/settings')
@@ -58,6 +64,21 @@ export async function toggleWeekDay(week: number, daysOn: string[]): Promise<voi
     })
 
     revalidatePath('/team/kontor')
+}
+
+export async function toggleVakt(userToToggle: string): Promise<void> {
+    await validateUserSession('TEAM_MEMBER')
+    const client = await pgClient()
+
+    await client.query(
+        `UPDATE users
+            SET vaktable = NOT vaktable
+         WHERE id = $1`,
+        [userToToggle],
+    )
+
+    revalidatePath('/')
+    revalidatePath('/team/kontor/settings')
 }
 
 export async function nukeMe(): Promise<void> {

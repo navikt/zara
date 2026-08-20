@@ -20,7 +20,7 @@ export async function getTeamWeek(week: number): Promise<TeamWeek> {
     )
 
     return result.rows.map((it) => ({
-        user: R.pick(it, ['id', 'user_id', 'nav_ident', 'name', 'default_loc']),
+        user: R.pick(it, ['id', 'user_id', 'nav_ident', 'name', 'default_loc', 'vaktable']),
         schedule: toDefaultSchedule(it.default_loc, it),
     }))
 }
