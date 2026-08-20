@@ -77,6 +77,10 @@ export async function toggleVakt(userToToggle: string): Promise<void> {
         [userToToggle],
     )
 
+    after(async () => {
+        await updateTodaysOfficeSummaryIfNeeded()
+    })
+
     revalidatePath('/')
     revalidatePath('/team/kontor/settings')
 }
@@ -93,6 +97,10 @@ export async function skewVakt(year: number, week: number, skew: number): Promis
         [year, week, skew],
     )
     await client.query('COMMIT')
+
+    after(async () => {
+        await updateTodaysOfficeSummaryIfNeeded()
+    })
 
     revalidatePath('/team/kontor/settings')
 }

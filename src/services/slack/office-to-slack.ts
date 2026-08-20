@@ -21,7 +21,7 @@ export async function postDailyOfficeSummary(): Promise<{
     const currentWeek = getISOWeek(now)
     const day = getZeroIndexedWeekday(now)
 
-    const { office } = await getOfficeSnapshot(currentYear, currentWeek, day)
+    const { office, vakt } = await getOfficeSnapshot(currentYear, currentWeek, day)
 
     if (!isWeekday(day)) {
         logger.info("Not a working day, skipping today's office post.")
@@ -37,7 +37,7 @@ export async function postDailyOfficeSummary(): Promise<{
     const data = await slackChatPostMessage({
         channel: tsmAwaySlackChannelId,
         text: `Hvem skal på FA1 i dag? 🏢`,
-        blocks: buildOfficeBlocks(office),
+        blocks: buildOfficeBlocks(office, vakt),
     })
 
     await insertDailyPost(currentWeek, currentYear, day, data.channel, data.ts)
@@ -59,11 +59,11 @@ export async function updateTodaysOfficeSummaryIfNeeded(): Promise<void> {
         return
     }
 
-    const { office } = await getOfficeSnapshot(currentYear, currentWeek, day)
+    const { office, vakt } = await getOfficeSnapshot(currentYear, currentWeek, day)
 
     await updateSlackMessage(exists.channel_id, exists.message_ts, {
         text: `Hvem skal på FA1 i dag? 🏢`,
-        blocks: buildOfficeBlocks(office),
+        blocks: buildOfficeBlocks(office, vakt),
     })
 }
 
@@ -95,7 +95,7 @@ export async function postWeeklyRememberToUpdatePost(): Promise<{ postLink: stri
     return { postLink: createPermalink(data.channel, data.ts) }
 }
 
-function buildOfficeBlocks(office: OfficeUser[]): unknown[] {
+function buildOfficeBlocks(office: OfficeUser[], vakt: OfficeUser | null): unknown[] {
     const dateLabel = toReadableFullDate(new Date())
     const ansattUrl = getKontorUrl()
     const officeList =
@@ -138,6 +138,13 @@ function buildOfficeBlocks(office: OfficeUser[]): unknown[] {
                     action_id: OfficeUpdatesActions.KommerIkke,
                 },
             ],
+        },
+        {
+            type: 'section',
+            text: {
+                type: 'mrkdwn',
+                text: `Ukas vakt er ${vakt ? vakt.name : 'ingen???'}`,
+            },
         },
         {
             type: 'section',

@@ -1,17 +1,23 @@
+import { currentVakt } from '#features/team/kontor/settings/vakt-utils'
 import { pgClient } from '#services/db/postgres/production-pg'
 import { CronPost, OfficeUser } from '#services/team-office/common/types'
 
 import { DEFAULT_OFFICE_DAYS, WEEK_DAYS } from '../common/day-utils'
 
-export async function getOfficeSnapshot(year: number, week: number, day: number): Promise<{ office: OfficeUser[] }> {
+export async function getOfficeSnapshot(
+    year: number,
+    week: number,
+    day: number,
+): Promise<{ office: OfficeUser[]; vakt: OfficeUser | null }> {
     if (day < 0) throw new Error('Day cannot be negative')
 
     // Saturday and sunday
-    if (day > 4) return { office: [] }
+    if (day > 4) return { office: [], vakt: null }
 
     const client = await pgClient()
     const dayCol = WEEK_DAYS[day]
 
+    await client.query('BEGIN')
     const result = await client.query<OfficeUser & { day_override: boolean | null }>(
         `SELECT u.*, ws.${dayCol} AS day_override
          FROM users u
@@ -26,8 +32,13 @@ export async function getOfficeSnapshot(year: number, week: number, day: number)
         return r.default_loc === 'office' && DEFAULT_OFFICE_DAYS.includes(day)
     }
 
+    const team = await client.query<OfficeUser>('SELECT * FROM users')
+    await client.query('COMMIT')
+    const vakt = await currentVakt(team.rows)
+
     return {
         office: result.rows.filter(isInOffice),
+        vakt: vakt ?? null,
     }
 }
 
