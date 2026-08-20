@@ -8,6 +8,8 @@ import { Location } from '#services/team-office/common/types'
 import { getMyself } from '#services/team-office/me-office-service'
 import { getTeam } from '#services/team-office/team-office-service'
 
+import { VaktLoopView } from './VaktLoopView'
+
 async function KontorSettings(): Promise<ReactElement> {
     const me = await getMyself()
 
@@ -34,6 +36,7 @@ async function KontorSettings(): Promise<ReactElement> {
                     Teamet ditt
                 </Heading>
                 <EntireTeamView team={team} />
+                <VaktLoopView team={team} />
             </div>
             <div></div>
         </div>
