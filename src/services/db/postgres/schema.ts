@@ -128,3 +128,18 @@ export async function add_vaktable(client: Pool | PoolClient): Promise<void> {
     `)
     await client.query('UPDATE migrations SET version = 6')
 }
+
+export async function add_vakt_table(client: Pool | PoolClient): Promise<void> {
+    logger.info('Running add_vakt_table migration...')
+
+    await client.query(`
+        CREATE TABLE vakt (
+            year INTEGER NOT NULL,
+            week INTEGER NOT NULL,
+            skew INTEGER NOT NULL,
+            PRIMARY KEY (year, week)
+        )
+    `)
+
+    await client.query('UPDATE migrations SET version = 7')
+}

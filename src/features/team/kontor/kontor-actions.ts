@@ -81,6 +81,22 @@ export async function toggleVakt(userToToggle: string): Promise<void> {
     revalidatePath('/team/kontor/settings')
 }
 
+export async function skewVakt(year: number, week: number, skew: number): Promise<void> {
+    await validateUserSession('TEAM_MEMBER')
+    const client = await pgClient()
+
+    await client.query('BEGIN')
+    await client.query(
+        `INSERT INTO vakt (year, week, skew)
+            VALUES ($1, $2, $3)
+            ON CONFLICT (year, week) DO UPDATE SET skew = $3`,
+        [year, week, skew],
+    )
+    await client.query('COMMIT')
+
+    revalidatePath('/team/kontor/settings')
+}
+
 export async function nukeMe(): Promise<void> {
     const { userId } = await validateUserSession('TEAM_MEMBER')
     const client = await pgClient()

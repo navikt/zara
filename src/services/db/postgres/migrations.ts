@@ -1,7 +1,7 @@
 import { logger } from '@navikt/next-logger'
 import { Pool } from 'pg'
 
-import { pgClient } from '#services/db/postgres/production-pg'
+import { pgClient } from './production-pg'
 import {
     initial_v1,
     office_cron_job_v2,
@@ -9,7 +9,8 @@ import {
     add_nav_ident_v4,
     quiz_tables_v5,
     add_vaktable,
-} from '#services/db/postgres/schema'
+    add_vakt_table,
+} from './schema'
 
 export async function runMigrations(): Promise<void> {
     const client = await pgClient()
@@ -34,6 +35,8 @@ export async function runMigrations(): Promise<void> {
             await quiz_tables_v5(client)
         case 5:
             await add_vaktable(client)
+        case 6:
+            await add_vakt_table(client)
     }
     await client.query('COMMIT')
 }
