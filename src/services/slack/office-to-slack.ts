@@ -143,7 +143,7 @@ function buildOfficeBlocks(office: OfficeUser[], vakt: OfficeUser | null): unkno
             type: 'section',
             text: {
                 type: 'mrkdwn',
-                text: `Ukas vakt er ${vakt ? vakt.name : 'ingen???'}`,
+                text: `Ukas vakt er: *${vakt ? vakt.name : 'ingen???'}*`,
             },
         },
         {
