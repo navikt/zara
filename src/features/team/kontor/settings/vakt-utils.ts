@@ -1,10 +1,23 @@
+import { logger } from '@navikt/next-logger'
 import { getISOWeek, getYear } from 'date-fns'
 import * as R from 'remeda'
 
 import { pgClient } from '#services/db/postgres/production-pg'
 import { OfficeUser } from '#services/team-office/common/types'
 
-export async function currentVaktSkew(): Promise<number> {
+export async function currentVakt(team: OfficeUser[]): Promise<(OfficeUser & { skew: number }) | null> {
+    const weekSkew = await currentVaktSkew()
+    const vaktables = vaktablesOrdered(team)
+    if (vaktables.length === 0) {
+        logger.warn('No vakts configured?!')
+        return null
+    }
+
+    const cursor = currentVaktCursor(currentYearWeek().week, vaktables.length, weekSkew)
+    return { ...vaktables[cursor], skew: weekSkew }
+}
+
+async function currentVaktSkew(): Promise<number> {
     const { year: currentYear, week: currentISOWeek } = currentYearWeek()
 
     const client = await pgClient()
@@ -44,7 +57,7 @@ export function vaktablesOrdered(team: OfficeUser[]): OfficeUser[] {
     return vaktables
 }
 
-export function currentVaktCursor(week: number, vaktCount: number, weekSkew: number): number {
+function currentVaktCursor(week: number, vaktCount: number, weekSkew: number): number {
     return (week + weekSkew) % vaktCount
 }
 

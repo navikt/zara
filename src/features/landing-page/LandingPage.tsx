@@ -1,5 +1,3 @@
-'use client'
-
 import {
     BandageIcon,
     Buildings3Icon,
@@ -11,9 +9,10 @@ import {
     PadlockLockedIcon,
     SandboxIcon,
 } from '@navikt/aksel-icons'
-import { Heading, LinkCard } from '@navikt/ds-react'
+import { Heading } from '@navikt/ds-react'
+import { LinkCard, LinkCardAnchor, LinkCardDescription, LinkCardIcon, LinkCardTitle } from '@navikt/ds-react/LinkCard'
 import Link from 'next/link'
-import React, { ReactElement } from 'react'
+import React, { ReactElement, Suspense } from 'react'
 
 import {
     functionalProduksjonsFeatureList,
@@ -21,6 +20,8 @@ import {
 } from '#features/vakt/produksjons-feature-list'
 import { cn } from '#lib/tw'
 import { type ZaraFeatures } from '#services/auth/access-control'
+
+import { ThisWeeksVakt } from './ThisWeeksVakt'
 
 type Props = {
     features: ZaraFeatures[]
@@ -59,10 +60,15 @@ function LandingPage({ features }: Props): ReactElement {
                 </div>
             </div>
             <div className="bg-ax-bg-raised p-4 rounded-md w-full">
-                <Heading level="3" size="large" spacing className="flex items-center gap-3">
-                    <GlassesIcon aria-hidden className="-mb-0.5" />
-                    Produksjonsvakt
-                </Heading>
+                <div className="flex items-center">
+                    <Heading level="3" size="large" className="flex items-center gap-3">
+                        <GlassesIcon aria-hidden className="-mb-0.5" />
+                        Produksjonsvakt
+                    </Heading>
+                    <Suspense fallback={null}>
+                        <ThisWeeksVakt />
+                    </Suspense>
+                </div>
                 <div>
                     <Heading level="4" size="small" spacing className="flex items-center gap-1 ml-2">
                         <HandBandageIcon aria-hidden className="-mb-0.5" />
@@ -152,19 +158,19 @@ function AccessibleFeature({
                 </div>
             )}
 
-            <LinkCard.Icon>
+            <LinkCardIcon>
                 <Icon fontSize="2rem" aria-hidden />
-            </LinkCard.Icon>
-            <LinkCard.Title>
+            </LinkCardIcon>
+            <LinkCardTitle>
                 {hasAccess ? (
-                    <LinkCard.Anchor asChild>
+                    <LinkCardAnchor asChild>
                         <Link href={href}>{title}</Link>
-                    </LinkCard.Anchor>
+                    </LinkCardAnchor>
                 ) : (
                     title
                 )}
-            </LinkCard.Title>
-            <LinkCard.Description>{description}</LinkCard.Description>
+            </LinkCardTitle>
+            <LinkCardDescription>{description}</LinkCardDescription>
         </LinkCard>
     )
 }

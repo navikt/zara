@@ -3,7 +3,7 @@ import React, { ReactElement } from 'react'
 
 import { OfficeUser } from '#services/team-office/common/types'
 
-import { currentVaktCursor, currentVaktSkew, currentYearWeek, vaktablesOrdered } from './vakt-utils'
+import { currentVakt, currentYearWeek, vaktablesOrdered } from './vakt-utils'
 import { WeekSkewButton } from './WeekSkewButton'
 
 type Props = {
@@ -12,9 +12,8 @@ type Props = {
 
 export async function VaktScheduleView({ team }: Props): Promise<ReactElement> {
     const { year, week } = currentYearWeek()
-    const weekSkew = await currentVaktSkew()
     const vaktables = vaktablesOrdered(team)
-    const cursor = currentVaktCursor(week, vaktables.length, weekSkew)
+    const vakt = await currentVakt(team)
 
     return (
         <div className="mt-4">
@@ -28,20 +27,23 @@ export async function VaktScheduleView({ team }: Props): Promise<ReactElement> {
                     </Detail>
                 </div>
                 <div>
-                    <WeekSkewButton year={year} week={week} skew={weekSkew} />
+                    <WeekSkewButton year={year} week={week} skew={vakt?.skew ?? 0} />
                 </div>
             </div>
             {vaktables.length === 0 ? (
                 <BodyShort>Ingen er satt som vaktable.</BodyShort>
             ) : (
                 <ul className="list-disc pl-5">
-                    {vaktables.map((user, index) => (
-                        <li key={user.user_id}>
-                            {index === cursor && <span className="font-bold">➡ </span>}
-                            {user.name}
-                            {index === cursor && <span> er vakt</span>}
-                        </li>
-                    ))}
+                    {vaktables.map((user) => {
+                        const isVakt = user.user_id === vakt?.user_id
+                        return (
+                            <li key={user.user_id}>
+                                {isVakt && <span className="font-bold">➡ </span>}
+                                {user.name}
+                                {isVakt && <span> er vakt</span>}
+                            </li>
+                        )
+                    })}
                 </ul>
             )}
         </div>
