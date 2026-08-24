@@ -89,8 +89,13 @@ export type QuizSummary = {
     questionCount: number
     defaultTimeLimit: number
     isEncrypted: boolean
-    /** True when the content is encrypted with the owner's passphrase (needed to edit/host). */
+    /**
+     * True for LEGACY quizzes still encrypted with the owner's passphrase (needed to edit/host).
+     * New quizzes use the app secret, and a shared quiz is never passphrase-encrypted.
+     */
     needsPassphrase: boolean
+    /** Played at least once → visible to the whole team, and locked for editing/deleting. */
+    isShared: boolean
     createdAt: string
     lastPlayedAt: string | null
 }

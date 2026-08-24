@@ -14,8 +14,9 @@ type Props = {
 type Loaded = { content: QuizContent; defaultTimeLimit: number }
 
 /**
- * Passphrase gate for editing an encrypted quiz: the owner unlocks with their passphrase, then the
- * builder appears. Quizzes that need no passphrase are loaded on the server, so they never get here.
+ * Unlock gate for LEGACY quizzes still encrypted with the owner's passphrase. Once unlocked and
+ * saved, the quiz is re-encrypted with the app secret and never asks for a passphrase again. New
+ * quizzes need no passphrase at all, so they're loaded on the server and never get here.
  */
 function QuizEditGate({ quizId }: Props): ReactElement {
     const [loaded, setLoaded] = useState<Loaded | null>(null)
@@ -48,7 +49,7 @@ function QuizEditGate({ quizId }: Props): ReactElement {
             <TextField
                 label="Passordfrase"
                 type="password"
-                description="Quizen er kryptert. Skriv inn passordfrasen for å redigere den."
+                description="Denne quizen ble laget med en passordfrase. Skriv den inn for å låse opp — neste gang du lagrer blir den fjernet."
                 value={passphrase}
                 onChange={(e) => setPassphrase(e.target.value)}
                 onKeyDown={(e) => {

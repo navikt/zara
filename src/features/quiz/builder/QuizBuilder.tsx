@@ -23,6 +23,8 @@ const TIME_LIMIT_OPTIONS = [10, 15, 20, 30, 45, 60, 90, 120]
 type Props = {
     /** When present, we're editing an existing quiz (content already decrypted by the edit gate). */
     existing?: { id: string; content: QuizContent; defaultTimeLimit: number }
+    /** Seeds a brand-new quiz from an existing one (duplicating). Ignored when `existing` is set. */
+    template?: { content: QuizContent; defaultTimeLimit: number }
 }
 
 function blankBase(): DraftBase {
@@ -138,16 +140,18 @@ function ImagePicker({
     )
 }
 
-function QuizBuilder({ existing }: Props): ReactElement {
+function QuizBuilder({ existing, template }: Props): ReactElement {
     const router = useRouter()
     const [isPending, startTransition] = useTransition()
     const [error, setError] = useState<string | null>(null)
-    const [passphrase, setPassphrase] = useState('')
 
-    const [title, setTitle] = useState(existing?.content.title ?? '')
-    const [defaultTimeLimit, setDefaultTimeLimit] = useState(existing?.defaultTimeLimit ?? 20)
+    // Editing wins over duplicating; a duplicate is seeded from the source but saved as a new quiz.
+    const seed = existing ?? template ?? null
+
+    const [title, setTitle] = useState(existing?.content.title ?? (template ? `${template.content.title} (kopi)` : ''))
+    const [defaultTimeLimit, setDefaultTimeLimit] = useState(seed?.defaultTimeLimit ?? 20)
     const [questions, setQuestions] = useState<DraftQuestion[]>(
-        existing?.content.questions.map(questionToDraft) ?? [blankQuestion()],
+        seed?.content.questions.map(questionToDraft) ?? [blankQuestion()],
     )
 
     const updateQuestion = (id: string, patch: Partial<DraftQuestion>): void =>
@@ -195,16 +199,16 @@ function QuizBuilder({ existing }: Props): ReactElement {
         setError(null)
         const content = validate()
         if (!content) return
-        if (passphrase.trim().length < 4) {
-            setError('Velg en passordfrase på minst 4 tegn for å kryptere quizen.')
-            return
-        }
 
         startTransition(async () => {
             if (existing) {
-                await saveExistingQuiz(existing.id, content, defaultTimeLimit, passphrase)
+                const { ok } = await saveExistingQuiz(existing.id, content, defaultTimeLimit)
+                if (!ok) {
+                    setError('Quizen kunne ikke lagres. Er den allerede spilt, er den delt med teamet og låst.')
+                    return
+                }
             } else {
-                await saveNewQuiz(content, defaultTimeLimit, passphrase)
+                await saveNewQuiz(content, defaultTimeLimit)
             }
             router.push('/quiz')
         })
@@ -307,17 +311,6 @@ function QuizBuilder({ existing }: Props): ReactElement {
                 >
                     Legg til spørsmål
                 </Button>
-            </div>
-
-            <div className="flex flex-col gap-2 bg-ax-bg-raised p-4 rounded-md">
-                <TextField
-                    label="Passordfrase (krypterer quizen)"
-                    type="password"
-                    description="Kreves for å redigere og starte quizen senere. Kan ikke gjenopprettes om du glemmer den."
-                    className="max-w-sm"
-                    value={passphrase}
-                    onChange={(e) => setPassphrase(e.target.value)}
-                />
             </div>
 
             {error && <Alert variant="error">{error}</Alert>}

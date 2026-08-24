@@ -1,8 +1,8 @@
 import { logger } from '@navikt/next-logger'
 
 import { pgClient } from '#services/db/postgres/production-pg'
-import { decryptJson } from '#services/quiz/quiz-crypto'
-import { decryptWithPassphrase, encryptWithPassphrase } from '#services/quiz/quiz-passphrase-crypto'
+import { decryptJson, encryptJson } from '#services/quiz/quiz-crypto'
+import { decryptWithPassphrase } from '#services/quiz/quiz-passphrase-crypto'
 import { LeaderboardEntry, QuizContent, QuizContentSchema, QuizSummary } from '#services/quiz/quiz-schema'
 
 type QuizRow = {
@@ -46,9 +46,9 @@ function parseContent(raw: unknown, quizId: string): QuizContent | null {
 }
 
 /**
- * Content available WITHOUT a passphrase: a quiz opened to plaintext after a session, or a legacy
- * app-secret-encrypted quiz (salt = null). Passphrase-encrypted quizzes (salt set) return null —
- * callers must supply the passphrase via {@link getQuizContent}.
+ * Content available WITHOUT a passphrase: a quiz encrypted with the app secret (salt = null), or one
+ * opened to plaintext by the older "open after session" behaviour. Only LEGACY passphrase-encrypted
+ * quizzes (salt set) return null — callers must supply the passphrase via {@link getQuizContent}.
  */
 function readOpenableContent(row: QuizRow): QuizContent | null {
     if (!row.is_encrypted) return parseContent(row.content_plain, row.id)
@@ -69,46 +69,43 @@ function summaryOf(row: QuizRow): QuizSummary {
         defaultTimeLimit: row.default_time_limit,
         isEncrypted: row.is_encrypted,
         needsPassphrase: row.is_encrypted && row.salt != null,
+        isShared: row.last_played_at != null,
         createdAt: row.created_at.toISOString(),
         lastPlayedAt: row.last_played_at?.toISOString() ?? null,
     }
 }
 
-export async function createQuiz(
-    ownerUserId: string,
-    content: QuizContent,
-    defaultTimeLimit: number,
-    passphrase: string,
-): Promise<string> {
-    const { blob, salt } = await encryptWithPassphrase(content, passphrase)
+export async function createQuiz(ownerUserId: string, content: QuizContent, defaultTimeLimit: number): Promise<string> {
     const client = await pgClient()
     const result = await client.query<{ id: string }>(
         `INSERT INTO quiz
              (owner_user_id, is_encrypted, content_encrypted, salt, title, question_count, default_time_limit)
-         VALUES ($1, true, $2, $3, $4, $5, $6)
+         VALUES ($1, true, $2, NULL, $3, $4, $5)
          RETURNING id`,
-        [ownerUserId, blob, salt, content.title, content.questions.length, defaultTimeLimit],
+        [ownerUserId, encryptJson(content), content.title, content.questions.length, defaultTimeLimit],
     )
 
     return result.rows[0].id
 }
 
-/** Re-encrypts under a (possibly new) passphrase; an opened quiz goes back to encrypted-at-rest. */
+/**
+ * Re-encrypts the quiz under the app secret. Shared (played) quizzes are immutable, hence the
+ * `last_played_at IS NULL` guard. Saving also clears `salt`, which is how a legacy passphrase quiz
+ * is silently upgraded to app-secret encryption the first time its owner edits it.
+ */
 export async function updateQuiz(
     id: string,
     ownerUserId: string,
     content: QuizContent,
     defaultTimeLimit: number,
-    passphrase: string,
 ): Promise<boolean> {
-    const { blob, salt } = await encryptWithPassphrase(content, passphrase)
     const client = await pgClient()
     const result = await client.query(
         `UPDATE quiz
-         SET content_encrypted = $1, salt = $2, content_plain = NULL, is_encrypted = true,
-             title = $3, question_count = $4, default_time_limit = $5
-         WHERE id = $6 AND owner_user_id = $7`,
-        [blob, salt, content.title, content.questions.length, defaultTimeLimit, id, ownerUserId],
+         SET content_encrypted = $1, salt = NULL, content_plain = NULL, is_encrypted = true,
+             title = $2, question_count = $3, default_time_limit = $4
+         WHERE id = $5 AND owner_user_id = $6 AND last_played_at IS NULL`,
+        [encryptJson(content), content.title, content.questions.length, defaultTimeLimit, id, ownerUserId],
     )
 
     return (result.rowCount ?? 0) > 0
@@ -132,12 +129,33 @@ export async function listMyQuizzes(ownerUserId: string): Promise<QuizSummary[]>
     return result.rows.map(summaryOf)
 }
 
-/** Metadata only (no decryption) — for the results page and the edit/host passphrase gates. */
-export async function getQuizMeta(id: string, ownerUserId: string): Promise<QuizSummary | null> {
+/**
+ * The team's shared library: every quiz that has been played through to the end, which is therefore
+ * immutable and hostable by anyone. Excludes the caller's own quizzes — those already show under
+ * "Mine quizer". A draft that has never been played stays private to its owner.
+ */
+export async function listSharedQuizzes(excludeOwnerUserId: string): Promise<QuizSummary[]> {
     const client = await pgClient()
     const result = await client.query<QuizRow>(
-        `SELECT ${SUMMARY_COLUMNS} FROM quiz WHERE id = $1 AND owner_user_id = $2`,
-        [id, ownerUserId],
+        `SELECT ${SUMMARY_COLUMNS} FROM quiz
+         WHERE last_played_at IS NOT NULL AND owner_user_id <> $1
+         ORDER BY last_played_at DESC`,
+        [excludeOwnerUserId],
+    )
+
+    return result.rows.map(summaryOf)
+}
+
+/**
+ * Metadata only (no decryption) — for the results page and the legacy passphrase gates. Readable by
+ * the owner, or by anyone once the quiz has been played and shared.
+ */
+export async function getQuizMeta(id: string, userId: string): Promise<QuizSummary | null> {
+    const client = await pgClient()
+    const result = await client.query<QuizRow>(
+        `SELECT ${SUMMARY_COLUMNS} FROM quiz
+         WHERE id = $1 AND (owner_user_id = $2 OR last_played_at IS NOT NULL)`,
+        [id, userId],
     )
     const row = result.rows[0]
     return row ? summaryOf(row) : null
@@ -147,9 +165,25 @@ export type LoadContentResult =
     | { ok: true; content: QuizContent; defaultTimeLimit: number }
     | { ok: false; reason: 'not-found' | 'wrong-passphrase' }
 
+/** Turns a row into its decrypted content, asking for the passphrase only on legacy rows. */
+async function decryptRow(row: QuizRow, passphrase: string | null): Promise<LoadContentResult> {
+    const openable = readOpenableContent(row)
+    if (openable) return { ok: true, content: openable, defaultTimeLimit: row.default_time_limit }
+
+    // Only LEGACY passphrase rows get this far.
+    if (row.salt == null || row.content_encrypted == null) return { ok: false, reason: 'not-found' }
+    if (!passphrase) return { ok: false, reason: 'wrong-passphrase' }
+
+    const decrypted = await decryptWithPassphrase(row.content_encrypted, row.salt, passphrase)
+    const content = parseContent(decrypted, row.id)
+    if (!content) return { ok: false, reason: 'wrong-passphrase' }
+
+    return { ok: true, content, defaultTimeLimit: row.default_time_limit }
+}
+
 /**
- * Loads a quiz's full content for editing/hosting. Opened or legacy quizzes need no passphrase;
- * passphrase-encrypted quizzes require the correct passphrase (wrong → 'wrong-passphrase').
+ * Loads a quiz's full content for EDITING — owner only. Legacy passphrase-encrypted quizzes require
+ * the correct passphrase (wrong → 'wrong-passphrase'); everything else decrypts with the app secret.
  */
 export async function getQuizContent(
     id: string,
@@ -164,36 +198,51 @@ export async function getQuizContent(
     const row = result.rows[0]
     if (!row) return { ok: false, reason: 'not-found' }
 
-    const openable = readOpenableContent(row)
-    if (openable) return { ok: true, content: openable, defaultTimeLimit: row.default_time_limit }
-
-    if (row.salt == null || row.content_encrypted == null) return { ok: false, reason: 'not-found' }
-    if (!passphrase) return { ok: false, reason: 'wrong-passphrase' }
-
-    const decrypted = await decryptWithPassphrase(row.content_encrypted, row.salt, passphrase)
-    const content = parseContent(decrypted, row.id)
-    if (!content) return { ok: false, reason: 'wrong-passphrase' }
-
-    return { ok: true, content, defaultTimeLimit: row.default_time_limit }
-}
-
-export async function deleteQuiz(id: string, ownerUserId: string): Promise<void> {
-    const client = await pgClient()
-    await client.query(`DELETE FROM quiz WHERE id = $1 AND owner_user_id = $2`, [id, ownerUserId])
+    return decryptRow(row, passphrase)
 }
 
 /**
- * After a session ends the quiz is "opened" to plaintext (taken from the live session's already
- * decrypted content, since the encrypted blob now needs the owner's passphrase).
+ * Loads content for HOSTING or DUPLICATING: the owner's own quizzes, plus any quiz the team has
+ * played (shared). Shared quizzes are always app-secret encrypted, so they never need a passphrase.
  */
-export async function openQuizAfterSession(id: string, content: QuizContent): Promise<void> {
+export async function getPlayableQuizContent(
+    id: string,
+    userId: string,
+    passphrase: string | null,
+): Promise<LoadContentResult> {
+    const client = await pgClient()
+    const result = await client.query<QuizRow>(
+        `SELECT * FROM quiz WHERE id = $1 AND (owner_user_id = $2 OR last_played_at IS NOT NULL)`,
+        [id, userId],
+    )
+    const row = result.rows[0]
+    if (!row) return { ok: false, reason: 'not-found' }
+
+    return decryptRow(row, passphrase)
+}
+
+/** Shared quizzes are immutable, so only a never-played draft can be deleted (by its owner). */
+export async function deleteQuiz(id: string, ownerUserId: string): Promise<void> {
+    const client = await pgClient()
+    await client.query(`DELETE FROM quiz WHERE id = $1 AND owner_user_id = $2 AND last_played_at IS NULL`, [
+        id,
+        ownerUserId,
+    ])
+}
+
+/**
+ * After a session ends the quiz becomes shared with the team: `last_played_at` is stamped, and the
+ * content is re-encrypted under the app secret from the live session's already-decrypted copy. That
+ * last part matters for legacy quizzes — dropping the salt is what lets everyone else open it later.
+ */
+export async function markQuizPlayed(id: string, content: QuizContent): Promise<void> {
     const client = await pgClient()
     await client.query(
         `UPDATE quiz
-         SET content_plain = $1, content_encrypted = NULL, salt = NULL, is_encrypted = false,
+         SET content_encrypted = $1, salt = NULL, content_plain = NULL, is_encrypted = true,
              title = $2, question_count = $3, last_played_at = now()
          WHERE id = $4`,
-        [JSON.stringify(content), content.title, content.questions.length, id],
+        [encryptJson(content), content.title, content.questions.length, id],
     )
 }
 
@@ -280,12 +329,18 @@ export type QuizRun = {
     players: QuizRunPlayer[]
 }
 
-/** All finished runs of a quiz the caller owns, newest first, with each run's per-player results. */
-export async function listQuizRuns(quizId: string, ownerUserId: string): Promise<QuizRun[]> {
+/**
+ * All finished runs of a quiz, newest first, with each run's per-player results. Visible to the
+ * owner, and to everyone once the quiz has been played and shared.
+ */
+export async function listQuizRuns(quizId: string, userId: string): Promise<QuizRun[]> {
     const client = await pgClient()
 
-    const owns = await client.query('SELECT 1 FROM quiz WHERE id = $1 AND owner_user_id = $2', [quizId, ownerUserId])
-    if ((owns.rowCount ?? 0) === 0) return []
+    const visible = await client.query(
+        'SELECT 1 FROM quiz WHERE id = $1 AND (owner_user_id = $2 OR last_played_at IS NOT NULL)',
+        [quizId, userId],
+    )
+    if ((visible.rowCount ?? 0) === 0) return []
 
     const sessions = await client.query<{
         id: string

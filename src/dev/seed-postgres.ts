@@ -34,9 +34,14 @@ export async function seedDevelopmentPostgres(client: Pool): Promise<void> {
 export function developmentOnlyResetPostgres(client: Pool): Promise<void> {
     if (bundledEnv.runtimeEnv !== 'local') raise('What the HELL are you doing?')
 
+    // Quiz tables first — quiz_player_result → quiz_session → quiz are chained by foreign keys.
     return client
         .query(
             `
+        DROP TABLE IF EXISTS quiz_player_result;
+        DROP TABLE IF EXISTS quiz_session;
+        DROP TABLE IF EXISTS quiz_image;
+        DROP TABLE IF EXISTS quiz;
         DROP TABLE IF EXISTS slack_cron_posts;
         DROP TABLE IF EXISTS week_schedule;
         DROP TABLE IF EXISTS users;

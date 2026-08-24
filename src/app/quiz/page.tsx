@@ -5,10 +5,11 @@ import React, { ReactElement, Suspense } from 'react'
 import { AkselNextLinkButton } from '#components/AkselNextLink'
 import PageHeader from '#components/page/PageHeader'
 import MyQuizzes from '#features/quiz/list/MyQuizzes'
+import SharedQuizzes from '#features/quiz/list/SharedQuizzes'
 import ActiveSessions from '#features/quiz/lobby/ActiveSessions'
 import { validateUserSession } from '#services/auth/auth'
 import { listActiveSessions } from '#services/quiz/quiz-session-service'
-import { listMyQuizzes } from '#services/quiz/quiz-store'
+import { listMyQuizzes, listSharedQuizzes } from '#services/quiz/quiz-store'
 
 async function ActiveSessionsSection({ userId }: { userId: string }): Promise<ReactElement> {
     const sessions = await listActiveSessions()
@@ -18,6 +19,11 @@ async function ActiveSessionsSection({ userId }: { userId: string }): Promise<Re
 async function MyQuizzesSection({ userId }: { userId: string }): Promise<ReactElement> {
     const quizzes = await listMyQuizzes(userId)
     return <MyQuizzes quizzes={quizzes} />
+}
+
+async function SharedQuizzesSection({ userId }: { userId: string }): Promise<ReactElement> {
+    const quizzes = await listSharedQuizzes(userId)
+    return <SharedQuizzes quizzes={quizzes} />
 }
 
 async function Page(): Promise<ReactElement> {
@@ -46,6 +52,15 @@ async function Page(): Promise<ReactElement> {
                 </Heading>
                 <Suspense fallback={<Skeleton variant="rounded" width="100%" height={160} />}>
                     <MyQuizzesSection userId={user.userId} />
+                </Suspense>
+            </section>
+
+            <section>
+                <Heading level="2" size="medium" spacing>
+                    Delte quizer
+                </Heading>
+                <Suspense fallback={<Skeleton variant="rounded" width="100%" height={160} />}>
+                    <SharedQuizzesSection userId={user.userId} />
                 </Suspense>
             </section>
         </div>

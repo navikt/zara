@@ -1,6 +1,6 @@
 'use client'
 
-import { BarChartIcon, PencilIcon, PlayIcon, TrashIcon } from '@navikt/aksel-icons'
+import { BarChartIcon, FilesIcon, PencilIcon, PlayIcon, TrashIcon } from '@navikt/aksel-icons'
 import { Alert, BodyShort, Button, Heading, Tag, TextField } from '@navikt/ds-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -70,14 +70,15 @@ function MyQuizzes({ quizzes }: Props): ReactElement {
                     <div>
                         <Heading level="3" size="small" className="flex items-center gap-2">
                             {quiz.title}
-                            {!quiz.isEncrypted && (
-                                <Tag variant="neutral" size="xsmall">
-                                    Spilt
+                            {quiz.isShared && (
+                                <Tag variant="success" size="xsmall">
+                                    Delt
                                 </Tag>
                             )}
                         </Heading>
                         <BodyShort size="small" className="text-ax-text-neutral-subtle">
                             {quiz.questionCount} spørsmål · {quiz.defaultTimeLimit}s standardtid
+                            {quiz.isShared && ' · spilt og delt med teamet'}
                         </BodyShort>
                     </div>
                     <div className="flex gap-2">
@@ -112,15 +113,28 @@ function MyQuizzes({ quizzes }: Props): ReactElement {
                                 Start quiz
                             </Button>
                         )}
-                        <Button
-                            as={Link}
-                            href={`/quiz/${quiz.id}/edit`}
-                            size="small"
-                            variant="secondary"
-                            icon={<PencilIcon aria-hidden />}
-                        >
-                            Rediger
-                        </Button>
+                        {/* A shared quiz is immutable — copy it into a new draft instead of editing. */}
+                        {quiz.isShared ? (
+                            <Button
+                                as={Link}
+                                href={`/quiz/new?from=${quiz.id}`}
+                                size="small"
+                                variant="secondary"
+                                icon={<FilesIcon aria-hidden />}
+                            >
+                                Dupliser
+                            </Button>
+                        ) : (
+                            <Button
+                                as={Link}
+                                href={`/quiz/${quiz.id}/edit`}
+                                size="small"
+                                variant="secondary"
+                                icon={<PencilIcon aria-hidden />}
+                            >
+                                Rediger
+                            </Button>
+                        )}
                         <Button
                             as={Link}
                             href={`/quiz/${quiz.id}/results`}
@@ -130,30 +144,31 @@ function MyQuizzes({ quizzes }: Props): ReactElement {
                         >
                             Resultater
                         </Button>
-                        {confirmDeleteId === quiz.id ? (
-                            <>
+                        {!quiz.isShared &&
+                            (confirmDeleteId === quiz.id ? (
+                                <>
+                                    <Button
+                                        size="small"
+                                        variant="danger"
+                                        loading={isPending}
+                                        onClick={() => remove(quiz.id)}
+                                    >
+                                        Bekreft sletting
+                                    </Button>
+                                    <Button size="small" variant="tertiary" onClick={() => setConfirmDeleteId(null)}>
+                                        Avbryt
+                                    </Button>
+                                </>
+                            ) : (
                                 <Button
                                     size="small"
-                                    variant="danger"
-                                    loading={isPending}
-                                    onClick={() => remove(quiz.id)}
+                                    variant="tertiary"
+                                    icon={<TrashIcon aria-hidden />}
+                                    onClick={() => setConfirmDeleteId(quiz.id)}
                                 >
-                                    Bekreft sletting
+                                    Slett
                                 </Button>
-                                <Button size="small" variant="tertiary" onClick={() => setConfirmDeleteId(null)}>
-                                    Avbryt
-                                </Button>
-                            </>
-                        ) : (
-                            <Button
-                                size="small"
-                                variant="tertiary"
-                                icon={<TrashIcon aria-hidden />}
-                                onClick={() => setConfirmDeleteId(quiz.id)}
-                            >
-                                Slett
-                            </Button>
-                        )}
+                            ))}
                     </div>
                 </div>
             ))}
