@@ -2,15 +2,25 @@
 
 import { Alert, BodyShort, Button, Heading, Loader } from '@navikt/ds-react'
 import { useRouter } from 'next/navigation'
-import React, { ReactElement, useTransition } from 'react'
+import React, { ReactElement, useState, useTransition } from 'react'
 
 import PlayerGrid from '#features/quiz/host/PlayerGrid'
 import { QUESTION_TYPES } from '#features/quiz/question-types'
-import { hostCancelSession, hostEndSession, hostNextQuestion, hostRevealQuestion } from '#features/quiz/session-actions'
+import {
+    hostCancelSession,
+    hostEndSession,
+    hostNextQuestion,
+    hostRevealNextPlace,
+    hostRevealQuestion,
+} from '#features/quiz/session-actions'
+import ConnectionAlert from '#features/quiz/shared/ConnectionAlert'
 import Countdown from '#features/quiz/shared/Countdown'
 import Leaderboard from '#features/quiz/shared/Leaderboard'
+import LobbyRoster from '#features/quiz/shared/LobbyRoster'
+import Podium from '#features/quiz/shared/Podium'
 import QuestionStage from '#features/quiz/shared/QuestionStage'
 import { useQuizSession } from '#features/quiz/shared/useQuizSession'
+import { revealButtonLabel } from '#services/quiz/quiz-reveal'
 import { PublicQuestion, SessionStatus } from '#services/quiz/quiz-schema'
 import { averagePercent } from '#services/quiz/quiz-scoring'
 
@@ -62,13 +72,18 @@ function QuestionPreview({ question }: { question: PublicQuestion }): ReactEleme
 
 function HostSession({ sessionId, meUserId }: Props): ReactElement {
     const router = useRouter()
-    const state = useQuizSession(sessionId)
+    const { state, connection, failedAttempts } = useQuizSession(sessionId)
     const [isPending, startTransition] = useTransition()
+    const [actionError, setActionError] = useState<string | null>(null)
 
     if (!state) {
         return (
-            <div className="flex justify-center p-12">
-                <Loader size="2xlarge" title="Kobler til sesjonen…" />
+            <div className="flex flex-col items-center gap-4 p-12">
+                {connection === 'offline' ? (
+                    <ConnectionAlert connection={connection} failedAttempts={failedAttempts} />
+                ) : (
+                    <Loader size="2xlarge" title="Kobler til sesjonen…" />
+                )}
             </div>
         )
     }
@@ -76,15 +91,25 @@ function HostSession({ sessionId, meUserId }: Props): ReactElement {
     const isHost = state.hostUserId === meUserId
     const isLast = state.currentIndex >= state.questionCount - 1
     const answeredCount = state.players.filter((p) => p.answered).length
+    const revealLabel = revealButtonLabel(state.revealStep, state.leaderboard.length)
     const run =
         (fn: () => Promise<void>): (() => void) =>
         () =>
             startTransition(async () => {
-                await fn()
+                setActionError(null)
+                try {
+                    await fn()
+                } catch {
+                    // Without this the rejection is swallowed by the transition and the host is
+                    // left clicking a button that silently does nothing.
+                    setActionError('Handlingen nådde ikke fram. Sjekk nettforbindelsen og prøv igjen.')
+                }
             })
 
     return (
         <div className="flex flex-col gap-6 pb-24">
+            <ConnectionAlert connection={connection} failedAttempts={failedAttempts} />
+
             <div className="flex flex-wrap justify-between items-center gap-3 bg-ax-bg-raised p-4 rounded-md">
                 <div>
                     <Heading level="2" size="medium">
@@ -98,12 +123,14 @@ function HostSession({ sessionId, meUserId }: Props): ReactElement {
 
             {!isHost && <Alert variant="info">Du ser denne sesjonen som tilskuer (ikke vert).</Alert>}
 
+            {actionError && <Alert variant="warning">{actionError}</Alert>}
+
             {state.status === 'lobby' && (
                 <div className="bg-ax-bg-raised p-4 rounded-md">
                     <Heading level="3" size="small" spacing>
-                        Spillere ({state.players.length})
+                        Spillere ({state.lobbyRoster.length})
                     </Heading>
-                    <PlayerGrid players={state.players} showAnswered={false} />
+                    <LobbyRoster players={state.lobbyRoster} />
                 </div>
             )}
 
@@ -145,18 +172,30 @@ function HostSession({ sessionId, meUserId }: Props): ReactElement {
             {state.status === 'reveal' && <Leaderboard entries={state.leaderboard} />}
 
             {state.status === 'ended' && (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-6">
                     <Heading level="2" size="large">
                         🏆 Quizen er ferdig!
                     </Heading>
-                    <Leaderboard entries={state.leaderboard} totalPercent={averagePercent(state.leaderboard)} />
+                    <Podium entries={state.leaderboard} />
+                    {state.leaderboard.length > 3 && (
+                        <Leaderboard entries={state.leaderboard} startRank={4} heading="Resten av feltet" />
+                    )}
+                    <div className="flex items-center justify-between gap-3 px-3 pt-2 border-t border-ax-border-neutral-subtle">
+                        <span className="font-semibold">Lagets totalscore</span>
+                        <span className="font-bold tabular-nums">{averagePercent(state.leaderboard)}% riktig</span>
+                    </div>
+                    {!isHost && state.revealStep < state.revealMaxStep && (
+                        <Alert variant="info">Verten avslører navnene om litt …</Alert>
+                    )}
                     <div>
-                        <Button onClick={() => router.push('/quiz')}>Tilbake til quiz-oversikt</Button>
+                        <Button variant="secondary" onClick={() => router.push('/quiz')}>
+                            Tilbake til quiz-oversikt
+                        </Button>
                     </div>
                 </div>
             )}
 
-            {isHost && state.status !== 'ended' && (
+            {isHost && (state.status !== 'ended' || revealLabel != null) && (
                 <div className="fixed bottom-0 inset-x-0 flex justify-center gap-2 bg-ax-bg-default/90 border-t border-ax-border-neutral-subtle p-3 backdrop-blur">
                     {state.status === 'lobby' && (
                         <>
@@ -166,12 +205,10 @@ function HostSession({ sessionId, meUserId }: Props): ReactElement {
                             <Button
                                 variant="tertiary"
                                 loading={isPending}
-                                onClick={() =>
-                                    startTransition(async () => {
-                                        await hostCancelSession(sessionId)
-                                        router.push('/quiz')
-                                    })
-                                }
+                                onClick={run(async () => {
+                                    await hostCancelSession(sessionId)
+                                    router.push('/quiz')
+                                })}
                             >
                                 Avbryt
                             </Button>
@@ -195,6 +232,11 @@ function HostSession({ sessionId, meUserId }: Props): ReactElement {
                     {(state.status === 'question' || state.status === 'reveal') && (
                         <Button variant="tertiary" loading={isPending} onClick={run(() => hostEndSession(sessionId))}>
                             Avslutt nå
+                        </Button>
+                    )}
+                    {state.status === 'ended' && revealLabel != null && (
+                        <Button loading={isPending} onClick={run(() => hostRevealNextPlace(sessionId))}>
+                            {revealLabel}
                         </Button>
                     )}
                 </div>

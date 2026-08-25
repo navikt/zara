@@ -10,6 +10,7 @@ import {
     cancelSession,
     createSession,
     endSession,
+    revealNextPlace,
     revealQuestion,
 } from '#services/quiz/quiz-session-service'
 import { getPlayableQuizContent, markQuizPlayed, saveSessionStats } from '#services/quiz/quiz-store'
@@ -56,6 +57,12 @@ export async function hostRevealQuestion(sessionId: string): Promise<void> {
 export async function hostCancelSession(sessionId: string): Promise<void> {
     const user = await validateUserSession('TEAM_MEMBER')
     await cancelSession(sessionId, user.userId)
+}
+
+/** Unmask the next place in the finished quiz's podium ceremony (3rd → 2nd → 1st → everyone). */
+export async function hostRevealNextPlace(sessionId: string): Promise<void> {
+    const user = await validateUserSession('TEAM_MEMBER')
+    await revealNextPlace(sessionId, user.userId)
 }
 
 export async function hostEndSession(sessionId: string): Promise<void> {

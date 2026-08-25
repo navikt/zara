@@ -3,7 +3,7 @@ import { logger } from '@navikt/next-logger'
 import { pgClient } from '#services/db/postgres/production-pg'
 import { decryptJson, encryptJson } from '#services/quiz/quiz-crypto'
 import { decryptWithPassphrase } from '#services/quiz/quiz-passphrase-crypto'
-import { LeaderboardEntry, QuizContent, QuizContentSchema, QuizSummary } from '#services/quiz/quiz-schema'
+import { QuizContent, QuizContentSchema, QuizSummary } from '#services/quiz/quiz-schema'
 
 type QuizRow = {
     id: string
@@ -246,6 +246,20 @@ export async function markQuizPlayed(id: string, content: QuizContent): Promise<
     )
 }
 
+/**
+ * A player's final result as persisted. Unlike the client-facing leaderboard this holds the REAL
+ * identity — the alias only exists to keep the live scoreboard anonymous, and the stored run is
+ * the post-hoc record.
+ */
+export type PersistedPlayerResult = {
+    userId: string
+    name: string
+    points: number
+    correctCount: number
+    percent: number
+    rank: number
+}
+
 export type SessionStatsInput = {
     quizId: string
     hostUserId: string
@@ -254,7 +268,7 @@ export type SessionStatsInput = {
     questionCount: number
     /** The team's overall percent for this run (average of every player's percent). */
     totalPercent: number
-    results: LeaderboardEntry[]
+    results: PersistedPlayerResult[]
 }
 
 /** Requirement 7: persist per-session stats into their own tables. */
