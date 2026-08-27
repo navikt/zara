@@ -1,5 +1,3 @@
-import { LeaderboardEntry } from '#services/quiz/quiz-schema'
-
 export const MAX_POINTS = 1000
 /** A correct (fully accurate) answer at the very last moment still earns this fraction of the max. */
 export const MIN_CORRECT_POINTS = 500
@@ -21,27 +19,44 @@ export function averagePercent(entries: { percent: number }[]): number {
     return Math.round(entries.reduce((sum, entry) => sum + entry.percent, 0) / entries.length)
 }
 
+/**
+ * A player's raw score, as held server-side. Carries BOTH the real identity (`userId`, `name`,
+ * `oid`) and the anonymous one (`playerId`, `alias`).
+ */
 export type PlayerScore = {
     userId: string
     name: string
+    oid: string
+    playerId: string
+    alias: string
     points: number
     correctCount: number
 }
 
 /**
- * Ranks players by total points (tie-break: more correct, then name) and computes each
- * player's percent of questions answered correctly.
+ * A ranked player, server-side only. This is NEVER serialised to a client as-is — it holds the
+ * alias→name mapping the whole feature exists to hide. The session service projects it into a
+ * {@link LeaderboardEntry}, masking `name`/`oid` until the host reveals that rank.
  */
-export function buildLeaderboard(players: PlayerScore[], questionCount: number): LeaderboardEntry[] {
+export type RankedPlayer = PlayerScore & {
+    percent: number
+    rank: number
+}
+
+/**
+ * Ranks players by total points (tie-break: more correct, then alias) and computes each
+ * player's percent of questions answered correctly.
+ *
+ * The tie-break uses the ALIAS, not the real name: ranking by name would leak the alphabetical
+ * ordering of the real roster through the rendered order of an otherwise anonymous leaderboard.
+ */
+export function buildLeaderboard(players: PlayerScore[], questionCount: number): RankedPlayer[] {
     const sorted = [...players].sort(
-        (a, b) => b.points - a.points || b.correctCount - a.correctCount || a.name.localeCompare(b.name),
+        (a, b) => b.points - a.points || b.correctCount - a.correctCount || a.alias.localeCompare(b.alias),
     )
 
     return sorted.map((player, index) => ({
-        userId: player.userId,
-        name: player.name,
-        points: player.points,
-        correctCount: player.correctCount,
+        ...player,
         percent: questionCount > 0 ? Math.round((player.correctCount / questionCount) * 100) : 0,
         rank: index + 1,
     }))

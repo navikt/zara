@@ -1,16 +1,18 @@
 import { logger } from '@navikt/next-logger'
-import { randomInt, randomUUID } from 'node:crypto'
+import { createHash, randomInt, randomUUID } from 'node:crypto'
 
 import { User } from '#services/auth/user'
 import { valkeyClient } from '#services/db/valkey/production-valkey'
 import { gradeAnswer } from '#services/quiz/quiz-grading'
 import { publishLobbyChanged, publishQuizEvent } from '#services/quiz/quiz-pubsub-client'
+import { maxRevealStep, unmaskedRanks } from '#services/quiz/quiz-reveal'
 import {
     ActiveSession,
     AnswerPayload,
     ClientSessionState,
     LeaderboardEntry,
     LiveSession,
+    LobbyPlayer,
     PlayerPresence,
     PublicQuestion,
     Question,
@@ -18,7 +20,7 @@ import {
     RevealData,
     RevealResult,
 } from '#services/quiz/quiz-schema'
-import { averagePercent, buildLeaderboard, PlayerScore } from '#services/quiz/quiz-scoring'
+import { averagePercent, buildLeaderboard, PlayerScore, RankedPlayer } from '#services/quiz/quiz-scoring'
 import { SessionStatsInput } from '#services/quiz/quiz-store'
 
 const TTL = 6 * 60 * 60
@@ -29,6 +31,10 @@ const ACTIVE_SESSIONS_KEY = 'quiz:active-sessions'
 
 const sessionKey = (id: string): string => `quiz:session:${id}`
 const playersKey = (id: string): string => `quiz:session:${id}:players`
+/** Set of lowercased aliases already claimed in this session; SADD is the atomic claim. */
+const aliasesKey = (id: string): string => `quiz:session:${id}:aliases`
+/** How many podium places the host has unmasked. Its own key so reveals can use an atomic INCR. */
+const revealStepKey = (id: string): string => `quiz:session:${id}:reveal-step`
 const answersKey = (id: string, index: number): string => `quiz:session:${id}:answers:${index}`
 const scoresKey = (id: string): string => `quiz:session:${id}:scores`
 const correctKey = (id: string): string => `quiz:session:${id}:correct`
@@ -37,7 +43,11 @@ const orderKey = (id: string, index: number): string => `quiz:session:${id}:orde
 /** Set once when a question is scored, so concurrent reveal triggers can't double-count points. */
 const revealLockKey = (id: string, index: number): string => `quiz:session:${id}:revealed:${index}`
 
-type StoredPlayer = { name: string; oid: string }
+/**
+ * A player as stored in Valkey. Holds both identities; the projection decides which half (if any)
+ * a client is allowed to see.
+ */
+export type StoredPlayer = { playerId: string; alias: string; name: string; oid: string }
 type StoredAnswer = { answer: AnswerPayload; answeredAt: number; accuracy: number; correct: boolean; points: number }
 
 /** Fisher–Yates shuffle, returns a new array. */
@@ -82,26 +92,78 @@ function parse<T>(raw: string): T | null {
     }
 }
 
-function leaderboardFrom(
-    playersRaw: Record<string, string>,
+/**
+ * Parses a stored player, tolerating records written before aliases existed: those fall back to
+ * using the real name as the alias, so sessions that were already live across a deploy finish
+ * gracefully instead of crashing the projection.
+ *
+ * The fallback id is DERIVED, not random: the projection runs on every broadcast, so a random id
+ * would change identity between frames — churning React keys and never matching the `playerId` the
+ * play page handed the client. Derivation is fine here because a legacy player's alias is their
+ * real name anyway, so there is no mapping left to protect.
+ */
+function parsePlayer(userId: string, raw: string): StoredPlayer | null {
+    const stored = parse<Partial<StoredPlayer>>(raw)
+    if (!stored || typeof stored.name !== 'string') return null
+    return {
+        playerId: stored.playerId ?? `legacy-${createHash('sha256').update(userId).digest('hex').slice(0, 16)}`,
+        alias: stored.alias ?? stored.name,
+        name: stored.name,
+        oid: stored.oid ?? '',
+    }
+}
+
+/** Every player in the session, keyed by their (real) userId. */
+function parsePlayers(playersRaw: Record<string, string>): Map<string, StoredPlayer> {
+    const players = new Map<string, StoredPlayer>()
+    for (const [userId, raw] of Object.entries(playersRaw)) {
+        const player = parsePlayer(userId, raw)
+        if (player) players.set(userId, player)
+    }
+    return players
+}
+
+/**
+ * Ranks the session's players. The result carries real names — it is server-side only, and callers
+ * must project it through {@link toLeaderboardEntries} before it goes anywhere near a client.
+ */
+function rankPlayers(
+    players: Map<string, StoredPlayer>,
     scoresRaw: Record<string, string>,
     correctRaw: Record<string, string>,
     questionCount: number,
-): LeaderboardEntry[] {
-    const playerScores: PlayerScore[] = Object.entries(playersRaw).flatMap(([userId, raw]) => {
-        const player = parse<StoredPlayer>(raw)
-        if (!player) return []
-        return [
-            {
-                userId,
-                name: player.name,
-                points: Number(scoresRaw[userId] ?? 0),
-                correctCount: Number(correctRaw[userId] ?? 0),
-            },
-        ]
-    })
+): RankedPlayer[] {
+    const playerScores: PlayerScore[] = [...players].map(([userId, player]) => ({
+        userId,
+        name: player.name,
+        oid: player.oid,
+        playerId: player.playerId,
+        alias: player.alias,
+        points: Number(scoresRaw[userId] ?? 0),
+        correctCount: Number(correctRaw[userId] ?? 0),
+    }))
 
     return buildLeaderboard(playerScores, questionCount)
+}
+
+/**
+ * Projects ranked players into the client DTO, unmasking `name`/`oid` only for the ranks the host
+ * has already revealed. This is the single place real identities are allowed back into a payload.
+ */
+function toLeaderboardEntries(ranked: RankedPlayer[], unmasked: Set<number> | 'all'): LeaderboardEntry[] {
+    return ranked.map((player) => {
+        const revealed = unmasked === 'all' || unmasked.has(player.rank)
+        return {
+            playerId: player.playerId,
+            alias: player.alias,
+            name: revealed ? player.name : null,
+            oid: revealed ? player.oid : null,
+            points: player.points,
+            correctCount: player.correctCount,
+            percent: player.percent,
+            rank: player.rank,
+        }
+    })
 }
 
 /**
@@ -153,32 +215,61 @@ function revealDataFor(question: Question): RevealData {
     }
 }
 
-function projectState(
+/**
+ * Builds the payload every client receives. This is the privacy boundary: while the session is in
+ * the lobby it emits real names (and nothing else about a player), and from the moment the quiz
+ * starts it emits aliases only, until the host's podium reveal unmasks ranks one at a time.
+ *
+ * Exported for tests — it's a pure function, and the "no name and alias in the same payload"
+ * invariant is worth asserting directly rather than through Valkey.
+ */
+export function projectState(
     session: LiveSession,
     playersRaw: Record<string, string>,
     answersRaw: Record<string, string>,
     scoresRaw: Record<string, string>,
     correctRaw: Record<string, string>,
     displayOrder: string[] | null,
+    revealStep: number,
 ): ClientSessionState {
     const question = currentQuestion(session)
     const inQuestionPhase = session.status === 'question' || session.status === 'reveal'
     const answered = new Set(Object.keys(answersRaw))
+    const players = parsePlayers(playersRaw)
+    const inLobby = session.status === 'lobby'
 
-    const players: PlayerPresence[] = Object.entries(playersRaw)
-        .flatMap(([userId, raw]): PlayerPresence[] => {
-            const player = parse<StoredPlayer>(raw)
-            if (!player) return []
-            return [
-                {
-                    userId,
-                    name: player.name,
-                    oid: player.oid,
-                    answered: inQuestionPhase ? answered.has(userId) : false,
-                },
-            ]
-        })
-        .sort((a, b) => a.name.localeCompare(b.name))
+    const ranked = rankPlayers(players, scoresRaw, correctRaw, session.content.questions.length)
+    const revealMaxStep = maxRevealStep(ranked.length)
+    // Nobody is unmasked until the quiz is over and the host starts the ceremony.
+    const unmasked = session.status === 'ended' ? unmaskedRanks(revealStep, ranked.length) : new Set<number>()
+    const unmaskedPlayerIds = new Set(
+        ranked.filter((p) => unmasked === 'all' || unmasked.has(p.rank)).map((p) => p.playerId),
+    )
+
+    // Lobby: real names, no alias and no playerId — there is nothing here to correlate with the
+    // anonymous list below. Sorted by name, which is safe because this phase is not anonymous.
+    const lobbyRoster: LobbyPlayer[] = inLobby
+        ? [...players.values()]
+              .map((player) => ({ oid: player.oid, name: player.name }))
+              .sort((a, b) => a.name.localeCompare(b.name))
+        : []
+
+    // Play: aliases only. Sorted by ALIAS — sorting by name would leak the alphabetical ordering
+    // of the real roster through the rendered order.
+    const presence: PlayerPresence[] = inLobby
+        ? []
+        : [...players]
+              .map(([userId, player]): PlayerPresence => {
+                  const revealed = unmaskedPlayerIds.has(player.playerId)
+                  return {
+                      playerId: player.playerId,
+                      alias: player.alias,
+                      name: revealed ? player.name : null,
+                      oid: revealed ? player.oid : null,
+                      answered: inQuestionPhase ? answered.has(userId) : false,
+                  }
+              })
+              .sort((a, b) => a.alias.localeCompare(b.alias))
 
     const showQuestion = question != null && inQuestionPhase
     const publicQuestion = showQuestion ? toPublicQuestion(question, displayOrder) : null
@@ -187,10 +278,11 @@ function projectState(
     if (session.status === 'reveal' && question != null) {
         const results: RevealResult[] = Object.entries(answersRaw).flatMap(([userId, raw]) => {
             const stored = parse<StoredAnswer>(raw)
-            if (!stored) return []
+            const player = players.get(userId)
+            if (!stored || !player) return []
             return [
                 {
-                    userId,
+                    playerId: player.playerId,
                     answer: stored.answer,
                     accuracy: stored.accuracy,
                     correct: stored.correct,
@@ -202,9 +294,7 @@ function projectState(
     }
 
     const leaderboard =
-        session.status === 'reveal' || session.status === 'ended'
-            ? leaderboardFrom(playersRaw, scoresRaw, correctRaw, session.content.questions.length)
-            : []
+        session.status === 'reveal' || session.status === 'ended' ? toLeaderboardEntries(ranked, unmasked) : []
 
     return {
         sessionId: session.sessionId,
@@ -216,9 +306,12 @@ function projectState(
         question: publicQuestion,
         startedAt: showQuestion ? session.currentStartedAt : null,
         timeLimitSeconds: showQuestion && question ? questionLimitSeconds(session, question) : null,
-        players,
+        lobbyRoster,
+        players: presence,
         reveal,
         leaderboard,
+        revealStep: Math.min(revealStep, revealMaxStep),
+        revealMaxStep,
     }
 }
 
@@ -241,8 +334,18 @@ export async function getClientState(sessionId: string): Promise<ClientSessionSt
             ? await vk.get(orderKey(sessionId, session.currentIndex))
             : null
     const displayOrder = orderRaw ? parse<string[]>(orderRaw) : null
+    // Only the ended session has a ceremony to track; skip the read entirely otherwise.
+    const revealStepRaw = session.status === 'ended' ? await vk.get(revealStepKey(sessionId)) : null
 
-    return projectState(session, playersRaw, answersRaw, scoresRaw, correctRaw, displayOrder)
+    return projectState(
+        session,
+        playersRaw,
+        answersRaw,
+        scoresRaw,
+        correctRaw,
+        displayOrder,
+        Number(revealStepRaw ?? 0),
+    )
 }
 
 async function broadcast(sessionId: string): Promise<ClientSessionState | null> {
@@ -363,17 +466,45 @@ export async function createSession(quiz: HostQuizInput, host: User): Promise<Li
     return session
 }
 
-export async function joinSession(sessionId: string, user: User): Promise<ClientSessionState | null> {
+export type JoinResult =
+    | { ok: true; player: StoredPlayer }
+    | { ok: false; reason: 'no-session' | 'ended' | 'alias-taken' }
+
+/** The caller's player record for a session, or null if they haven't joined. */
+export async function getSessionPlayer(sessionId: string, userId: string): Promise<StoredPlayer | null> {
+    const raw = await valkeyClient().hget(playersKey(sessionId), userId)
+    return raw ? parsePlayer(userId, raw) : null
+}
+
+/**
+ * Joins a player under the alias they picked. Idempotent: rejoining (or refreshing) returns the
+ * existing record, and an alias is immutable for the life of the session so nobody can shed a bad
+ * result by renaming.
+ */
+export async function joinSession(sessionId: string, user: User, alias: string): Promise<JoinResult> {
     const session = await getSession(sessionId)
-    if (!session) return null
+    if (!session) return { ok: false, reason: 'no-session' }
 
     const vk = valkeyClient()
-    const player: StoredPlayer = { name: user.name, oid: user.oid }
+    const existing = await getSessionPlayer(sessionId, user.userId)
+    if (existing) return { ok: true, player: existing }
+
+    // Joining a finished quiz would insert a new last place mid-ceremony, shifting everyone's rank
+    // and the number of reveal steps under the host. Late is late.
+    if (session.status === 'ended') return { ok: false, reason: 'ended' }
+
+    // SADD is the atomic claim: two players racing on the same alias, the second gets 0 back.
+    const claimed = await vk.sadd(aliasesKey(sessionId), alias.toLowerCase())
+    if (claimed === 0) return { ok: false, reason: 'alias-taken' }
+    await vk.expire(aliasesKey(sessionId), TTL)
+
+    const player: StoredPlayer = { playerId: randomUUID(), alias, name: user.name, oid: user.oid }
     await vk.hset(playersKey(sessionId), user.userId, JSON.stringify(player))
     await vk.expire(playersKey(sessionId), TTL)
     await publishLobbyChanged()
+    await broadcast(sessionId)
 
-    return broadcast(sessionId)
+    return { ok: true, player }
 }
 
 export type SubmitAnswerResult = { ok: true } | { ok: false; reason: string }
@@ -531,12 +662,14 @@ export async function endSession(
         vk.hgetall(scoresKey(sessionId)),
         vk.hgetall(correctKey(sessionId)),
     ])
-    const leaderboard = leaderboardFrom(playersRaw, scoresRaw, correctRaw, session.content.questions.length)
+    const ranked = rankPlayers(parsePlayers(playersRaw), scoresRaw, correctRaw, session.content.questions.length)
 
     session.status = 'ended'
     session.currentStartedAt = null
     // Keep the ended session around briefly so the final leaderboard stays viewable.
     await persistSession(session, ENDED_TTL)
+    // The podium ceremony starts masked, however the previous run of this quiz ended.
+    await vk.set(revealStepKey(sessionId), '0', 'EX', ENDED_TTL)
     await removeActiveSession(sessionId)
     await broadcast(sessionId)
 
@@ -546,10 +679,35 @@ export async function endSession(
         startedAt: new Date(session.createdAt),
         endedAt: new Date(),
         questionCount: session.content.questions.length,
-        totalPercent: averagePercent(leaderboard),
-        results: leaderboard,
+        totalPercent: averagePercent(ranked),
+        // Stats are the post-hoc record, so they persist the REAL identity, not the alias.
+        results: ranked.map((player) => ({
+            userId: player.userId,
+            name: player.name,
+            points: player.points,
+            correctCount: player.correctCount,
+            percent: player.percent,
+            rank: player.rank,
+        })),
         content: session.content,
     }
+}
+
+/**
+ * Host-only: unmask the next podium place (3rd, then 2nd, then 1st), and finally everyone below the
+ * podium. INCR is atomic, so an impatient host double-clicking can't corrupt the step; the read
+ * side clamps it to the maximum for the player count.
+ */
+export async function revealNextPlace(sessionId: string, hostUserId: string): Promise<ClientSessionState | null> {
+    const session = await getSession(sessionId)
+    if (!session || session.hostUserId !== hostUserId) return null
+    if (session.status !== 'ended') return getClientState(sessionId)
+
+    const vk = valkeyClient()
+    await vk.incr(revealStepKey(sessionId))
+    await vk.expire(revealStepKey(sessionId), ENDED_TTL)
+
+    return broadcast(sessionId)
 }
 
 /**

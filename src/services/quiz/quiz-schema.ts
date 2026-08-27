@@ -89,11 +89,28 @@ export type QuizSummary = {
     questionCount: number
     defaultTimeLimit: number
     isEncrypted: boolean
-    /** True when the content is encrypted with the owner's passphrase (needed to edit/host). */
+    /**
+     * True for LEGACY quizzes still encrypted with the owner's passphrase (needed to edit/host).
+     * New quizzes use the app secret, and a shared quiz is never passphrase-encrypted.
+     */
     needsPassphrase: boolean
+    /** Played at least once → visible to the whole team, and locked for editing/deleting. */
+    isShared: boolean
     createdAt: string
     lastPlayedAt: string | null
 }
+
+/* ───────────────────────────── Player aliases ───────────────────────────── */
+
+/**
+ * The nickname a player picks when joining a session. Once the quiz starts this is the ONLY
+ * thing other players see about them, until the host reveals the podium. Case-insensitively
+ * unique within a session.
+ */
+export const AliasSchema = z
+    .string()
+    .transform((value) => value.trim().replace(/\s+/g, ' '))
+    .pipe(z.string().min(2, 'Kallenavnet må være minst 2 tegn.').max(20, 'Kallenavnet kan være maks 20 tegn.'))
 
 /* ───────────────────────────── Answer payloads ───────────────────────────── */
 
@@ -133,10 +150,27 @@ export type LiveSession = {
     content: QuizContent
 }
 
-export type PlayerPresence = {
-    userId: string
-    name: string
+/**
+ * A player as seen in the LOBBY: real name and avatar, so the room knows who turned up.
+ * Deliberately carries no alias and no `playerId` — see {@link ClientSessionState.lobbyRoster}.
+ */
+export type LobbyPlayer = {
     oid: string
+    name: string
+}
+
+/**
+ * A player as seen once the quiz has STARTED: alias only. `playerId` is a random per-session id
+ * (never derived from the user), so it cannot be linked back to a lobby entry or an email.
+ * `name`/`oid` stay null until the host unmasks that player during the final reveal.
+ */
+export type PlayerPresence = {
+    playerId: string
+    alias: string
+    /** Real name — null until the host has revealed this player's place. */
+    name: string | null
+    /** Entra oid for the avatar — null until the host has revealed this player's place. */
+    oid: string | null
     /** Has this player submitted an answer for the current question? */
     answered: boolean
 }
@@ -162,9 +196,18 @@ export type RevealData =
     | { type: 'slider'; correctValue: number }
     | { type: 'text'; acceptedAnswers: string[] }
 
+/**
+ * A leaderboard row as sent to clients. Anonymous by default: `name`/`oid` are only populated
+ * once the host has revealed that rank during the podium ceremony. The server-side ranked
+ * player (which does carry the real identity) never leaves the session service.
+ */
 export type LeaderboardEntry = {
-    userId: string
-    name: string
+    playerId: string
+    alias: string
+    /** Real name — null until the host has revealed this rank. */
+    name: string | null
+    /** Entra oid for the avatar — null until the host has revealed this rank. */
+    oid: string | null
     points: number
     correctCount: number
     percent: number
@@ -172,7 +215,7 @@ export type LeaderboardEntry = {
 }
 
 export type RevealResult = {
-    userId: string
+    playerId: string
     answer: AnswerPayload | null
     accuracy: number
     correct: boolean
@@ -182,6 +225,11 @@ export type RevealResult = {
 /**
  * What the host & player browsers render. Correct answers and per-question points are
  * only populated when `status === 'reveal'` (or `'ended'`).
+ *
+ * PRIVACY: {@link lobbyRoster} and {@link players} are mutually exclusive — exactly one is ever
+ * non-empty. The lobby list carries real names but no alias and no `playerId`; the play list
+ * carries aliases but no name and no `oid`. They share no common key, so a client that records
+ * both phases still cannot join them into an alias→name mapping. Never merge these two.
  */
 export type ClientSessionState = {
     sessionId: string
@@ -193,9 +241,16 @@ export type ClientSessionState = {
     question: PublicQuestion | null
     startedAt: number | null
     timeLimitSeconds: number | null
+    /** Who is in the room, by real name. Only populated while `status === 'lobby'`. */
+    lobbyRoster: LobbyPlayer[]
+    /** The anonymous player list. Only populated once `status !== 'lobby'`. */
     players: PlayerPresence[]
     reveal: { data: RevealData; results: RevealResult[] } | null
     leaderboard: LeaderboardEntry[]
+    /** How many podium places the host has unmasked. 0 = none; {@link revealMaxStep} = everyone. */
+    revealStep: number
+    /** The step at which every name is revealed. Depends on the number of players. */
+    revealMaxStep: number
 }
 
 /** Broadcast on `channel:quiz:<sessionId>`. We always send the full projected state — simplest and robust. */

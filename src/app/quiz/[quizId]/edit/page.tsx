@@ -1,5 +1,5 @@
 import { SandboxIcon } from '@navikt/aksel-icons'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import React, { ReactElement } from 'react'
 
 import PageHeader from '#components/page/PageHeader'
@@ -15,8 +15,12 @@ async function Page({ params }: PageProps<'/quiz/[quizId]/edit'>): Promise<React
     const meta = await getQuizMeta(quizId, user.userId)
     if (!meta) notFound()
 
-    // No passphrase needed → load the content on the server and edit straight away. Passphrase-
-    // encrypted → render the unlock gate, since only the owner's passphrase can derive the key.
+    // Played → shared with the team and immutable. Duplicating is the only way to change it.
+    if (meta.isShared) redirect(`/quiz/new?from=${quizId}`)
+    if (meta.ownerUserId !== user.userId) notFound()
+
+    // No passphrase needed → load the content on the server and edit straight away. Only legacy
+    // passphrase-encrypted quizzes render the unlock gate.
     const preloaded = meta.needsPassphrase ? null : await getQuizContent(quizId, user.userId, null)
 
     return (

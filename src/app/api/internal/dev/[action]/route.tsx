@@ -4,6 +4,7 @@ import { ContactableUserFeedback, InSituFeedback } from '@navikt/syk-zara/feedba
 import { notFound } from 'next/navigation'
 
 import { developmentOnlyResetPostgres, seedDevelopmentPostgres } from '#dev/seed-postgres'
+import { seedLegacyPassphraseQuiz } from '#dev/seed-quiz'
 import { clearDevelopmentFeedback, seedDevelopmentFeedback } from '#dev/seed-valkey'
 import { createContactDetails } from '#dev/test-data'
 import { bundledEnv } from '#lib/env'
@@ -49,6 +50,20 @@ export async function POST(_: Request, { params }: RouteContext<'/api/internal/d
             await seedDevelopmentPostgres(client)
 
             return Response.json({ message: `Postgres reset!` }, { status: 201 })
+        }
+        case 'seed-legacy-quiz': {
+            const client = await pgClient()
+            const { id, passphrase } = await seedLegacyPassphraseQuiz(client)
+
+            return Response.json(
+                {
+                    message: 'Legacy passphrase-encrypted quiz seeded!',
+                    id,
+                    passphrase,
+                    editUrl: `/quiz/${id}/edit`,
+                },
+                { status: 201 },
+            )
         }
         case 're-seed': {
             await clearDevelopmentFeedback(valkeyClient())

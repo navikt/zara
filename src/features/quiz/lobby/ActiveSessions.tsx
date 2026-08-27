@@ -4,7 +4,6 @@ import { BodyShort, Button, Heading, Tag } from '@navikt/ds-react'
 import Link from 'next/link'
 import React, { ReactElement, useState, useSyncExternalStore } from 'react'
 
-import { joinAndEnter } from '#features/quiz/play-actions'
 import { ActiveSession, LobbyEvent, SessionStatus } from '#services/quiz/quiz-schema'
 
 type Props = {
@@ -102,11 +101,9 @@ function ActiveSessions({ sessions, meUserId }: Props): ReactElement {
                                 Åpne vert-visning
                             </Button>
                         ) : (
-                            <form action={joinAndEnter.bind(null, session.sessionId)}>
-                                <Button type="submit" size="small" variant="secondary">
-                                    Bli med
-                                </Button>
-                            </form>
+                            <Button as={Link} href={`/quiz/join/${session.sessionId}`} size="small" variant="secondary">
+                                Bli med
+                            </Button>
                         )}
                     </div>
                 )
