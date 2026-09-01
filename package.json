@@ -26,7 +26,7 @@
         "@navikt/ds-tailwind": "^8.16.1",
         "@navikt/next-logger": "^5.0.0",
         "@navikt/oasis": "^4.1.4",
-        "@navikt/pino-logger": "^5.0.0",
+        "@navikt/pino-logger": "^5.0.1",
         "@navikt/syk-zara": "^2.0.20",
         "@navikt/tsm-oxfmt": "^0.0.9",
         "@opentelemetry/api": "^1.9.1",

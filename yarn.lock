@@ -508,6 +508,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@navikt/pino-logger@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "@navikt/pino-logger@npm:5.0.1::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fpino-logger%2F5.0.1%2F819f7f398e4378c014dd39f704c26f691a0915a1"
+  dependencies:
+    "@opentelemetry/api": "npm:^1.9.1"
+    pino-socket: "npm:8.0.0"
+  peerDependencies:
+    pino: 8 || 9 || 10
+  dependenciesMeta:
+    pino-socket:
+      optional: true
+  checksum: 10c0/0336f83b22f4c89418326236f19855c2ecc3305af96205296d3a695ab21085ed2761cb783ad61e0e1c51eb676b1bd2743da1f8ed891ae3e16e27b65ae67c4233
+  languageName: node
+  linkType: hard
+
 "@navikt/syk-zara@npm:^2.0.20":
   version: 2.0.20
   resolution: "@navikt/syk-zara@npm:2.0.20::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fsyk-zara%2F2.0.20%2Fc8f07260442cad1b9c91655d0b5b3f536bf8e9c1"
@@ -3493,7 +3508,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino-socket@npm:^8.0.0":
+"pino-socket@npm:8.0.0, pino-socket@npm:^8.0.0":
   version: 8.0.0
   resolution: "pino-socket@npm:8.0.0"
   dependencies:
@@ -4675,7 +4690,7 @@ __metadata:
     "@navikt/ds-tailwind": "npm:^8.16.1"
     "@navikt/next-logger": "npm:^5.0.0"
     "@navikt/oasis": "npm:^4.1.4"
-    "@navikt/pino-logger": "npm:^5.0.0"
+    "@navikt/pino-logger": "npm:^5.0.1"
     "@navikt/syk-zara": "npm:^2.0.20"
     "@navikt/tsm-oxfmt": "npm:^0.0.9"
     "@opentelemetry/api": "npm:^1.9.1"
