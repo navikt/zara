@@ -20,6 +20,7 @@ export default defineConfig({
         'no-console': 'warn',
         'no-unused-expressions': 'warn',
         'no-array-constructor': 'warn',
+        'react/refs': 'off',
         'typescript/no-explicit-any': 'warn',
         'typescript/no-require-imports': 'warn',
         'typescript/ban-ts-comment': ['warn', { 'ts-expect-error': 'allow-with-description' }],
