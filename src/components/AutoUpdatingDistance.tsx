@@ -7,7 +7,15 @@ import React, { ReactElement, useState } from 'react'
 
 import useInterval from '#lib/hooks/useInterval'
 
-export function AutoUpdatingDistance({ prefix, time }: { prefix?: string; time: string }): ReactElement {
+export function AutoUpdatingDistance({
+    prefix,
+    time,
+    className,
+}: {
+    prefix?: string
+    time: string
+    className?: string
+}): ReactElement {
     const [rerernderino, triggerino] = useState(0)
     const diffInSeconds = differenceInSeconds(new Date(), time)
 
@@ -23,7 +31,7 @@ export function AutoUpdatingDistance({ prefix, time }: { prefix?: string; time: 
     }, rerenderIntervalMs)
 
     return (
-        <Detail suppressHydrationWarning key={rerernderino}>
+        <Detail suppressHydrationWarning key={rerernderino} className={className}>
             {prefix}
             {formatDistanceToNowStrict(time, { locale: nb, addSuffix: true })}
         </Detail>

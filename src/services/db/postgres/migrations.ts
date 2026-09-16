@@ -10,6 +10,7 @@ import {
     quiz_tables_v5,
     add_vaktable,
     add_vakt_table,
+    add_ros_table,
 } from './schema'
 
 export async function runMigrations(): Promise<void> {
@@ -37,6 +38,8 @@ export async function runMigrations(): Promise<void> {
             await add_vaktable(client)
         case 6:
             await add_vakt_table(client)
+        case 7:
+            await add_ros_table(client)
     }
     await client.query('COMMIT')
 }

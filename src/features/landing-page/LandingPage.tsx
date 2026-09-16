@@ -14,6 +14,7 @@ import { LinkCard, LinkCardAnchor, LinkCardDescription, LinkCardIcon, LinkCardTi
 import Link from 'next/link'
 import React, { ReactElement, Suspense } from 'react'
 
+import { CringeCatIcon, Iconable } from '#components/FakeIcons'
 import {
     functionalProduksjonsFeatureList,
     technicalProduksjonsFeatureList,
@@ -120,6 +121,13 @@ function LandingPage({ features }: Props): ReactElement {
                         hasAccess={features.includes('TEAM_MEMBER')}
                     />
                     <AccessibleFeature
+                        Icon={CringeCatIcon}
+                        title="ROS (TryggNok)"
+                        href="/team/ros"
+                        description="Speiling av teamets ROS-analyser i TryggNok"
+                        hasAccess={features.includes('TEAM_MEMBER')}
+                    />
+                    <AccessibleFeature
                         Icon={SandboxIcon}
                         title="Quiz"
                         href="/quiz"
@@ -139,7 +147,7 @@ function AccessibleFeature({
     href,
     hasAccess,
 }: {
-    Icon: typeof NotePencilDashIcon
+    Icon: Iconable
     title: string
     description: string
     href: string

@@ -143,3 +143,24 @@ export async function add_vakt_table(client: Pool | PoolClient): Promise<void> {
 
     await client.query('UPDATE migrations SET version = 7')
 }
+
+export async function add_ros_table(client: Pool | PoolClient): Promise<void> {
+    logger.info('Running add_ros_table migration...')
+
+    await client.query(`
+        CREATE TABLE ros
+        (
+            id              UUID PRIMARY KEY     DEFAULT gen_random_uuid(),
+            added           TIMESTAMPTZ NOT NULL DEFAULT now(),
+            updating        BOOLEAN     NOT NULL DEFAULT false,
+            last_updated    TIMESTAMPTZ NOT NULL DEFAULT now(),
+            last_updated_by TEXT        NOT NULL,
+            ros             JSONB,
+            tiltak          JSONB,
+            risks           JSONB,
+            result          JSONB
+        )
+    `)
+
+    await client.query('UPDATE migrations SET version = 8')
+}
