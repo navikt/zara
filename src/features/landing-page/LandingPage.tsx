@@ -19,6 +19,7 @@ import {
     functionalProduksjonsFeatureList,
     technicalProduksjonsFeatureList,
 } from '#features/vakt/produksjons-feature-list'
+import { bundledEnv } from '#lib/env'
 import { cn } from '#lib/tw'
 import { type ZaraFeatures } from '#services/auth/access-control'
 
@@ -120,13 +121,15 @@ function LandingPage({ features }: Props): ReactElement {
                         description="Styr dine kontordager og om du er remote- eller kontoransatt"
                         hasAccess={features.includes('TEAM_MEMBER')}
                     />
-                    <AccessibleFeature
-                        Icon={CringeCatIcon}
-                        title="ROS (TryggNok)"
-                        href="/team/ros"
-                        description="Speiling av teamets ROS-analyser i TryggNok"
-                        hasAccess={features.includes('TEAM_MEMBER')}
-                    />
+                    {bundledEnv.runtimeEnv !== 'dev-gcp' && (
+                        <AccessibleFeature
+                            Icon={CringeCatIcon}
+                            title="ROS (TryggNok)"
+                            href="/team/ros"
+                            description="Speiling av teamets ROS-analyser i TryggNok"
+                            hasAccess={features.includes('TEAM_MEMBER')}
+                        />
+                    )}
                     <AccessibleFeature
                         Icon={SandboxIcon}
                         title="Quiz"
