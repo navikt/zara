@@ -11,12 +11,25 @@ import { nb } from 'date-fns/locale'
 import React, { ReactElement } from 'react'
 
 import { validateUserSession } from '#services/auth/auth'
-import type { RiskNode, RosNode, TiltakStatus } from '#services/ros/tryggnok-mapper'
+import type { RiskNode, RiskTags, RosNode, TiltakStatus } from '#services/ros/tryggnok-mapper'
 import { getTryggnokRosResult } from '#services/ros/tryggnok-service'
 
 function formatDate(value: string | null): string | null {
     if (value == null) return null
     return format(new Date(value), 'd. MMMM yyyy', { locale: nb })
+}
+
+// Human-readable labels for the risk tags. `viktigFunn` is surfaced separately
+// as a highlighted pin, so it is intentionally omitted here.
+const RISK_TAG_LABELS: Partial<Record<keyof RiskTags, string>> = {
+    konfidensialitet: 'Konfidensialitet',
+    integritet: 'Integritet',
+    tilgjengelighet: 'Tilgjengelighet',
+    personvern: 'Personvern',
+    adressebeskyttelse: 'Adressebeskyttelse',
+    egenAnsatt: 'Egen ansatt',
+    mulighet: 'Mulighet',
+    ikkeRelevant: 'Ikke relevant',
 }
 
 const TILTAK_STATUS_CONFIG: Record<TiltakStatus, { variant: TagProps['variant']; Icon: typeof CheckmarkCircleIcon }> = {
@@ -92,6 +105,7 @@ function Risk({ risk }: { risk: RiskNode }): ReactElement {
               ? 'bg-ax-bg-success-strong'
               : 'bg-ax-bg-warning-strong'
     const viktigFunn = risk.tags.viktigFunn
+    const activeTags = (Object.keys(RISK_TAG_LABELS) as (keyof RiskTags)[]).filter((key) => risk.tags[key])
 
     return (
         <div className={viktigFunn ? 'flex bg-ax-bg-info-softA' : 'flex'}>
@@ -126,6 +140,15 @@ function Risk({ risk }: { risk: RiskNode }): ReactElement {
                             </Tag>
                         )}
                     </div>
+                    {activeTags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-3">
+                            {activeTags.map((key) => (
+                                <Tag key={key} size="small" variant="neutral-moderate">
+                                    {RISK_TAG_LABELS[key]}
+                                </Tag>
+                            ))}
+                        </div>
+                    )}
                     {risk.kommentar && (
                         <BodyShort size="small" className="whitespace-pre-line text-ax-text-neutral-subtle">
                             {risk.kommentar}
