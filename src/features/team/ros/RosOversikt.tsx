@@ -1,4 +1,10 @@
-import { CheckmarkCircleIcon, ClockDashedIcon, QuestionmarkCircleIcon, XMarkOctagonIcon } from '@navikt/aksel-icons'
+import {
+    CheckmarkCircleIcon,
+    ClockDashedIcon,
+    PushPinIcon,
+    QuestionmarkCircleIcon,
+    XMarkOctagonIcon,
+} from '@navikt/aksel-icons'
 import { BodyShort, Detail, Heading, Tag, type TagProps } from '@navikt/ds-react'
 import { format } from 'date-fns'
 import { nb } from 'date-fns/locale'
@@ -30,7 +36,6 @@ function TiltakStatusTag({ status }: { status: TiltakStatus }): ReactElement {
 }
 
 export async function RosOversikt(): Promise<ReactElement> {
-    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate loading delay
     await validateUserSession('TEAM_MEMBER')
 
     const result = await getTryggnokRosResult()
@@ -78,60 +83,89 @@ function RosAssessment({ ros }: { ros: RosNode }): ReactElement {
 }
 
 function Risk({ risk }: { risk: RiskNode }): ReactElement {
+    // Colour follows likelihood (Sannsynlighet): low/moderate (1–2) is green, higher (3–4+) is yellow.
+    const likelihood = risk.sannsynlighet?.level ?? null
+    const likelihoodColor =
+        likelihood == null
+            ? 'bg-ax-border-neutral-subtle'
+            : likelihood <= 2
+              ? 'bg-ax-bg-success-strong'
+              : 'bg-ax-bg-warning-strong'
+    const viktigFunn = risk.tags.viktigFunn
+
     return (
-        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr]">
-            <div className="p-5 md:border-r border-ax-border-neutral-subtle">
-                <Heading level="3" size="small" spacing>
-                    {String(risk.title)}
-                </Heading>
-                <div className="flex flex-wrap gap-2 mb-3">
-                    {risk.sannsynlighet && (
-                        <Tag size="small" variant="info">
-                            Sannsynlighet: {risk.sannsynlighet.level} – {risk.sannsynlighet.label}
-                        </Tag>
+        <div className={viktigFunn ? 'flex bg-ax-bg-info-softA' : 'flex'}>
+            {/* Likelihood indicator strip, matching the coloured column in TryggNok. */}
+            <div className={`w-1.5 shrink-0 ${likelihoodColor}`} aria-hidden />
+            <div className="grid flex-1 grid-cols-1 md:grid-cols-[2fr_1fr]">
+                <div className="p-5 md:border-r border-ax-border-neutral-subtle">
+                    <div className="flex items-start justify-between gap-3">
+                        <Heading level="3" size="small" spacing>
+                            {String(risk.title)}
+                        </Heading>
+                        {viktigFunn && (
+                            <Tag
+                                size="small"
+                                variant="info-moderate"
+                                icon={<PushPinIcon aria-hidden />}
+                                className="shrink-0"
+                            >
+                                Viktig funn
+                            </Tag>
+                        )}
+                    </div>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                        {risk.sannsynlighet && (
+                            <Tag size="small" variant="info">
+                                Sannsynlighet: {risk.sannsynlighet.level} – {risk.sannsynlighet.label}
+                            </Tag>
+                        )}
+                        {risk.konsekvens && (
+                            <Tag size="small" variant="warning">
+                                Konsekvens: {risk.konsekvens.level} – {risk.konsekvens.label}
+                            </Tag>
+                        )}
+                    </div>
+                    {risk.kommentar && (
+                        <BodyShort size="small" className="whitespace-pre-line text-ax-text-neutral-subtle">
+                            {risk.kommentar}
+                        </BodyShort>
                     )}
-                    {risk.konsekvens && (
-                        <Tag size="small" variant="warning">
-                            Konsekvens: {risk.konsekvens.level} – {risk.konsekvens.label}
-                        </Tag>
+                    {(risk.opprettet || risk.sistEndret) && (
+                        <Detail className="text-ax-text-neutral-subtle mt-3">
+                            {risk.opprettet && <>Opprettet {formatDate(risk.opprettet)}</>}
+                            {risk.opprettet && risk.sistEndret && ' · '}
+                            {risk.sistEndret && <>Sist endret {formatDate(risk.sistEndret)}</>}
+                        </Detail>
                     )}
                 </div>
-                {risk.kommentar && (
-                    <BodyShort size="small" className="whitespace-pre-line text-ax-text-neutral-subtle">
-                        {risk.kommentar}
-                    </BodyShort>
-                )}
-                {(risk.opprettet || risk.sistEndret) && (
-                    <Detail className="text-ax-text-neutral-subtle mt-3">
-                        {risk.opprettet && <>Opprettet {formatDate(risk.opprettet)}</>}
-                        {risk.opprettet && risk.sistEndret && ' · '}
-                        {risk.sistEndret && <>Sist endret {formatDate(risk.sistEndret)}</>}
+                <div className="p-5 bg-ax-bg-sunken">
+                    <Detail uppercase spacing>
+                        Foreslåtte tiltak
                     </Detail>
-                )}
-            </div>
-            <div className="p-5 bg-ax-bg-sunken">
-                <Detail uppercase spacing>
-                    Foreslåtte tiltak
-                </Detail>
-                {risk.tiltak.length > 0 ? (
-                    <ul className="flex flex-col gap-2">
-                        {risk.tiltak.map((tiltak, i) => (
-                            <li key={i} className="rounded border border-ax-border-neutral-subtle bg-ax-bg-default p-2">
-                                <BodyShort size="small">{String(tiltak.title)}</BodyShort>
-                                {tiltak.status && <TiltakStatusTag status={tiltak.status} />}
-                                {tiltak.sistEndret && (
-                                    <Detail className="text-ax-text-neutral-subtle mt-1">
-                                        Sist endret {formatDate(tiltak.sistEndret)}
-                                    </Detail>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <BodyShort size="small" className="italic text-ax-text-neutral-subtle">
-                        Ingen tiltak
-                    </BodyShort>
-                )}
+                    {risk.tiltak.length > 0 ? (
+                        <ul className="flex flex-col gap-2">
+                            {risk.tiltak.map((tiltak, i) => (
+                                <li
+                                    key={i}
+                                    className="rounded border border-ax-border-neutral-subtle bg-ax-bg-default p-2"
+                                >
+                                    <BodyShort size="small">{String(tiltak.title)}</BodyShort>
+                                    {tiltak.status && <TiltakStatusTag status={tiltak.status} />}
+                                    {tiltak.sistEndret && (
+                                        <Detail className="text-ax-text-neutral-subtle mt-1">
+                                            Sist endret {formatDate(tiltak.sistEndret)}
+                                        </Detail>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <BodyShort size="small" className="italic text-ax-text-neutral-subtle">
+                            Ingen tiltak
+                        </BodyShort>
+                    )}
+                </div>
             </div>
         </div>
     )
