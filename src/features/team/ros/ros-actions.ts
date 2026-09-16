@@ -12,6 +12,9 @@ import { dumpTryggnokRosData } from '#services/ros/tryggnok-service'
 
 export async function initiateTryggnokSharepointJob(): Promise<void> {
     const user = await validateUserSession('TEAM_MEMBER')
+
+    logger.info(`User ${user.name} is initiating ROS-job`)
+
     const client = await pgClient()
 
     let rowId: string
@@ -37,6 +40,7 @@ export async function initiateTryggnokSharepointJob(): Promise<void> {
     after(async () => {
         try {
             await dumpTryggnokRosData(rowId, token)
+            logger.info(`User ${user.name}'s ROS-job completed successfully`)
         } catch (e) {
             logger.error(Error('Failed scraping ROS data from TryggNok', { cause: e }))
         }
