@@ -4,7 +4,15 @@ import { pgClient } from '#services/db/postgres/production-pg'
 import { fetchAssessments } from '#services/ros/msgraph-tryggnok/fetch-assessments'
 import { fetchRisks } from '#services/ros/msgraph-tryggnok/fetch-risks'
 import { fetchTiltak } from '#services/ros/msgraph-tryggnok/fetch-tiltak'
-import { buildTryggnokTree } from '#services/ros/tryggnok-mapper'
+import { buildTryggnokTree, type RosNode } from '#services/ros/tryggnok-mapper'
+
+export async function getTryggnokRosResult(): Promise<RosNode[] | null> {
+    const client = await pgClient()
+    const result = await client.query('SELECT result FROM ros ORDER BY last_updated DESC LIMIT 1')
+    if (result.rowCount === 0 || result.rows[0].result == null) return null
+
+    return result.rows[0].result as RosNode[]
+}
 
 export async function dumpTryggnokRosData(rowId: string, msGraphToken: string): Promise<void> {
     const client = await pgClient()

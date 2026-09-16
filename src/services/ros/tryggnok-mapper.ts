@@ -1,7 +1,7 @@
 import type { RisksEntry } from '#services/ros/msgraph-tryggnok/fetch-risks'
 import type { TiltakEntry } from '#services/ros/msgraph-tryggnok/fetch-tiltak'
 
-type TiltakStatus = 'Mulig tiltak' | 'Skal gjennomføres' | 'Implementert' | 'Besluttet å ikke gjennomføre'
+export type TiltakStatus = 'Mulig tiltak' | 'Skal gjennomføres' | 'Implementert' | 'Besluttet å ikke gjennomføre'
 
 // Attributter list (ee03ba07-...) item IDs -> human-readable status.
 const TILTAK_STATUS: Record<number, TiltakStatus> = {
@@ -11,9 +11,9 @@ const TILTAK_STATUS: Record<number, TiltakStatus> = {
     138: 'Besluttet å ikke gjennomføre',
 }
 
-type Sannsynlighet = 'Meget lite sannsynlig' | 'Lite sannsynlig' | 'Moderat' | 'Sannsynlig' | 'Meget sannsynlig'
+export type Sannsynlighet = 'Meget lite sannsynlig' | 'Lite sannsynlig' | 'Moderat' | 'Sannsynlig' | 'Meget sannsynlig'
 
-type Konsekvens = 'Ubetydelig' | 'Lav' | 'Moderat' | 'Alvorlig' | 'Svært alvorlig'
+export type Konsekvens = 'Ubetydelig' | 'Lav' | 'Moderat' | 'Alvorlig' | 'Svært alvorlig'
 
 // Stored value is 0-based (0-4) -> displayed level 1-5.
 const SANNSYNLIGHET: Sannsynlighet[] = [
@@ -26,12 +26,12 @@ const SANNSYNLIGHET: Sannsynlighet[] = [
 
 const KONSEKVENS: Konsekvens[] = ['Ubetydelig', 'Lav', 'Moderat', 'Alvorlig', 'Svært alvorlig']
 
-type TiltakNode = {
+export type TiltakNode = {
     title: unknown
     status: TiltakStatus | null
 }
 
-type RiskNode = {
+export type RiskNode = {
     id: string
     title: unknown
     sannsynlighet: { level: number; label: Sannsynlighet } | null
@@ -41,7 +41,7 @@ type RiskNode = {
     tiltak: TiltakNode[]
 }
 
-type RiskTags = {
+export type RiskTags = {
     mulighet: boolean
     adressebeskyttelse: boolean
     konfidensialitet: boolean
