@@ -102,7 +102,9 @@ export function buildTryggnokTree(risksData: RisksEntry[], tiltakData: TiltakEnt
         assessmentId: entry.assessmentId,
         title: entry.title,
         risks: entry.risks
-            .filter((r) => !r.fields?.Slettet) // deleted risks are filtered out
+            // Deleted risks and auto-generated questionnaire scenarios (qa_Type === 2)
+            // are not shown in the real app, so they are filtered out.
+            .filter((r) => !r.fields?.Slettet && num(r.fields?.qa_Type) !== 2)
             .map((r) => {
                 const unikId = num(r.fields?.UnikID)
                 return {
