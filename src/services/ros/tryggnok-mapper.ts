@@ -29,6 +29,7 @@ const KONSEKVENS: Konsekvens[] = ['Ubetydelig', 'Lav', 'Moderat', 'Alvorlig', 'S
 export type TiltakNode = {
     title: unknown
     status: TiltakStatus | null
+    sistEndret: string | null
 }
 
 export type RiskNode = {
@@ -37,6 +38,8 @@ export type RiskNode = {
     sannsynlighet: { level: number; label: Sannsynlighet } | null
     konsekvens: { level: number; label: Konsekvens } | null
     kommentar: string | null
+    opprettet: string | null
+    sistEndret: string | null
     tags: RiskTags
     tiltak: TiltakNode[]
 }
@@ -56,6 +59,8 @@ export type RiskTags = {
 export type RosNode = {
     assessmentId: number
     title: unknown
+    opprettet: string | null
+    sistEndret: string | null
     risks: RiskNode[]
 }
 
@@ -70,6 +75,13 @@ function text(value: unknown): string | null {
 
 function bool(value: unknown): boolean {
     return value === true || value === 1 || value === '1'
+}
+
+// Normalises a TryggNok/Graph date field to an ISO string, or null when absent/invalid.
+function date(value: unknown): string | null {
+    if (typeof value !== 'string' || !value.trim()) return null
+    const parsed = new Date(value)
+    return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString()
 }
 
 function scaleLevel<T>(value: unknown, labels: T[]): { level: number; label: T } | null {
@@ -91,6 +103,7 @@ export function buildTryggnokTree(risksData: RisksEntry[], tiltakData: TiltakEnt
             const node: TiltakNode = {
                 title: t.fields?.Tiltak_Tittel ?? t.fields?.Title,
                 status: statusKey !== null ? (TILTAK_STATUS[statusKey] ?? null) : null,
+                sistEndret: date(t.fields?.Modified),
             }
             const bucket = tiltakByRiskUnikId.get(riskUnikId)
             if (bucket) bucket.push(node)
@@ -101,6 +114,8 @@ export function buildTryggnokTree(risksData: RisksEntry[], tiltakData: TiltakEnt
     return risksData.map((entry) => ({
         assessmentId: entry.assessmentId,
         title: entry.title,
+        opprettet: date(entry.opprettet),
+        sistEndret: date(entry.sistEndret),
         risks: entry.risks
             // Deleted risks and auto-generated questionnaire scenarios (qa_Type === 2)
             // are not shown in the real app, so they are filtered out.
@@ -113,6 +128,8 @@ export function buildTryggnokTree(risksData: RisksEntry[], tiltakData: TiltakEnt
                     sannsynlighet: scaleLevel(r.fields?.NySannsynlighet, SANNSYNLIGHET),
                     konsekvens: scaleLevel(r.fields?.NyKonsekvens, KONSEKVENS),
                     kommentar: text(r.fields?.Kommentar),
+                    opprettet: date(r.fields?.Opprettet_TryggNokSkriv ?? r.fields?.Created),
+                    sistEndret: date(r.fields?.Endret_TryggNokSkriv ?? r.fields?.Modified),
                     tags: {
                         mulighet: bool(r.fields?.Mulighet),
                         adressebeskyttelse: bool(r.fields?.tag_Kode67),

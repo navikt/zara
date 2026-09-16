@@ -1,10 +1,17 @@
 import { CheckmarkCircleIcon, ClockDashedIcon, QuestionmarkCircleIcon, XMarkOctagonIcon } from '@navikt/aksel-icons'
 import { BodyShort, Detail, Heading, Tag, type TagProps } from '@navikt/ds-react'
+import { format } from 'date-fns'
+import { nb } from 'date-fns/locale'
 import React, { ReactElement } from 'react'
 
 import { validateUserSession } from '#services/auth/auth'
 import type { RiskNode, RosNode, TiltakStatus } from '#services/ros/tryggnok-mapper'
 import { getTryggnokRosResult } from '#services/ros/tryggnok-service'
+
+function formatDate(value: string | null): string | null {
+    if (value == null) return null
+    return format(new Date(value), 'd. MMMM yyyy', { locale: nb })
+}
 
 const TILTAK_STATUS_CONFIG: Record<TiltakStatus, { variant: TagProps['variant']; Icon: typeof CheckmarkCircleIcon }> = {
     'Mulig tiltak': { variant: 'neutral', Icon: QuestionmarkCircleIcon },
@@ -48,6 +55,13 @@ function RosAssessment({ ros }: { ros: RosNode }): ReactElement {
                 <Heading level="2" size="medium">
                     {String(ros.title)}
                 </Heading>
+                {(ros.opprettet || ros.sistEndret) && (
+                    <Detail className="text-ax-text-neutral-subtle mt-1">
+                        {ros.opprettet && <>Opprettet {formatDate(ros.opprettet)}</>}
+                        {ros.opprettet && ros.sistEndret && ' · '}
+                        {ros.sistEndret && <>Sist endret {formatDate(ros.sistEndret)}</>}
+                    </Detail>
+                )}
             </div>
             {ros.risks.length === 0 ? (
                 <BodyShort className="italic px-5 py-4">Ingen risikoer</BodyShort>
@@ -86,6 +100,13 @@ function Risk({ risk }: { risk: RiskNode }): ReactElement {
                         {risk.kommentar}
                     </BodyShort>
                 )}
+                {(risk.opprettet || risk.sistEndret) && (
+                    <Detail className="text-ax-text-neutral-subtle mt-3">
+                        {risk.opprettet && <>Opprettet {formatDate(risk.opprettet)}</>}
+                        {risk.opprettet && risk.sistEndret && ' · '}
+                        {risk.sistEndret && <>Sist endret {formatDate(risk.sistEndret)}</>}
+                    </Detail>
+                )}
             </div>
             <div className="p-5 bg-ax-bg-sunken">
                 <Detail uppercase spacing>
@@ -97,6 +118,11 @@ function Risk({ risk }: { risk: RiskNode }): ReactElement {
                             <li key={i} className="rounded border border-ax-border-neutral-subtle bg-ax-bg-default p-2">
                                 <BodyShort size="small">{String(tiltak.title)}</BodyShort>
                                 {tiltak.status && <TiltakStatusTag status={tiltak.status} />}
+                                {tiltak.sistEndret && (
+                                    <Detail className="text-ax-text-neutral-subtle mt-1">
+                                        Sist endret {formatDate(tiltak.sistEndret)}
+                                    </Detail>
+                                )}
                             </li>
                         ))}
                     </ul>
