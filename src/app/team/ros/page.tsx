@@ -13,7 +13,7 @@ function RosPage(): ReactElement {
 
     return (
         <PageBlock as="main" width="2xl" gutters>
-            <PageHeader heading="Riskoanalyser" Icon={CringeCatIcon}>
+            <PageHeader heading="Risikovurderinger" Icon={CringeCatIcon}>
                 <Suspense fallback={null}>
                     <RosStatus />
                 </Suspense>

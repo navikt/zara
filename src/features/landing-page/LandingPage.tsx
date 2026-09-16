@@ -126,7 +126,7 @@ function LandingPage({ features }: Props): ReactElement {
                             Icon={CringeCatIcon}
                             title="ROS (TryggNok)"
                             href="/team/ros"
-                            description="Speiling av teamets ROS-analyser i TryggNok"
+                            description="Speiling av teamets ROS i TryggNok"
                             hasAccess={features.includes('TEAM_MEMBER')}
                         />
                     )}
