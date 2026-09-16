@@ -1,4 +1,4 @@
-import { Detail } from '@navikt/ds-react'
+import { Button, Detail } from '@navikt/ds-react'
 import { connection } from 'next/server'
 import { ReactElement } from 'react'
 
@@ -22,12 +22,17 @@ export async function RosStatus(): Promise<ReactElement> {
 
     const ros = result.rows[0]
     return (
-        <div className="relative">
+        <div className="relative flex gap-2">
             <AutoUpdatingDistance
                 prefix="Sist eksportert: "
                 time={ros.last_updated}
                 className="absolute -bottom-6 right-2 text-nowrap"
             />
+            {ros.result != null && (
+                <Button as="a" href="/team/ros/export" target="_blank" variant="tertiary">
+                    Eksporter JSON
+                </Button>
+            )}
             <RosAction />
         </div>
     )
