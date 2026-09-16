@@ -5,6 +5,7 @@ import React, { ReactElement, Suspense } from 'react'
 import { CringeCatIcon } from '#components/FakeIcons'
 import PageHeader from '#components/page/PageHeader'
 import { RosOversikt } from '#features/team/ros/RosOversikt'
+import { RosOversiktSkeleton } from '#features/team/ros/RosOversiktSkeleton'
 import { RosStatus } from '#features/team/ros/RosStatus'
 import { bundledEnv } from '#lib/env'
 
@@ -18,7 +19,7 @@ function RosPage(): ReactElement {
                     <RosStatus />
                 </Suspense>
             </PageHeader>
-            <Suspense fallback={<div>TODO: Bedre loading state...</div>}>
+            <Suspense fallback={<RosOversiktSkeleton />}>
                 <RosOversikt />
             </Suspense>
         </PageBlock>

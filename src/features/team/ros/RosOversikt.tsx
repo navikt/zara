@@ -30,6 +30,7 @@ function TiltakStatusTag({ status }: { status: TiltakStatus }): ReactElement {
 }
 
 export async function RosOversikt(): Promise<ReactElement> {
+    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate loading delay
     await validateUserSession('TEAM_MEMBER')
 
     const result = await getTryggnokRosResult()
