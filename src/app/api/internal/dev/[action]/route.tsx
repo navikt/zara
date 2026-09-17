@@ -10,7 +10,7 @@ import { createContactDetails } from '#dev/test-data'
 import { bundledEnv } from '#lib/env'
 import { runMigrations } from '#services/db/postgres/migrations'
 import { pgClient } from '#services/db/postgres/production-pg'
-import { valkeyClient } from '#services/db/valkey/production-valkey'
+import { realValkey } from '#services/db/valkey/production-valkey'
 import { getFeedbackClient } from '#services/feedback/feedback-client'
 import { postDailyOfficeSummary, postWeeklyRememberToUpdatePost } from '#services/slack/office-to-slack'
 import { postDailySummary } from '#services/slack/summary-to-slack'
@@ -66,15 +66,15 @@ export async function POST(_: Request, { params }: RouteContext<'/api/internal/d
             )
         }
         case 're-seed': {
-            await clearDevelopmentFeedback(valkeyClient())
+            await clearDevelopmentFeedback(await realValkey())
 
-            const client = getFeedbackClient()
+            const client = await getFeedbackClient()
             await seedDevelopmentFeedback(client)
 
             return Response.json({ message: `Re-seeded!` }, { status: 201 })
         }
         case 'new-feedback': {
-            const client = getFeedbackClient()
+            const client = await getFeedbackClient()
 
             const newId = crypto.randomUUID()
             const feedback: Omit<ContactableUserFeedback, 'id'> = {
@@ -105,7 +105,7 @@ export async function POST(_: Request, { params }: RouteContext<'/api/internal/d
             return Response.json({ message: `Random feedback added!` }, { status: 201 })
         }
         case 'new-in-situ': {
-            const client = getFeedbackClient()
+            const client = await getFeedbackClient()
 
             const newId = crypto.randomUUID()
             const feedback: Omit<InSituFeedback, 'id'> = {

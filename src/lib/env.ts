@@ -46,30 +46,17 @@ const KafkaConfigSchema = z.union([
 ])
 
 type ValkeyConfig = z.infer<typeof ValkeyConfigSchema>
-const ValkeyConfigSchema = z.union([
-    /**
-     * Defines a union type for strongly typing Valkey configurations for local and production environments.
-     * The local setup doesn't require authentication but does need the Docker image URL.
-     */
-    z.object({
-        runtimeEnv: z.union([z.literal('dev-gcp'), z.literal('prod-gcp')]),
-        username: z.string(),
-        password: z.string(),
-        tls: z.object({
-            host: z.string(),
-            port: z.coerce.number(),
-        }),
-    }),
-    z.object({
-        runtimeEnv: z.literal('local'),
-        host: z.string(),
-        port: z.coerce.number().optional(),
-    }),
-])
+const ValkeyConfigSchema = z.object({
+    username: z.string().optional(),
+    password: z.string().optional(),
+    host: z.string(),
+    port: z.coerce.number(),
+    tls: z.boolean(),
+})
 
 type ServerEnv = z.infer<typeof ServerEnvSchema>
 const ServerEnvSchema = z.object({
-    useSykInnValkey: z.boolean().default(false),
+    useSykInnValkey: z.stringbool().nullish(),
     valkeyConfig: ValkeyConfigSchema,
     postgresConfig: PostgresConfigSchema,
     kafkaConfig: KafkaConfigSchema,
@@ -89,19 +76,13 @@ const ServerEnvSchema = z.object({
  * the server is configured correctly before receiving any traffic.
  */
 export function getServerEnv(): ServerEnv {
-    const useLocalSykInn = process.env.USE_SYK_INN_VALKEY === 'true'
     const valkeyConfig = {
-        runtimeEnv: process.env.NEXT_PUBLIC_RUNTIME_ENV,
         username: process.env.VALKEY_USERNAME_SYK_INN,
         password: process.env.VALKEY_PASSWORD_SYK_INN,
         host: process.env.VALKEY_HOST_SYK_INN,
-        // Local
-        port: useLocalSykInn ? 6379 : process.env.VALKEY_PORT_SYK_INN,
-        // Cloud
-        tls: {
-            host: process.env.VALKEY_HOST_SYK_INN,
-            port: process.env.VALKEY_PORT_SYK_INN,
-        },
+        port: process.env.VALKEY_PORT_SYK_INN,
+        // If VALKEY_URI_SYK_INN is set, it means we're in nais cloud
+        tls: process.env.VALKEY_URI_SYK_INN != null,
     } satisfies Record<KeysOfUnion<ValkeyConfig>, unknown>
 
     const postgresConfig = {
@@ -121,7 +102,7 @@ export function getServerEnv(): ServerEnv {
     } satisfies Record<KeysOfUnion<KafkaConfig>, unknown>
 
     const parsedEnv = ServerEnvSchema.parse({
-        useSykInnValkey: useLocalSykInn,
+        useSykInnValkey: process.env.USE_SYK_INN_VALKEY,
         valkeyConfig: valkeyConfig,
         postgresConfig: postgresConfig,
         kafkaConfig: kafkaConfig,

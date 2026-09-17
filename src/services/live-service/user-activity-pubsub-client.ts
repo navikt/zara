@@ -1,8 +1,9 @@
 import { logger } from '@navikt/next-logger'
-import Valkey from 'iovalkey'
+import { GlideClient, GlideClientConfiguration, PubSubMsg } from '@valkey/valkey-glide'
 import * as R from 'remeda'
 
-import { subscriberValkeyClient, valkeyClient } from '#services/db/valkey/production-valkey'
+import { spanServerAsync } from '#lib/otel/server'
+import { getGlideClientConfig, realValkey } from '#services/db/valkey/production-valkey'
 import { UserActivity } from '#services/live-service/pages'
 
 const CHANNELS = {
@@ -11,21 +12,26 @@ const CHANNELS = {
 
 export type UserActivityPubSubClient = {
     userActive: (activity: UserActivity) => Promise<void>
-    sub: (channels: { onActivity?: (activity: UserActivity) => Promise<void> }) => Promise<() => Promise<void>>
+    sub: (
+        channels: { onActivity?: (activity: UserActivity) => Promise<void> },
+        signal?: AbortSignal,
+    ) => Promise<() => Promise<void>>
 }
 
-function createUserActivityPubSubClient(valkey: Valkey, subValkey: Valkey): UserActivityPubSubClient {
+function createUserActivityPubSubClient(valkey: GlideClient): UserActivityPubSubClient {
     return {
         userActive: async (activity) => {
-            await valkey.publish(CHANNELS.ACTIVITY, JSON.stringify(activity))
+            await valkey.publish(JSON.stringify(activity), CHANNELS.ACTIVITY)
         },
-        sub: async (channels) => {
+        sub: async (channels, signal) => {
             const toSubscribeTo = [channels.onActivity != null ? CHANNELS.ACTIVITY : null].filter(R.isNonNull)
 
-            logger.info(`Setting up subscriptions to ${toSubscribeTo.join(', ')}`)
-            await subValkey.subscribe(...toSubscribeTo)
+            if (signal?.aborted) return async () => {}
 
-            const handler = async (channel: string, message: string): Promise<void> => {
+            const handler = async (msg: PubSubMsg): Promise<void> => {
+                const channel = String(msg.channel)
+                const message = String(msg.message)
+
                 switch (channel) {
                     case CHANNELS.ACTIVITY:
                         if (channels.onActivity) {
@@ -47,20 +53,34 @@ function createUserActivityPubSubClient(valkey: Valkey, subValkey: Valkey): User
                 }
             }
 
-            subValkey.on('message', handler)
+            logger.info(`Setting up subscriptions to ${toSubscribeTo.join(', ')}`)
+            const subValkey = await GlideClient.createClient({
+                ...getGlideClientConfig(),
+                pubsubSubscriptions: {
+                    channelsAndPatterns: {
+                        [GlideClientConfiguration.PubSubChannelModes.Exact]: new Set(toSubscribeTo),
+                    },
+                    callback: handler,
+                },
+            })
 
-            return async () => {
-                subValkey.removeListener('message', handler)
-
-                await subValkey.unsubscribe()
+            // The client may have disconnected while the connection was being established; close now
+            // so the freshly-created subscriber isn't left to be dropped mid-handshake by glide's core.
+            if (signal?.aborted) {
+                subValkey.close()
+                return async () => {}
             }
+
+            return async () =>
+                spanServerAsync('FeedbackSubClient.unsubscribe', async () => {
+                    subValkey.close()
+                })
         },
     }
 }
 
-export function createUserActivityClient(): UserActivityPubSubClient {
-    const valkey = valkeyClient()
-    const subValkey = subscriberValkeyClient()
+export async function createUserActivityClient(): Promise<UserActivityPubSubClient> {
+    const valkey = await realValkey()
 
-    return createUserActivityPubSubClient(valkey, subValkey)
+    return createUserActivityPubSubClient(valkey)
 }

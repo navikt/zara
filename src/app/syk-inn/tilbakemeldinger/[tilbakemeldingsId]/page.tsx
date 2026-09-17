@@ -15,7 +15,7 @@ async function Page({ params }: PageProps<'/syk-inn/tilbakemeldinger/[tilbakemel
     const { tilbakemeldingsId } = await params
 
     const user = await validateUserSession('TILBAKEMELDINGER')
-    const client = getFeedbackClient()
+    const client = await getFeedbackClient()
     const feedback = await client.byId(tilbakemeldingsId)
 
     if (feedback == null) {

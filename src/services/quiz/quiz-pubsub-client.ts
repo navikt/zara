@@ -1,6 +1,7 @@
 import { logger } from '@navikt/next-logger'
+import { GlideClient, GlideClientConfiguration, PubSubMsg } from '@valkey/valkey-glide'
 
-import { createValkeySubscriber, valkeyClient } from '#services/db/valkey/production-valkey'
+import { getGlideClientConfig, realValkey } from '#services/db/valkey/production-valkey'
 import { QuizEvent } from '#services/quiz/quiz-schema'
 
 const LOBBY_CHANNEL = 'channel:quiz:lobby'
@@ -10,63 +11,81 @@ function sessionChannel(sessionId: string): string {
 }
 
 export async function publishQuizEvent(sessionId: string, event: QuizEvent): Promise<void> {
-    await valkeyClient().publish(sessionChannel(sessionId), JSON.stringify(event))
+    const valkey = await realValkey()
+    await valkey.publish(JSON.stringify(event), sessionChannel(sessionId))
 }
 
 export async function publishLobbyChanged(): Promise<void> {
-    await valkeyClient().publish(LOBBY_CHANNEL, 'changed')
+    const valkey = await realValkey()
+    await valkey.publish('changed', LOBBY_CHANNEL)
 }
 
 /**
- * Subscribes to a single live session's events. Uses a dedicated connection (see
- * {@link createValkeySubscriber}) so concurrent session streams don't interfere with each
- * other. The returned cleanup function quits the connection.
+ * Creates a dedicated subscriber connection listening on a single channel. Valkey GLIDE requires
+ * subscriptions (and their callback) to be declared when the client is created, so each subscriber
+ * owns its own connection; the returned cleanup function closes it.
+ *
+ * `signal` guards the setup race: if the client disconnected while `createClient` was still
+ * connecting, we close the finished client right away instead of leaving it to be dropped by
+ * glide's core (which logs a noisy `Internal client has been dropped` error).
+ */
+async function subscribeToChannel(
+    channel: string,
+    onMessage: (message: string) => void,
+    signal?: AbortSignal,
+): Promise<() => Promise<void>> {
+    if (signal?.aborted) return async () => {}
+
+    const handler = (msg: PubSubMsg): void => {
+        if (String(msg.channel) !== channel) return
+        onMessage(String(msg.message))
+    }
+
+    const sub = await GlideClient.createClient({
+        ...getGlideClientConfig(),
+        pubsubSubscriptions: {
+            channelsAndPatterns: {
+                [GlideClientConfiguration.PubSubChannelModes.Exact]: new Set([channel]),
+            },
+            callback: handler,
+        },
+    })
+
+    // The client may have disconnected while the connection was being established; close now so the
+    // freshly-created subscriber isn't leaked (and isn't dropped mid-handshake by glide's core).
+    if (signal?.aborted) {
+        sub.close()
+        return async () => {}
+    }
+
+    return async () => {
+        sub.close()
+    }
+}
+
+/**
+ * Subscribes to a single live session's events. Uses a dedicated connection so concurrent session
+ * streams don't interfere with each other. The returned cleanup function closes the connection.
  */
 export async function subscribeToQuizSession(
     sessionId: string,
     onEvent: (event: QuizEvent) => void,
+    signal?: AbortSignal,
 ): Promise<() => Promise<void>> {
-    const sub = createValkeySubscriber()
     const channel = sessionChannel(sessionId)
-    try {
-        await sub.subscribe(channel)
-    } catch (e) {
-        await sub.quit().catch(() => {})
-        throw e
-    }
-
-    const handler = (incomingChannel: string, message: string): void => {
-        if (incomingChannel !== channel) return
-        try {
-            onEvent(JSON.parse(message) as QuizEvent)
-        } catch (e) {
-            logger.error(new Error(`Failed to parse quiz event on ${channel}: ${message}`, { cause: e }))
-        }
-    }
-    sub.on('message', handler)
-
-    return async () => {
-        sub.removeListener('message', handler)
-        await sub.quit()
-    }
+    return subscribeToChannel(
+        channel,
+        (message) => {
+            try {
+                onEvent(JSON.parse(message) as QuizEvent)
+            } catch (e) {
+                logger.error(new Error(`Failed to parse quiz event on ${channel}: ${message}`, { cause: e }))
+            }
+        },
+        signal,
+    )
 }
 
-export async function subscribeToLobby(onChange: () => void): Promise<() => Promise<void>> {
-    const sub = createValkeySubscriber()
-    try {
-        await sub.subscribe(LOBBY_CHANNEL)
-    } catch (e) {
-        await sub.quit().catch(() => {})
-        throw e
-    }
-
-    const handler = (incomingChannel: string): void => {
-        if (incomingChannel === LOBBY_CHANNEL) onChange()
-    }
-    sub.on('message', handler)
-
-    return async () => {
-        sub.removeListener('message', handler)
-        await sub.quit()
-    }
+export async function subscribeToLobby(onChange: () => void, signal?: AbortSignal): Promise<() => Promise<void>> {
+    return subscribeToChannel(LOBBY_CHANNEL, () => onChange(), signal)
 }

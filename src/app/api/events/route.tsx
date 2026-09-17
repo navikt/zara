@@ -14,6 +14,7 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     let closed = false
     let cleanSub: () => void
+    const abortController = new AbortController()
 
     const stream = new ReadableStream<Uint8Array>({
         async start(controller) {
@@ -26,18 +27,22 @@ export async function GET(request: NextRequest): Promise<Response> {
                 }
             }
 
-            const pubsub = createUserActivityClient()
-            cleanSub = await pubsub.sub({
-                onActivity: async (activity) => {
-                    if (activity.page !== pageToGetEventsFor) return
-                    if (user.oid === activity.oid) return
+            const pubsub = await createUserActivityClient()
+            cleanSub = await pubsub.sub(
+                {
+                    onActivity: async (activity) => {
+                        if (activity.page !== pageToGetEventsFor) return
+                        if (user.oid === activity.oid) return
 
-                    send(JSON.stringify(activity))
+                        send(JSON.stringify(activity))
+                    },
                 },
-            })
+                abortController.signal,
+            )
         },
 
         cancel() {
+            abortController.abort()
             cleanSub()
             closed = true
         },

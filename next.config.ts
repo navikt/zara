@@ -4,7 +4,15 @@ const nextConfig: NextConfig = {
     output: 'standalone',
     assetPrefix: process.env.NEXT_PUBLIC_ASSET_PREFIX,
     transpilePackages: ['@navikt/syk-zara'],
-    serverExternalPackages: ['@slack/bolt', '@navikt/next-logger', 'next-logger', 'pino', 'pino-socket', 'prom-client'],
+    serverExternalPackages: [
+        '@slack/bolt',
+        '@valkey/valkey-glide',
+        '@navikt/next-logger',
+        'next-logger',
+        'pino',
+        'pino-socket',
+        'prom-client',
+    ],
     // NextJS module tracer misses the `module-sync` export condition (-> require.mjs) for these packages
     outputFileTracingIncludes: {
         '/': [

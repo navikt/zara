@@ -7,11 +7,11 @@ export async function GET(_: Request, { params }: RouteContext<'/quiz/session/[s
     await validateUserSession('TEAM_MEMBER')
     const { sessionId } = await params
 
-    return sseResponse(async (send) => {
+    return sseResponse(async (send, signal) => {
         // Send the current state immediately so a late-joining client renders without waiting.
         const initial = await getClientState(sessionId)
         if (initial) send(JSON.stringify({ type: 'state', state: initial }))
 
-        return subscribeToQuizSession(sessionId, (event) => send(JSON.stringify(event)))
+        return subscribeToQuizSession(sessionId, (event) => send(JSON.stringify(event)), signal)
     })
 }

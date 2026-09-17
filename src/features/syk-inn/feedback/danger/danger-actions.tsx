@@ -11,7 +11,7 @@ import { notifySlack } from '#services/slack/feedback-to-slack'
 
 export async function deleteFeedbackPermanently(id: string): Promise<never> {
     const user = await validateUserSession('TILBAKEMELDINGER')
-    const client = getFeedbackClient()
+    const client = await getFeedbackClient()
 
     const feedback = await client.byId(id)
     if (!feedback) unauthorized()
@@ -25,7 +25,7 @@ export async function deleteFeedbackPermanently(id: string): Promise<never> {
 
 export async function shareToSlack(id: string): Promise<void> {
     const user = await validateUserSession('TILBAKEMELDINGER')
-    const client = getFeedbackClient()
+    const client = await getFeedbackClient()
 
     const feedback = await client.byId(id)
     if (!feedback) unauthorized()

@@ -1,9 +1,9 @@
 import { AdminFeedbackClient, createAdminFeedbackClient } from '@navikt/syk-zara/feedback/admin'
 
-import { valkeyClient } from '#services/db/valkey/production-valkey'
+import { realValkey } from '#services/db/valkey/production-valkey'
 
-export function getFeedbackClient(): AdminFeedbackClient {
-    const valkey = valkeyClient()
+export async function getFeedbackClient(): Promise<AdminFeedbackClient> {
+    const valkey = await realValkey()
 
     return createAdminFeedbackClient(valkey)
 }

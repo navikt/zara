@@ -3,11 +3,18 @@ type Cleanup = () => void | Promise<void>
 
 /**
  * Builds a Server-Sent-Events `Response` from a `start` callback. The callback receives a `send`
- * that frames a string as one SSE `data:` event and returns a cleanup run when the client
- * disconnects. Owns the stream lifecycle + SSE headers so routes only provide their subscribe logic.
+ * that frames a string as one SSE `data:` event and an `AbortSignal` that fires when the client
+ * disconnects, and returns a cleanup run when the client disconnects. Owns the stream lifecycle +
+ * SSE headers so routes only provide their subscribe logic.
+ *
+ * The `signal` lets subscribe logic bail out of a still-in-flight connection setup: in dev
+ * (Fast Refresh, prefetch, EventSource auto-reconnect) clients frequently disconnect mid-setup, and
+ * a subscriber connection created after that point would be dropped by glide's core with a noisy
+ * `Internal client has been dropped` error. Checking the signal lets callers close it cleanly.
  */
-export function sseResponse(start: (send: Send) => Promise<Cleanup> | Cleanup): Response {
+export function sseResponse(start: (send: Send, signal: AbortSignal) => Promise<Cleanup> | Cleanup): Response {
     const encoder = new TextEncoder()
+    const abortController = new AbortController()
     let closed = false
     let canceled = false
     let cleanup: Cleanup | undefined
@@ -23,7 +30,7 @@ export function sseResponse(start: (send: Send) => Promise<Cleanup> | Cleanup): 
                 }
             }
             try {
-                cleanup = await start(send)
+                cleanup = await start(send, abortController.signal)
             } catch (e) {
                 closed = true
                 controller.error(e)
@@ -36,6 +43,7 @@ export function sseResponse(start: (send: Send) => Promise<Cleanup> | Cleanup): 
         cancel() {
             canceled = true
             closed = true
+            abortController.abort()
             void cleanup?.()
         },
     })

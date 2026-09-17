@@ -1,34 +1,20 @@
-import { logger } from '@navikt/next-logger'
-import Valkey from 'iovalkey'
+import { GlideClient, GlideClientConfiguration } from '@valkey/valkey-glide'
 import { lazyNextleton } from 'nextleton'
-import * as R from 'remeda'
 
 import { getServerEnv } from '#lib/env'
+import { raise } from '#lib/ts'
 
-export const valkeyClient = lazyNextleton('valkey-client', () => initializeValkey())
-export const subscriberValkeyClient = lazyNextleton('subscriber-valkey', () => initializeValkey())
+export const realValkey = lazyNextleton('valkey-client', () => GlideClient.createClient(getGlideClientConfig()))
 
-/**
- * Creates a brand-new, dedicated Valkey connection for a single subscriber. A Valkey
- * connection in subscribe mode can't be shared safely (unsubscribing affects every channel
- * on that connection), so anything that subscribes to a short-lived, per-request channel —
- * e.g. one SSE stream per live quiz session — should own its own connection and `.quit()` it
- * on cleanup, rather than reuse the shared {@link subscriberValkeyClient} singleton.
- */
-export function createValkeySubscriber(): Valkey {
-    return initializeValkey()
-}
+export function getGlideClientConfig(): GlideClientConfiguration {
+    const valkeyConfig = getServerEnv().valkeyConfig ?? raise('Valkey config is not set! :(')
 
-function initializeValkey(): Valkey {
-    const valkeyConfig = getServerEnv().valkeyConfig
-
-    const client = new Valkey({
-        ...R.omit(valkeyConfig, ['runtimeEnv']),
-        connectTimeout: 5000,
-        enableReadyCheck: false,
-    })
-
-    client.on('error', (err: Error) => logger.error(err))
-
-    return client
+    return {
+        clientName: 'zara',
+        addresses: [{ host: valkeyConfig.host, port: valkeyConfig.port }],
+        credentials: valkeyConfig.password
+            ? { username: valkeyConfig.username, password: valkeyConfig.password }
+            : undefined,
+        useTLS: valkeyConfig.tls,
+    }
 }

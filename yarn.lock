@@ -351,13 +351,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iovalkey/commands@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@iovalkey/commands@npm:0.1.0"
-  checksum: 10c0/7d6604c3246db94044274de658b94de225deb58d24df1406bafa2a990bc7476eb86e5370ca3eb1374cfc92f9033277d8e4276eebc8a512dfa1973542268deba1
-  languageName: node
-  linkType: hard
-
 "@isaacs/fs-minipass@npm:^4.0.0":
   version: 4.0.1
   resolution: "@isaacs/fs-minipass@npm:4.0.1"
@@ -508,16 +501,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/syk-zara@npm:^2.0.20":
-  version: 2.0.20
-  resolution: "@navikt/syk-zara@npm:2.0.20::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fsyk-zara%2F2.0.20%2Fc8f07260442cad1b9c91655d0b5b3f536bf8e9c1"
+"@navikt/syk-zara@npm:^2.0.21":
+  version: 2.0.21
+  resolution: "@navikt/syk-zara@npm:2.0.21::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fsyk-zara%2F2.0.21%2F1677538d88a7fb2d87f11fa1527ca353ba9aa261"
   peerDependencies:
     "@navikt/pino-logger": "*"
+    "@opentelemetry/api": ^1.9.1
+    "@valkey/valkey-glide": 2
     date-fns: 4
-    iovalkey: 0 || 1
     remeda: "*"
     zod: 4
-  checksum: 10c0/c35e748dbf3903d9d55b199957818b07749db7c1823b94ff6f42e618f5607ea7ce3d0a4a8bbdbc46fdc6f23581e0e4f45d14d90a2f5506d008849249e54dded8
+  checksum: 10c0/8e1b0f8f8ef58130e7550603bfbfffa6d0bbc7a490d8f07913f32e6e10fed03800a0bee0ebd6ee28d71b9f613ad46a7d3f0b5416246349abd8f0295883219e80
   languageName: node
   linkType: hard
 
@@ -957,6 +951,71 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@protobufjs/aspromise@npm:^1.1.1, @protobufjs/aspromise@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@protobufjs/aspromise@npm:1.1.2"
+  checksum: 10c0/a83343a468ff5b5ec6bff36fd788a64c839e48a07ff9f4f813564f58caf44d011cd6504ed2147bf34835bd7a7dd2107052af755961c6b098fd8902b4f6500d0f
+  languageName: node
+  linkType: hard
+
+"@protobufjs/base64@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@protobufjs/base64@npm:1.1.2"
+  checksum: 10c0/eec925e681081af190b8ee231f9bad3101e189abbc182ff279da6b531e7dbd2a56f1f306f37a80b1be9e00aa2d271690d08dcc5f326f71c9eed8546675c8caf6
+  languageName: node
+  linkType: hard
+
+"@protobufjs/codegen@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "@protobufjs/codegen@npm:2.0.5"
+  checksum: 10c0/1b8a2ae56ee60a56e9d205cd4b6072a1503c5069b8ebb905710f974ff0098a0d0700641c137e0a8d98dedf14423156a106a9433695cbf52574810f55000fdcab
+  languageName: node
+  linkType: hard
+
+"@protobufjs/eventemitter@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@protobufjs/eventemitter@npm:1.1.1"
+  checksum: 10c0/8e06193d4629c5e7c09d4f8c2ddba8fc4dfa739f0149f33a1d901568d35bb7b8b5277a4e8452baf3bdd0b302fd599cf255d193267aa93a0a4747e23cd073c4ac
+  languageName: node
+  linkType: hard
+
+"@protobufjs/fetch@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@protobufjs/fetch@npm:1.1.1"
+  dependencies:
+    "@protobufjs/aspromise": "npm:^1.1.1"
+  checksum: 10c0/a497ff5433854e8577f0427983ea39b9113b49a8120f94515291d763327061d2c3013e60e24ea436d091dafae01a0f6eb1867e3b1616045d96a31d8b3c646ed4
+  languageName: node
+  linkType: hard
+
+"@protobufjs/float@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@protobufjs/float@npm:1.0.2"
+  checksum: 10c0/18f2bdede76ffcf0170708af15c9c9db6259b771e6b84c51b06df34a9c339dbbeec267d14ce0bddd20acc142b1d980d983d31434398df7f98eb0c94a0eb79069
+  languageName: node
+  linkType: hard
+
+"@protobufjs/path@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@protobufjs/path@npm:1.1.2"
+  checksum: 10c0/cece0a938e7f5dfd2fa03f8c14f2f1cf8b0d6e13ac7326ff4c96ea311effd5fb7ae0bba754fbf505312af2e38500250c90e68506b97c02360a43793d88a0d8b4
+  languageName: node
+  linkType: hard
+
+"@protobufjs/pool@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@protobufjs/pool@npm:1.1.0"
+  checksum: 10c0/eda2718b7f222ac6e6ad36f758a92ef90d26526026a19f4f17f668f45e0306a5bd734def3f48f51f8134ae0978b6262a5c517c08b115a551756d1a3aadfcf038
+  languageName: node
+  linkType: hard
+
+"@protobufjs/utf8@npm:^1.1.1":
+  version: 1.1.2
+  resolution: "@protobufjs/utf8@npm:1.1.2"
+  checksum: 10c0/975c6e2c0319bd50c17531d186b537a88cb4d3205e3ca9297cd842b631d341da0ee3ff16be8656cd2660756dc753b29c8a6a14c0ad8ed602c1f91ddf22e7b3f3
+  languageName: node
+  linkType: hard
+
 "@rolldown/binding-android-arm-eabi@npm:1.2.6":
   version: 1.2.6
   resolution: "@rolldown/binding-android-arm-eabi@npm:1.2.6"
@@ -1386,6 +1445,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:>=13.7.0":
+  version: 26.5.1
+  resolution: "@types/node@npm:26.5.1"
+  dependencies:
+    undici-types: "npm:~8.9.0"
+  checksum: 10c0/40aa7aa4c099c8a08bf39b5bcb15eaf2cc073666c2191b1d9ac8243ce6b68b23ace904a044c521f6d310b70e94514b531be5f4fc184f141a7ce7f0679ebc7bb3
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:^24.13.3":
   version: 24.13.3
   resolution: "@types/node@npm:24.13.3"
@@ -1568,6 +1636,77 @@ __metadata:
   version: 7.0.2
   resolution: "@typescript/typescript-win32-x64@npm:7.0.2"
   conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@valkey/valkey-glide-darwin-arm64@npm:2.5.2":
+  version: 2.5.2
+  resolution: "@valkey/valkey-glide-darwin-arm64@npm:2.5.2"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@valkey/valkey-glide-darwin-x64@npm:2.5.2":
+  version: 2.5.2
+  resolution: "@valkey/valkey-glide-darwin-x64@npm:2.5.2"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@valkey/valkey-glide-linux-arm64-gnu@npm:2.5.2":
+  version: 2.5.2
+  resolution: "@valkey/valkey-glide-linux-arm64-gnu@npm:2.5.2"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@valkey/valkey-glide-linux-arm64-musl@npm:2.5.2":
+  version: 2.5.2
+  resolution: "@valkey/valkey-glide-linux-arm64-musl@npm:2.5.2"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@valkey/valkey-glide-linux-x64-gnu@npm:2.5.2":
+  version: 2.5.2
+  resolution: "@valkey/valkey-glide-linux-x64-gnu@npm:2.5.2"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@valkey/valkey-glide-linux-x64-musl@npm:2.5.2":
+  version: 2.5.2
+  resolution: "@valkey/valkey-glide-linux-x64-musl@npm:2.5.2"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@valkey/valkey-glide@npm:^2.5.2":
+  version: 2.5.2
+  resolution: "@valkey/valkey-glide@npm:2.5.2"
+  dependencies:
+    "@valkey/valkey-glide-darwin-arm64": "npm:2.5.2"
+    "@valkey/valkey-glide-darwin-x64": "npm:2.5.2"
+    "@valkey/valkey-glide-linux-arm64-gnu": "npm:2.5.2"
+    "@valkey/valkey-glide-linux-arm64-musl": "npm:2.5.2"
+    "@valkey/valkey-glide-linux-x64-gnu": "npm:2.5.2"
+    "@valkey/valkey-glide-linux-x64-musl": "npm:2.5.2"
+    long: "npm:5"
+    protobufjs: "npm:^7.6.3"
+  dependenciesMeta:
+    "@valkey/valkey-glide-darwin-arm64":
+      optional: true
+    "@valkey/valkey-glide-darwin-x64":
+      optional: true
+    "@valkey/valkey-glide-linux-arm64-gnu":
+      optional: true
+    "@valkey/valkey-glide-linux-arm64-musl":
+      optional: true
+    "@valkey/valkey-glide-linux-x64-gnu":
+      optional: true
+    "@valkey/valkey-glide-linux-x64-musl":
+      optional: true
+  checksum: 10c0/d4afcaad9a20014fd497f535fdcce10c484acf9482d1e5e08fd8ea1b19fe203e055967e52c5d15b8330a76c84537f4cd9ce9a85c88890b448d9da9cdee58a466
   languageName: node
   linkType: hard
 
@@ -1816,13 +1955,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cluster-key-slot@npm:^1.1.0":
-  version: 1.1.2
-  resolution: "cluster-key-slot@npm:1.1.2"
-  checksum: 10c0/d7d39ca28a8786e9e801eeb8c770e3c3236a566625d7299a47bb71113fb2298ce1039596acb82590e598c52dbc9b1f088c8f587803e697cb58e1867a95ff94d3
-  languageName: node
-  linkType: hard
-
 "colorette@npm:^2.0.7":
   version: 2.0.20
   resolution: "colorette@npm:2.0.20"
@@ -1900,7 +2032,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:^4.3.4, debug@npm:^4.4.0, debug@npm:^4.4.3":
+"debug@npm:^4.4.0, debug@npm:^4.4.3":
   version: 4.4.3
   resolution: "debug@npm:4.4.3"
   dependencies:
@@ -1909,13 +2041,6 @@ __metadata:
     supports-color:
       optional: true
   checksum: 10c0/d79136ec6c83ecbefd0f6a5593da6a9c91ec4d7ddc4b54c883d6e71ec9accb5f67a1a5e96d00a328196b5b5c86d365e98d8a3a70856aaf16b4e7b1985e67f5a6
-  languageName: node
-  linkType: hard
-
-"denque@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "denque@npm:2.1.0"
-  checksum: 10c0/f9ef81aa0af9c6c614a727cb3bd13c5d7db2af1abf9e6352045b86e85873e629690f6222f4edd49d10e4ccf8f078bbeec0794fafaf61b659c0589d0c511ec363
   languageName: node
   linkType: hard
 
@@ -2329,23 +2454,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iovalkey@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "iovalkey@npm:0.4.0"
-  dependencies:
-    "@iovalkey/commands": "npm:^0.1.0"
-    cluster-key-slot: "npm:^1.1.0"
-    debug: "npm:^4.3.4"
-    denque: "npm:^2.1.0"
-    lodash.defaults: "npm:^4.2.0"
-    lodash.isarguments: "npm:^3.1.0"
-    redis-errors: "npm:^1.2.0"
-    redis-parser: "npm:^3.0.0"
-    standard-as-callback: "npm:^2.1.0"
-  checksum: 10c0/a7ad6225c203d578007ed3b2756486389411d9f9c5421cf9b68251f027b4707afa05b5023abd5aaaa96be10121f5a08c531f6d3b127cd1f258b7558d1ffbb911
-  languageName: node
-  linkType: hard
-
 "ipaddr.js@npm:1.9.1":
   version: 1.9.1
   resolution: "ipaddr.js@npm:1.9.1"
@@ -2700,24 +2808,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.defaults@npm:^4.2.0":
-  version: 4.2.0
-  resolution: "lodash.defaults@npm:4.2.0"
-  checksum: 10c0/d5b77aeb702caa69b17be1358faece33a84497bcca814897383c58b28a2f8dfc381b1d9edbec239f8b425126a3bbe4916223da2a576bb0411c2cefd67df80707
-  languageName: node
-  linkType: hard
-
 "lodash.includes@npm:^4.3.0":
   version: 4.3.0
   resolution: "lodash.includes@npm:4.3.0"
   checksum: 10c0/7ca498b9b75bf602d04e48c0adb842dfc7d90f77bcb2a91a2b2be34a723ad24bc1c8b3683ec6b2552a90f216c723cdea530ddb11a3320e08fa38265703978f4b
-  languageName: node
-  linkType: hard
-
-"lodash.isarguments@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "lodash.isarguments@npm:3.1.0"
-  checksum: 10c0/5e8f95ba10975900a3920fb039a3f89a5a79359a1b5565e4e5b4310ed6ebe64011e31d402e34f577eca983a1fc01ff86c926e3cbe602e1ddfc858fdd353e62d8
   languageName: node
   linkType: hard
 
@@ -2760,6 +2854,13 @@ __metadata:
   version: 4.1.1
   resolution: "lodash.once@npm:4.1.1"
   checksum: 10c0/46a9a0a66c45dd812fcc016e46605d85ad599fe87d71a02f6736220554b52ffbe82e79a483ad40f52a8a95755b0d1077fba259da8bfb6694a7abbf4a48f1fc04
+  languageName: node
+  linkType: hard
+
+"long@npm:5, long@npm:^5.3.2":
+  version: 5.3.2
+  resolution: "long@npm:5.3.2"
+  checksum: 10c0/7130fe1cbce2dca06734b35b70d380ca3f70271c7f8852c922a7c62c86c4e35f0c39290565eca7133c625908d40e126ac57c02b1b1a4636b9457d77e1e60b981
   languageName: node
   linkType: hard
 
@@ -3605,6 +3706,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"protobufjs@npm:^7.6.3":
+  version: 7.6.6
+  resolution: "protobufjs@npm:7.6.6"
+  dependencies:
+    "@protobufjs/aspromise": "npm:^1.1.2"
+    "@protobufjs/base64": "npm:^1.1.2"
+    "@protobufjs/codegen": "npm:^2.0.5"
+    "@protobufjs/eventemitter": "npm:^1.1.1"
+    "@protobufjs/fetch": "npm:^1.1.1"
+    "@protobufjs/float": "npm:^1.0.2"
+    "@protobufjs/path": "npm:^1.1.2"
+    "@protobufjs/pool": "npm:^1.1.0"
+    "@protobufjs/utf8": "npm:^1.1.1"
+    "@types/node": "npm:>=13.7.0"
+    long: "npm:^5.3.2"
+  checksum: 10c0/6c0dc6d4a2801825e39417bc116297d5261c0cf28892a5e28adafc13432331c0cb75603bbe50ad6f2715f3b0a9ce2896591ad6b51fdc8eae2d05b9ac2e4a8ec1
+  languageName: node
+  linkType: hard
+
 "proxy-addr@npm:^2.0.7":
   version: 2.0.7
   resolution: "proxy-addr@npm:2.0.7"
@@ -3717,22 +3837,6 @@ __metadata:
   version: 1.0.0
   resolution: "real-require@npm:1.0.0"
   checksum: 10c0/74d44b360b8b662d29c646f4688da462c4b10243b11d22ff9635395e81951a9c1ed349393411c4911ca6f3474c3e10e812bf4767052706abb863ba59bde0813b
-  languageName: node
-  linkType: hard
-
-"redis-errors@npm:^1.0.0, redis-errors@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "redis-errors@npm:1.2.0"
-  checksum: 10c0/5b316736e9f532d91a35bff631335137a4f974927bb2fb42bf8c2f18879173a211787db8ac4c3fde8f75ed6233eb0888e55d52510b5620e30d69d7d719c8b8a7
-  languageName: node
-  linkType: hard
-
-"redis-parser@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "redis-parser@npm:3.0.0"
-  dependencies:
-    redis-errors: "npm:^1.0.0"
-  checksum: 10c0/ee16ac4c7b2a60b1f42a2cdaee22b005bd4453eb2d0588b8a4939718997ae269da717434da5d570fe0b05030466eeb3f902a58cf2e8e1ca058bf6c9c596f632f
   languageName: node
   linkType: hard
 
@@ -4092,13 +4196,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"standard-as-callback@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "standard-as-callback@npm:2.1.0"
-  checksum: 10c0/012677236e3d3fdc5689d29e64ea8a599331c4babe86956bf92fc5e127d53f85411c5536ee0079c52c43beb0026b5ce7aa1d834dd35dd026e82a15d1bcaead1f
-  languageName: node
-  linkType: hard
-
 "statuses@npm:^2.0.1, statuses@npm:^2.0.2, statuses@npm:~2.0.2":
   version: 2.0.2
   resolution: "statuses@npm:2.0.2"
@@ -4446,6 +4543,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"undici-types@npm:~8.9.0":
+  version: 8.9.0
+  resolution: "undici-types@npm:8.9.0"
+  checksum: 10c0/51c712c20c087368f62c6fc0f2bc49fa76bfe5dec28ff01584bb677ff29b0622569783c02d43e151143808c48c0503f804093bd2c491b10f2a830138034cb451
+  languageName: node
+  linkType: hard
+
 "undici@npm:^8.10.1, undici@npm:^8.4.1":
   version: 8.10.1
   resolution: "undici@npm:8.10.1"
@@ -4665,7 +4769,7 @@ __metadata:
     "@navikt/next-logger": "npm:^5.0.1"
     "@navikt/oasis": "npm:^4.2.0"
     "@navikt/pino-logger": "npm:^5.0.1"
-    "@navikt/syk-zara": "npm:^2.0.20"
+    "@navikt/syk-zara": "npm:^2.0.21"
     "@navikt/tsm-oxfmt": "npm:^0.0.11"
     "@opentelemetry/api": "npm:^1.9.1"
     "@opentelemetry/core": "npm:^2.11.0"
@@ -4675,11 +4779,11 @@ __metadata:
     "@types/pg": "npm:^8.23.1"
     "@types/react": "npm:19.2.18"
     "@types/react-dom": "npm:19.2.5"
+    "@valkey/valkey-glide": "npm:^2.5.2"
     clsx: "npm:^2.1.1"
     croner: "npm:^10.0.1"
     date-fns: "npm:^4.4.0"
     husky: "npm:^9.1.7"
-    iovalkey: "npm:^0.4.0"
     kafkajs: "npm:^2.2.4"
     lint-staged: "npm:^17.4.1"
     motion: "npm:^13.1.1"

@@ -8,7 +8,7 @@ export async function meActive(page: Pages): Promise<'pong' | 'no'> {
     const user = await userInfo()
     if (!user) return 'no'
 
-    const pubsub = createUserActivityClient()
+    const pubsub = await createUserActivityClient()
     await pubsub.userActive({ oid: user.oid, name: user.name, page })
 
     return 'pong'
