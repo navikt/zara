@@ -1,4 +1,3 @@
-import { logger } from '@navikt/next-logger'
 import { requestAzureClientCredentialsToken } from '@navikt/oasis'
 import * as z from 'zod'
 
@@ -102,7 +101,6 @@ export async function fetchInternalAPI<
         const parsed = responseSchema.safeParse(result)
 
         if (!parsed.success) {
-            logger.info(result)
             failSpan(
                 span,
                 'Invalid API response body',

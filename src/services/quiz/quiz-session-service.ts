@@ -1,8 +1,10 @@
 import { logger } from '@navikt/next-logger'
+import { TimeUnit } from '@valkey/valkey-glide'
 import { createHash, randomInt, randomUUID } from 'node:crypto'
 
 import { User } from '#services/auth/user'
-import { valkeyClient } from '#services/db/valkey/production-valkey'
+import { realValkey } from '#services/db/valkey/production-valkey'
+import { hashToRecord } from '#services/db/valkey/utils'
 import { gradeAnswer } from '#services/quiz/quiz-grading'
 import { publishLobbyChanged, publishQuizEvent } from '#services/quiz/quiz-pubsub-client'
 import { maxRevealStep, unmaskedRanks } from '#services/quiz/quiz-reveal'
@@ -70,14 +72,18 @@ function questionLimitSeconds(session: LiveSession, question: Question): number 
 }
 
 async function persistSession(session: LiveSession, ttl: number): Promise<void> {
-    await valkeyClient().set(sessionKey(session.sessionId), JSON.stringify(session), 'EX', ttl)
+    const vk = await realValkey()
+    await vk.set(sessionKey(session.sessionId), JSON.stringify(session), {
+        expiry: { type: TimeUnit.Seconds, count: ttl },
+    })
 }
 
 export async function getSession(sessionId: string): Promise<LiveSession | null> {
-    const raw = await valkeyClient().get(sessionKey(sessionId))
+    const vk = await realValkey()
+    const raw = await vk.get(sessionKey(sessionId))
     if (!raw) return null
     try {
-        return JSON.parse(raw) as LiveSession
+        return JSON.parse(String(raw)) as LiveSession
     } catch (e) {
         logger.error(new Error(`Corrupt quiz session ${sessionId}`, { cause: e }))
         return null
@@ -319,21 +325,23 @@ export async function getClientState(sessionId: string): Promise<ClientSessionSt
     const session = await getSession(sessionId)
     if (!session) return null
 
-    const vk = valkeyClient()
+    const vk = await realValkey()
     const [playersRaw, scoresRaw, correctRaw] = await Promise.all([
-        vk.hgetall(playersKey(sessionId)),
-        vk.hgetall(scoresKey(sessionId)),
-        vk.hgetall(correctKey(sessionId)),
+        vk.hgetall(playersKey(sessionId)).then(hashToRecord),
+        vk.hgetall(scoresKey(sessionId)).then(hashToRecord),
+        vk.hgetall(correctKey(sessionId)).then(hashToRecord),
     ])
 
     const inQuestionPhase = session.status === 'question' || session.status === 'reveal'
     const question = currentQuestion(session)
-    const answersRaw = inQuestionPhase ? await vk.hgetall(answersKey(sessionId, session.currentIndex)) : {}
+    const answersRaw = inQuestionPhase
+        ? hashToRecord(await vk.hgetall(answersKey(sessionId, session.currentIndex)))
+        : {}
     const orderRaw =
         inQuestionPhase && question?.type === 'ordering'
             ? await vk.get(orderKey(sessionId, session.currentIndex))
             : null
-    const displayOrder = orderRaw ? parse<string[]>(orderRaw) : null
+    const displayOrder = orderRaw ? parse<string[]>(String(orderRaw)) : null
     // Only the ended session has a ceremony to track; skip the read entirely otherwise.
     const revealStepRaw = session.status === 'ended' ? await vk.get(revealStepKey(sessionId)) : null
 
@@ -357,23 +365,22 @@ async function broadcast(sessionId: string): Promise<ClientSessionState | null> 
 /* ────────────────────────────── active sessions index ────────────────────────────── */
 
 async function addActiveSession(session: LiveSession): Promise<void> {
-    const vk = valkeyClient()
-    await vk.hset(
-        ACTIVE_SESSIONS_KEY,
-        session.sessionId,
-        JSON.stringify({ quizTitle: session.quizTitle, hostName: session.hostName }),
-    )
+    const vk = await realValkey()
+    await vk.hset(ACTIVE_SESSIONS_KEY, {
+        [session.sessionId]: JSON.stringify({ quizTitle: session.quizTitle, hostName: session.hostName }),
+    })
     await publishLobbyChanged()
 }
 
 async function removeActiveSession(sessionId: string): Promise<void> {
-    await valkeyClient().hdel(ACTIVE_SESSIONS_KEY, sessionId)
+    const vk = await realValkey()
+    await vk.hdel(ACTIVE_SESSIONS_KEY, [sessionId])
     await publishLobbyChanged()
 }
 
 export async function listActiveSessions(): Promise<ActiveSession[]> {
-    const vk = valkeyClient()
-    const raw = await vk.hgetall(ACTIVE_SESSIONS_KEY)
+    const vk = await realValkey()
+    const raw = hashToRecord(await vk.hgetall(ACTIVE_SESSIONS_KEY))
 
     // Read every indexed session in parallel rather than one-by-one.
     const entries = await Promise.all(
@@ -393,7 +400,7 @@ export async function listActiveSessions(): Promise<ActiveSession[]> {
     )
 
     const stale = entries.flatMap((entry) => ('stale' in entry ? [entry.stale] : []))
-    if (stale.length > 0) await vk.hdel(ACTIVE_SESSIONS_KEY, ...stale)
+    if (stale.length > 0) await vk.hdel(ACTIVE_SESSIONS_KEY, stale)
 
     return entries
         .filter((entry): entry is ActiveSession => !('stale' in entry))
@@ -403,7 +410,7 @@ export async function listActiveSessions(): Promise<ActiveSession[]> {
 /* ──────────────────────────────── auto-reveal ──────────────────────────────── */
 
 async function allPlayersAnswered(sessionId: string, index: number): Promise<boolean> {
-    const vk = valkeyClient()
+    const vk = await realValkey()
     const [playerIds, answeredIds] = await Promise.all([
         vk.hkeys(playersKey(sessionId)),
         vk.hkeys(answersKey(sessionId, index)),
@@ -472,8 +479,9 @@ export type JoinResult =
 
 /** The caller's player record for a session, or null if they haven't joined. */
 export async function getSessionPlayer(sessionId: string, userId: string): Promise<StoredPlayer | null> {
-    const raw = await valkeyClient().hget(playersKey(sessionId), userId)
-    return raw ? parsePlayer(userId, raw) : null
+    const vk = await realValkey()
+    const raw = await vk.hget(playersKey(sessionId), userId)
+    return raw ? parsePlayer(userId, String(raw)) : null
 }
 
 /**
@@ -485,7 +493,7 @@ export async function joinSession(sessionId: string, user: User, alias: string):
     const session = await getSession(sessionId)
     if (!session) return { ok: false, reason: 'no-session' }
 
-    const vk = valkeyClient()
+    const vk = await realValkey()
     const existing = await getSessionPlayer(sessionId, user.userId)
     if (existing) return { ok: true, player: existing }
 
@@ -494,12 +502,12 @@ export async function joinSession(sessionId: string, user: User, alias: string):
     if (session.status === 'ended') return { ok: false, reason: 'ended' }
 
     // SADD is the atomic claim: two players racing on the same alias, the second gets 0 back.
-    const claimed = await vk.sadd(aliasesKey(sessionId), alias.toLowerCase())
+    const claimed = await vk.sadd(aliasesKey(sessionId), [alias.toLowerCase()])
     if (claimed === 0) return { ok: false, reason: 'alias-taken' }
     await vk.expire(aliasesKey(sessionId), TTL)
 
     const player: StoredPlayer = { playerId: randomUUID(), alias, name: user.name, oid: user.oid }
-    await vk.hset(playersKey(sessionId), user.userId, JSON.stringify(player))
+    await vk.hset(playersKey(sessionId), { [user.userId]: JSON.stringify(player) })
     await vk.expire(playersKey(sessionId), TTL)
     await publishLobbyChanged()
     await broadcast(sessionId)
@@ -545,7 +553,7 @@ export async function submitAnswer(sessionId: string, user: User, answer: Answer
     const question = currentQuestion(session)
     if (!question || session.currentStartedAt == null) return { ok: false, reason: 'no-question' }
 
-    const vk = valkeyClient()
+    const vk = await realValkey()
     const answersK = answersKey(sessionId, session.currentIndex)
     if (await vk.hexists(answersK, user.userId)) return { ok: false, reason: 'already-answered' }
 
@@ -563,7 +571,7 @@ export async function submitAnswer(sessionId: string, user: User, answer: Answer
         correct: graded.correct,
         points: graded.points,
     }
-    await vk.hset(answersK, user.userId, JSON.stringify(stored))
+    await vk.hset(answersK, { [user.userId]: JSON.stringify(stored) })
     await vk.expire(answersK, TTL)
 
     // Auto-reveal the moment every joined player has answered; otherwise just push the new state.
@@ -581,20 +589,23 @@ export async function revealCurrentQuestion(sessionId: string): Promise<ClientSe
     if (!session) return null
     if (session.status !== 'question') return getClientState(sessionId)
 
-    const vk = valkeyClient()
+    const vk = await realValkey()
     // The status read above is not atomic with the hincrby below, so atomically claim the scoring:
     // without this, two triggers (auto-reveal timeout, last answer, host "Vis fasit") could both pass
     // the guard and double-count every player's points.
-    const claimed = await vk.set(revealLockKey(sessionId, session.currentIndex), '1', 'EX', TTL, 'NX')
+    const claimed = await vk.set(revealLockKey(sessionId, session.currentIndex), '1', {
+        conditionalSet: 'onlyIfDoesNotExist',
+        expiry: { type: TimeUnit.Seconds, count: TTL },
+    })
     if (claimed == null) return getClientState(sessionId)
 
-    const answersRaw = await vk.hgetall(answersKey(sessionId, session.currentIndex))
+    const answersRaw = hashToRecord(await vk.hgetall(answersKey(sessionId, session.currentIndex)))
     const increments: Promise<unknown>[] = []
     for (const [userId, raw] of Object.entries(answersRaw)) {
         const answer = parse<StoredAnswer>(raw)
         if (!answer) continue
-        if (answer.points > 0) increments.push(vk.hincrby(scoresKey(sessionId), userId, answer.points))
-        if (answer.correct) increments.push(vk.hincrby(correctKey(sessionId), userId, 1))
+        if (answer.points > 0) increments.push(vk.hincrBy(scoresKey(sessionId), userId, answer.points))
+        if (answer.correct) increments.push(vk.hincrBy(correctKey(sessionId), userId, 1))
     }
     await Promise.all(increments)
     await Promise.all([vk.expire(scoresKey(sessionId), TTL), vk.expire(correctKey(sessionId), TTL)])
@@ -626,13 +637,15 @@ export async function advanceToNextQuestion(sessionId: string, hostUserId: strin
     // Record when the quiz actually started (first question) for the session-duration stat.
     if (session.playStartedAt == null) session.playStartedAt = session.currentStartedAt
     await persistSession(session, TTL)
-    const vk = valkeyClient()
+    const vk = await realValkey()
     // Clear any leftover answers for this index (e.g. if the host restarts a question).
-    await vk.del(answersKey(sessionId, nextIndex))
+    await vk.del([answersKey(sessionId, nextIndex)])
     // Ordering questions get a single shuffled display order, stored so every client/pod agrees.
     if (nextQuestion.type === 'ordering') {
         const order = shuffle(nextQuestion.items.map((it) => it.id))
-        await vk.set(orderKey(sessionId, nextIndex), JSON.stringify(order), 'EX', TTL)
+        await vk.set(orderKey(sessionId, nextIndex), JSON.stringify(order), {
+            expiry: { type: TimeUnit.Seconds, count: TTL },
+        })
     }
     // The lobby list only reflects lobby→started and joins, so only the first question needs to
     // notify it — later advances would just fan out a needless refresh to every lobby viewer.
@@ -656,11 +669,11 @@ export async function endSession(
     // answers aren't dropped from the final leaderboard (scoring otherwise only happens on reveal).
     if (session.status === 'question') await revealCurrentQuestion(sessionId)
 
-    const vk = valkeyClient()
+    const vk = await realValkey()
     const [playersRaw, scoresRaw, correctRaw] = await Promise.all([
-        vk.hgetall(playersKey(sessionId)),
-        vk.hgetall(scoresKey(sessionId)),
-        vk.hgetall(correctKey(sessionId)),
+        vk.hgetall(playersKey(sessionId)).then(hashToRecord),
+        vk.hgetall(scoresKey(sessionId)).then(hashToRecord),
+        vk.hgetall(correctKey(sessionId)).then(hashToRecord),
     ])
     const ranked = rankPlayers(parsePlayers(playersRaw), scoresRaw, correctRaw, session.content.questions.length)
 
@@ -669,7 +682,7 @@ export async function endSession(
     // Keep the ended session around briefly so the final leaderboard stays viewable.
     await persistSession(session, ENDED_TTL)
     // The podium ceremony starts masked, however the previous run of this quiz ended.
-    await vk.set(revealStepKey(sessionId), '0', 'EX', ENDED_TTL)
+    await vk.set(revealStepKey(sessionId), '0', { expiry: { type: TimeUnit.Seconds, count: ENDED_TTL } })
     await removeActiveSession(sessionId)
     await broadcast(sessionId)
 
@@ -703,7 +716,7 @@ export async function revealNextPlace(sessionId: string, hostUserId: string): Pr
     if (!session || session.hostUserId !== hostUserId) return null
     if (session.status !== 'ended') return getClientState(sessionId)
 
-    const vk = valkeyClient()
+    const vk = await realValkey()
     await vk.incr(revealStepKey(sessionId))
     await vk.expire(revealStepKey(sessionId), ENDED_TTL)
 

@@ -2,8 +2,8 @@ import { faker } from '@faker-js/faker'
 import { logger } from '@navikt/next-logger'
 import { InSituFeedback, ContactableUserFeedback } from '@navikt/syk-zara/feedback'
 import { AdminFeedbackClient } from '@navikt/syk-zara/feedback/admin'
+import { GlideClient } from '@valkey/valkey-glide'
 import { subDays } from 'date-fns'
-import Valkey from 'iovalkey'
 import * as R from 'remeda'
 
 import { bundledEnv } from '#lib/env'
@@ -84,12 +84,19 @@ function insertSmallInSitu(timestamp: string): Omit<InSituFeedback, 'id'> {
     } satisfies Omit<InSituFeedback, 'id'>
 }
 
-export async function clearDevelopmentFeedback(valkey: Valkey): Promise<void> {
+export async function clearDevelopmentFeedback(valkey: GlideClient): Promise<void> {
     if (bundledEnv.runtimeEnv !== 'local') {
         raise('⚠️☠️🚨 You are trying to clear feedback in a non-development environment! 🚨☠️⚠️')
     }
 
-    const feedbackKeys = await valkey.keys(`feedback:*`)
+    const feedbackKeys: string[] = []
+    let cursor = '0'
+    do {
+        const [nextCursor, keys] = await valkey.scan(cursor, { match: 'feedback:*' })
+        feedbackKeys.push(...keys.map(String))
+        cursor = String(nextCursor)
+    } while (cursor !== '0')
+
     logger.warn(`Deleting all feedback entries (${feedbackKeys.length}) in Valkey...`)
-    feedbackKeys.forEach((key) => valkey.del(key))
+    if (feedbackKeys.length > 0) await valkey.del(feedbackKeys)
 }

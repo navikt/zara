@@ -13,7 +13,7 @@ async function Page(): Promise<ReactElement> {
      */
     const user = await validateUserSession('BRUKSVILKÅR')
 
-    const client = getBruksvilkarClient()
+    const client = await getBruksvilkarClient()
     const bruksvilkar = await client.all()
 
     return (

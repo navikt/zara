@@ -14,7 +14,7 @@ export async function redactFeedbackContent(
     redactLocations: [number, number][],
 ): Promise<{ redacted: boolean }> {
     const user = await validateUserSession('TILBAKEMELDINGER')
-    const client = getFeedbackClient()
+    const client = await getFeedbackClient()
     const feedback = await client.byId(id)
     if (!feedback) unauthorized()
 

@@ -16,7 +16,7 @@ async function Page(): Promise<ReactElement> {
      */
     const user = await validateUserSession('TILBAKEMELDINGER')
 
-    const client = getFeedbackClient()
+    const client = await getFeedbackClient()
     const feedback = await client.all()
 
     return (

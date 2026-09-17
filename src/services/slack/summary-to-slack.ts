@@ -78,7 +78,7 @@ async function getDailySummaryStats(): Promise<{
     yesterdayCount: number
     totalCount: number
 }> {
-    const client = getFeedbackClient()
+    const client = await getFeedbackClient()
 
     const all = await client.all()
 

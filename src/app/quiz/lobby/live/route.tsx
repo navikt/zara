@@ -6,7 +6,7 @@ import { listActiveSessions } from '#services/quiz/quiz-session-service'
 export async function GET(): Promise<Response> {
     await validateUserSession('TEAM_MEMBER')
 
-    return sseResponse(async (send) => {
+    return sseResponse(async (send, signal) => {
         const sendSessions = async (): Promise<void> =>
             send(JSON.stringify({ type: 'sessions', sessions: await listActiveSessions() }))
 
@@ -14,6 +14,6 @@ export async function GET(): Promise<Response> {
         await sendSessions()
         return subscribeToLobby(() => {
             void sendSessions()
-        })
+        }, signal)
     })
 }
