@@ -25,6 +25,7 @@ const QuestionBaseSchema = z.object({
 
 export const MultipleChoiceQuestionSchema = QuestionBaseSchema.extend({
     type: z.literal('multiple-choice'),
+    shuffleChoices: z.boolean().default(false),
     choices: z
         .array(ChoiceSchema)
         .min(2)

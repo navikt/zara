@@ -25,6 +25,7 @@ const LEGACY_QUIZ_CONTENT: QuizContent = {
         {
             id: '11111111-1111-4111-8111-111111111111',
             type: 'multiple-choice',
+            shuffleChoices: false,
             text: 'Hvilken by er hovedstaden i Norge?',
             timeLimitSeconds: null,
             imageId: null,

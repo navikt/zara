@@ -10,6 +10,7 @@ const base = { id: 'q1', text: 'Spørsmål', timeLimitSeconds: null, imageId: nu
 const mc: MultipleChoiceQuestion = {
     ...base,
     type: 'multiple-choice',
+    shuffleChoices: false,
     choices: [
         { id: 'a', text: 'A', correct: false },
         { id: 'b', text: 'B', correct: true },

@@ -1,7 +1,7 @@
 'use client'
 
 import { PlusIcon, TrashIcon } from '@navikt/aksel-icons'
-import { Button, Radio, RadioGroup, TextField } from '@navikt/ds-react'
+import { Button, Radio, RadioGroup, Switch, TextField } from '@navikt/ds-react'
 import React, { ReactElement } from 'react'
 
 import { EditorProps } from '#features/quiz/question-types'
@@ -64,6 +64,13 @@ function MultipleChoiceEditor({ draft, onChange }: EditorProps<'multiple-choice'
                     </Button>
                 </div>
             )}
+            <Switch
+                checked={draft.shuffleChoices}
+                onChange={(e) => onChange({ shuffleChoices: e.target.checked })}
+                description="Svaralternativene vises i tilfeldig rekkefølge når quizen spilles."
+            >
+                Bland svaralternativene
+            </Switch>
         </>
     )
 }
