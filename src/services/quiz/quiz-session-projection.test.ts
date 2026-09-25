@@ -9,6 +9,7 @@ const CONTENT: QuizContent = {
         {
             id: 'q1',
             type: 'multiple-choice',
+            shuffleChoices: false,
             text: 'Hva er hovedstaden i Norge?',
             timeLimitSeconds: null,
             imageId: null,

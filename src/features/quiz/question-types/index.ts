@@ -29,7 +29,7 @@ import TextReveal from './text/Reveal'
 /** Shared, editable fields every draft question carries. */
 export type DraftBase = { id: string; text: string; timeLimitSeconds: number | null; imageId: string | null }
 
-export type DraftMultipleChoice = DraftBase & { type: 'multiple-choice'; choices: Choice[] }
+export type DraftMultipleChoice = DraftBase & { type: 'multiple-choice'; choices: Choice[]; shuffleChoices: boolean }
 export type DraftOrdering = DraftBase & { type: 'ordering'; items: OrderingItem[] }
 export type DraftSlider = DraftBase & {
     type: 'slider'
@@ -96,6 +96,7 @@ export const QUESTION_TYPES: Record<QuestionType, QuestionTypeModule> = {
         blankDraft: (base) => ({
             ...base,
             type: 'multiple-choice',
+            shuffleChoices: true,
             choices: [
                 { id: uuid(), text: '', correct: true },
                 { id: uuid(), text: '', correct: false },
@@ -164,6 +165,7 @@ export function draftToQuestion(draft: DraftQuestion): Question {
             return {
                 ...base,
                 type: 'multiple-choice',
+                shuffleChoices: draft.shuffleChoices,
                 choices: draft.choices.map((c) => ({ id: c.id, text: c.text.trim(), correct: c.correct })),
             }
         case 'ordering':
@@ -202,7 +204,12 @@ export function questionToDraft(question: Question): DraftQuestion {
     }
     switch (question.type) {
         case 'multiple-choice':
-            return { ...base, type: 'multiple-choice', choices: question.choices.map((c) => ({ ...c })) }
+            return {
+                ...base,
+                type: 'multiple-choice',
+                choices: question.choices.map((c) => ({ ...c })),
+                shuffleChoices: question.shuffleChoices,
+            }
         case 'ordering':
             return { ...base, type: 'ordering', items: question.items.map((it) => ({ ...it })) }
         case 'slider':

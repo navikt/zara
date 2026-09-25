@@ -40,7 +40,7 @@ const revealStepKey = (id: string): string => `quiz:session:${id}:reveal-step`
 const answersKey = (id: string, index: number): string => `quiz:session:${id}:answers:${index}`
 const scoresKey = (id: string): string => `quiz:session:${id}:scores`
 const correctKey = (id: string): string => `quiz:session:${id}:correct`
-/** The once-computed shuffled display order (item ids) for an ordering question at `index`. */
+/** The once-computed shuffled display order (choice/item ids) for a question at `index`. */
 const orderKey = (id: string, index: number): string => `quiz:session:${id}:order:${index}`
 /** Set once when a question is scored, so concurrent reveal triggers can't double-count points. */
 const revealLockKey = (id: string, index: number): string => `quiz:session:${id}:revealed:${index}`
@@ -173,26 +173,25 @@ function toLeaderboardEntries(ranked: RankedPlayer[], unmasked: Set<number> | 'a
 }
 
 /**
- * Builds the answer-hiding {@link PublicQuestion} for a question. For ordering questions it uses the
+ * Builds the answer-hiding {@link PublicQuestion} for a question. Shuffled questions use the
  * `displayOrder` (item ids) computed once when the question started, so every client sees the same shuffle.
  */
 function toPublicQuestion(question: Question, displayOrder: string[] | null): PublicQuestion {
     const base = { id: question.id, text: question.text, imageId: question.imageId }
     switch (question.type) {
         case 'multiple-choice':
-            return {
-                ...base,
-                type: 'multiple-choice',
-                choices: question.choices.map((choice) => ({ id: choice.id, text: choice.text })),
-            }
         case 'ordering': {
-            const byId = new Map(question.items.map((it) => [it.id, it] as const))
-            const order = displayOrder?.length ? displayOrder : question.items.map((it) => it.id)
+            const source = question.type === 'ordering' ? question.items : question.choices
+            const byId = new Map(source.map((it) => [it.id, it] as const))
+            const shuffled = question.type === 'ordering' || question.shuffleChoices
+            const order = shuffled && displayOrder?.length ? displayOrder : source.map((it) => it.id)
             const items = order.flatMap((id) => {
                 const item = byId.get(id)
                 return item ? [{ id: item.id, text: item.text }] : []
             })
-            return { ...base, type: 'ordering', items }
+            return question.type === 'ordering'
+                ? { ...base, type: 'ordering', items }
+                : { ...base, type: 'multiple-choice', choices: items }
         }
         case 'slider':
             return {
@@ -338,7 +337,8 @@ export async function getClientState(sessionId: string): Promise<ClientSessionSt
         ? hashToRecord(await vk.hgetall(answersKey(sessionId, session.currentIndex)))
         : {}
     const orderRaw =
-        inQuestionPhase && question?.type === 'ordering'
+        inQuestionPhase &&
+        (question?.type === 'ordering' || (question?.type === 'multiple-choice' && question.shuffleChoices))
             ? await vk.get(orderKey(sessionId, session.currentIndex))
             : null
     const displayOrder = orderRaw ? parse<string[]>(String(orderRaw)) : null
@@ -636,17 +636,19 @@ export async function advanceToNextQuestion(sessionId: string, hostUserId: strin
     session.currentStartedAt = Date.now()
     // Record when the quiz actually started (first question) for the session-duration stat.
     if (session.playStartedAt == null) session.playStartedAt = session.currentStartedAt
-    await persistSession(session, TTL)
     const vk = await realValkey()
     // Clear any leftover answers for this index (e.g. if the host restarts a question).
     await vk.del([answersKey(sessionId, nextIndex)])
-    // Ordering questions get a single shuffled display order, stored so every client/pod agrees.
-    if (nextQuestion.type === 'ordering') {
-        const order = shuffle(nextQuestion.items.map((it) => it.id))
+    // Store the shuffle before publishing the question so every client/pod sees the same order.
+    if (nextQuestion.type === 'ordering' || (nextQuestion.type === 'multiple-choice' && nextQuestion.shuffleChoices)) {
+        const items = nextQuestion.type === 'ordering' ? nextQuestion.items : nextQuestion.choices
+        const order = shuffle(items.map((it) => it.id))
         await vk.set(orderKey(sessionId, nextIndex), JSON.stringify(order), {
+            conditionalSet: 'onlyIfDoesNotExist',
             expiry: { type: TimeUnit.Seconds, count: TTL },
         })
     }
+    await persistSession(session, TTL)
     // The lobby list only reflects lobby→started and joins, so only the first question needs to
     // notify it — later advances would just fan out a needless refresh to every lobby viewer.
     if (nextIndex === 0) await publishLobbyChanged()
