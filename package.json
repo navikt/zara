@@ -25,7 +25,7 @@
         "@navikt/ds-react": "^8.16.2",
         "@navikt/ds-tailwind": "^8.16.2",
         "@navikt/next-logger": "^5.0.1",
-        "@navikt/oasis": "^4.2.0",
+        "@navikt/oasis": "^4.2.2",
         "@navikt/pino-logger": "^5.0.1",
         "@navikt/syk-zara": "^2.0.21",
         "@navikt/tsm-oxfmt": "^0.0.11",
