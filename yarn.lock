@@ -1639,58 +1639,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@valkey/valkey-glide-darwin-arm64@npm:2.5.2":
-  version: 2.5.2
-  resolution: "@valkey/valkey-glide-darwin-arm64@npm:2.5.2"
+"@valkey/valkey-glide-darwin-arm64@npm:2.5.3":
+  version: 2.5.3
+  resolution: "@valkey/valkey-glide-darwin-arm64@npm:2.5.3"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@valkey/valkey-glide-darwin-x64@npm:2.5.2":
-  version: 2.5.2
-  resolution: "@valkey/valkey-glide-darwin-x64@npm:2.5.2"
+"@valkey/valkey-glide-darwin-x64@npm:2.5.3":
+  version: 2.5.3
+  resolution: "@valkey/valkey-glide-darwin-x64@npm:2.5.3"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@valkey/valkey-glide-linux-arm64-gnu@npm:2.5.2":
-  version: 2.5.2
-  resolution: "@valkey/valkey-glide-linux-arm64-gnu@npm:2.5.2"
+"@valkey/valkey-glide-linux-arm64-gnu@npm:2.5.3":
+  version: 2.5.3
+  resolution: "@valkey/valkey-glide-linux-arm64-gnu@npm:2.5.3"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@valkey/valkey-glide-linux-arm64-musl@npm:2.5.2":
-  version: 2.5.2
-  resolution: "@valkey/valkey-glide-linux-arm64-musl@npm:2.5.2"
+"@valkey/valkey-glide-linux-arm64-musl@npm:2.5.3":
+  version: 2.5.3
+  resolution: "@valkey/valkey-glide-linux-arm64-musl@npm:2.5.3"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@valkey/valkey-glide-linux-x64-gnu@npm:2.5.2":
-  version: 2.5.2
-  resolution: "@valkey/valkey-glide-linux-x64-gnu@npm:2.5.2"
+"@valkey/valkey-glide-linux-x64-gnu@npm:2.5.3":
+  version: 2.5.3
+  resolution: "@valkey/valkey-glide-linux-x64-gnu@npm:2.5.3"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@valkey/valkey-glide-linux-x64-musl@npm:2.5.2":
-  version: 2.5.2
-  resolution: "@valkey/valkey-glide-linux-x64-musl@npm:2.5.2"
+"@valkey/valkey-glide-linux-x64-musl@npm:2.5.3":
+  version: 2.5.3
+  resolution: "@valkey/valkey-glide-linux-x64-musl@npm:2.5.3"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@valkey/valkey-glide@npm:^2.5.2":
-  version: 2.5.2
-  resolution: "@valkey/valkey-glide@npm:2.5.2"
+"@valkey/valkey-glide@npm:^2.5.3":
+  version: 2.5.3
+  resolution: "@valkey/valkey-glide@npm:2.5.3"
   dependencies:
-    "@valkey/valkey-glide-darwin-arm64": "npm:2.5.2"
-    "@valkey/valkey-glide-darwin-x64": "npm:2.5.2"
-    "@valkey/valkey-glide-linux-arm64-gnu": "npm:2.5.2"
-    "@valkey/valkey-glide-linux-arm64-musl": "npm:2.5.2"
-    "@valkey/valkey-glide-linux-x64-gnu": "npm:2.5.2"
-    "@valkey/valkey-glide-linux-x64-musl": "npm:2.5.2"
+    "@valkey/valkey-glide-darwin-arm64": "npm:2.5.3"
+    "@valkey/valkey-glide-darwin-x64": "npm:2.5.3"
+    "@valkey/valkey-glide-linux-arm64-gnu": "npm:2.5.3"
+    "@valkey/valkey-glide-linux-arm64-musl": "npm:2.5.3"
+    "@valkey/valkey-glide-linux-x64-gnu": "npm:2.5.3"
+    "@valkey/valkey-glide-linux-x64-musl": "npm:2.5.3"
     long: "npm:5"
     protobufjs: "npm:^7.6.3"
   dependenciesMeta:
@@ -1706,7 +1706,7 @@ __metadata:
       optional: true
     "@valkey/valkey-glide-linux-x64-musl":
       optional: true
-  checksum: 10c0/d4afcaad9a20014fd497f535fdcce10c484acf9482d1e5e08fd8ea1b19fe203e055967e52c5d15b8330a76c84537f4cd9ce9a85c88890b448d9da9cdee58a466
+  checksum: 10c0/e2d0e165f7c0d7b6d1f362c7b41fb20afb85b53fe92f43e853bb241e5c585c40105d7776932cd803849a264ef55c8ddcd66d3711dc5998591339cecdcc488e6b
   languageName: node
   linkType: hard
 
@@ -4779,7 +4779,7 @@ __metadata:
     "@types/pg": "npm:^8.23.1"
     "@types/react": "npm:19.2.18"
     "@types/react-dom": "npm:19.2.5"
-    "@valkey/valkey-glide": "npm:^2.5.2"
+    "@valkey/valkey-glide": "npm:^2.5.3"
     clsx: "npm:^2.1.1"
     croner: "npm:^10.0.1"
     date-fns: "npm:^4.4.0"
