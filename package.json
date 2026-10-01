@@ -27,7 +27,7 @@
         "@navikt/next-logger": "^5.0.1",
         "@navikt/oasis": "^4.2.0",
         "@navikt/pino-logger": "^5.0.1",
-        "@navikt/syk-zara": "^2.0.21",
+        "@navikt/syk-zara": "^2.0.23",
         "@navikt/tsm-oxfmt": "^0.0.11",
         "@opentelemetry/api": "^1.9.1",
         "@opentelemetry/core": "^2.11.0",
