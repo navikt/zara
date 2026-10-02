@@ -501,9 +501,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/syk-zara@npm:^2.0.21":
-  version: 2.0.21
-  resolution: "@navikt/syk-zara@npm:2.0.21::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fsyk-zara%2F2.0.21%2F1677538d88a7fb2d87f11fa1527ca353ba9aa261"
+"@navikt/syk-zara@npm:^2.0.23":
+  version: 2.0.23
+  resolution: "@navikt/syk-zara@npm:2.0.23::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Fsyk-zara%2F2.0.23%2F1101aa330069f5402dbe97e13ec1bea6852a994e"
   peerDependencies:
     "@navikt/pino-logger": "*"
     "@opentelemetry/api": ^1.9.1
@@ -511,7 +511,7 @@ __metadata:
     date-fns: 4
     remeda: "*"
     zod: 4
-  checksum: 10c0/8e1b0f8f8ef58130e7550603bfbfffa6d0bbc7a490d8f07913f32e6e10fed03800a0bee0ebd6ee28d71b9f613ad46a7d3f0b5416246349abd8f0295883219e80
+  checksum: 10c0/18e6805f6e5de779e231ef0b5022a54eade9d20714088f16a83c1dfee77b47149ae86d3c555ef5bc3ca4286430aafc7d37e5e227b336999da84edecb123a0aa9
   languageName: node
   linkType: hard
 
@@ -4769,7 +4769,7 @@ __metadata:
     "@navikt/next-logger": "npm:^5.0.1"
     "@navikt/oasis": "npm:^4.2.0"
     "@navikt/pino-logger": "npm:^5.0.1"
-    "@navikt/syk-zara": "npm:^2.0.21"
+    "@navikt/syk-zara": "npm:^2.0.23"
     "@navikt/tsm-oxfmt": "npm:^0.0.11"
     "@opentelemetry/api": "npm:^1.9.1"
     "@opentelemetry/core": "npm:^2.11.0"
