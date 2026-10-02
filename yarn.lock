@@ -474,15 +474,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/oasis@npm:^4.2.0":
-  version: 4.2.0
-  resolution: "@navikt/oasis@npm:4.2.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Foasis%2F4.2.0%2Fb12e5ab20d3bce926871d205fafd1620da001942"
+"@navikt/oasis@npm:^4.2.2":
+  version: 4.2.2
+  resolution: "@navikt/oasis@npm:4.2.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Foasis%2F4.2.2%2F3c43e1e89bb2d46646a9a2aaf27972a024377a6f"
   dependencies:
-    "@navikt/texas": "npm:^4.2.0"
+    "@navikt/texas": "npm:^4.2.2"
     "@opentelemetry/api": "npm:^1.9.1"
-    "@prometheus-io/client": "npm:^0.16.0"
-    jose: "npm:^6.2.9"
-  checksum: 10c0/c468e8b117c46144eccf45deff5f6c69ef1718531b99c495c6998e43e5f40234c8b686112b1a6611a3b9bb23524a955fa01830837c6ae23e9d4eb842348517ce
+    "@prometheus-io/client": "npm:^0.16.1"
+    jose: "npm:^6.2.10"
+  checksum: 10c0/e9b3b02585104c430535d5a61256abf8b38c7dfaefb8cbd92647951c03d0cd06eb7886b822a5f7cdfa39e984d44d99e25a4f9d89770f1376a500cbc94475e224
   languageName: node
   linkType: hard
 
@@ -515,10 +515,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@navikt/texas@npm:^4.2.0":
-  version: 4.2.0
-  resolution: "@navikt/texas@npm:4.2.0::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Ftexas%2F4.2.0%2F5f1e0e66d7d06742ce47b4b9738fe17b4f97d6ac"
-  checksum: 10c0/b772f9bca0984d51020548545dcc393fdbc2333b0f9dd22237d8a3bc64aede6a410ab61a7277486845ad85dbdbac5f2fbd1fbeeeb07e7c666524c5721001b9a2
+"@navikt/texas@npm:^4.2.2":
+  version: 4.2.2
+  resolution: "@navikt/texas@npm:4.2.2::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40navikt%2Ftexas%2F4.2.2%2F862d743a1df21630a007a0d2d2a36a74dd8b5187"
+  checksum: 10c0/3b6d0ea1660b23094eb6ee60d45ec41c630df2ba1db6a15b9702f8b7ee8927912564f3896262a59329ed9b8c573684ccc34fb2335787311c74a973aa67537252
   languageName: node
   linkType: hard
 
@@ -941,7 +941,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prometheus-io/client@npm:^0.16.0":
+"@prometheus-io/client@npm:^0.16.1":
   version: 0.16.1
   resolution: "@prometheus-io/client@npm:0.16.1"
   dependencies:
@@ -2484,10 +2484,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jose@npm:^6.2.9":
-  version: 6.2.10
-  resolution: "jose@npm:6.2.10"
-  checksum: 10c0/799fd8d3d92fe748ebe1f57dbd3dfd917d2e61d9fb39912c72cc674ae61d69414b7cc0ce773df8a0160e849926fc31853aec9caab88c481563d5a8ab6558e107
+"jose@npm:^6.2.10":
+  version: 6.2.12
+  resolution: "jose@npm:6.2.12"
+  checksum: 10c0/e8582b946fabcae228819982dda4849908c353e9cb098f02f773635aa0d2f4917f17484c7441b8d526e564013b4cf96951455c94f81d0a39ee765bad44ce293d
   languageName: node
   linkType: hard
 
@@ -4767,7 +4767,7 @@ __metadata:
     "@navikt/ds-react": "npm:^8.16.2"
     "@navikt/ds-tailwind": "npm:^8.16.2"
     "@navikt/next-logger": "npm:^5.0.1"
-    "@navikt/oasis": "npm:^4.2.0"
+    "@navikt/oasis": "npm:^4.2.2"
     "@navikt/pino-logger": "npm:^5.0.1"
     "@navikt/syk-zara": "npm:^2.0.21"
     "@navikt/tsm-oxfmt": "npm:^0.0.11"
