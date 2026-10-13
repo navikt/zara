@@ -63,6 +63,7 @@ spec:
         - application: syk-inn-api
         - application: regulus-maximus
         - application: tsm-pdl-cache
+        - application: tsm-oppgave
         - application: syfohelsenettproxy
           namespace: teamsykmelding
         - application: logging

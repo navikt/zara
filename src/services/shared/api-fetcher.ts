@@ -4,13 +4,14 @@ import * as z from 'zod'
 import { bundledEnv } from '#lib/env'
 import { failSpan, spanServerAsync } from '#lib/otel/server'
 
-type ValidAPI = 'syfohelsenettproxy' | 'tsm-pdl-cache'
+type ValidAPI = 'syfohelsenettproxy' | 'tsm-pdl-cache' | 'tsm-oppgave'
 
 type ApiConfig = {
     namespace: string
 }
 
 const internalApis: Record<ValidAPI, ApiConfig> = {
+    'tsm-oppgave': { namespace: 'tsm' },
     'tsm-pdl-cache': { namespace: 'tsm' },
     syfohelsenettproxy: { namespace: 'teamsykmelding' },
 }

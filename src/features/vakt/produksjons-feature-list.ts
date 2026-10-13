@@ -1,4 +1,11 @@
-import { HeadHeartIcon, HospitalIcon, LayersIcon, PersonIcon, PillRectangleIcon } from '@navikt/aksel-icons'
+import {
+    HeadHeartIcon,
+    HospitalIcon,
+    LayersIcon,
+    TasklistIcon,
+    PersonIcon,
+    PillRectangleIcon,
+} from '@navikt/aksel-icons'
 
 export type VaktFeature = {
     Icon: typeof PersonIcon
@@ -30,6 +37,13 @@ export const produksjonsFeatures = {
             href: '/vakt/hpr-lookup',
             description: 'Søk på HPR-nummer og se informasjon og helsepersonell i HPR-registeret og PDL.',
             auditlog: false,
+        } satisfies VaktFeature,
+        oppgaveLookup: {
+            Icon: TasklistIcon,
+            title: 'Slå opp oppgaver (Foreløpig kun i dev)',
+            href: '/vakt/oppgave-lookup',
+            description: 'Søk på og se oppgaver.',
+            auditlog: true,
         } satisfies VaktFeature,
     },
     technical: {
