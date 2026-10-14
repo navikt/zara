@@ -83,3 +83,4 @@ spec:
       memory: 200Mi
   envFrom:
     - secret: tsm-zara-secrets
+    - secret: tsm-ident-hash
