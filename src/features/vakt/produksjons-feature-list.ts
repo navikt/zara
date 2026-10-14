@@ -1,4 +1,11 @@
-import { HeadHeartIcon, HospitalIcon, LayersIcon, PersonIcon, PillRectangleIcon } from '@navikt/aksel-icons'
+import {
+    HashtagIcon,
+    HeadHeartIcon,
+    HospitalIcon,
+    LayersIcon,
+    PersonIcon,
+    PillRectangleIcon,
+} from '@navikt/aksel-icons'
 
 export type VaktFeature = {
     Icon: typeof PersonIcon
@@ -53,6 +60,13 @@ export const produksjonsFeatures = {
             href: '/vakt/poison-pill',
             description:
                 "Marker en sykmelding som 'poison pill', som betyr at den ikke skal prosesseres i syk-inn-api.",
+            auditlog: false,
+        } satisfies VaktFeature,
+        hashIdents: {
+            Icon: HashtagIcon,
+            title: 'Hash ident med secrets',
+            href: '/vakt/hash-idents',
+            description: 'For oppslag i BigQuery når du trenger samme hashing som i produksjon.',
             auditlog: false,
         } satisfies VaktFeature,
     },
