@@ -15,7 +15,7 @@ export const oppgaveApiService = {
 
         return fetchInternalAPI({
             api: 'tsm-oppgave',
-            path: `/api/oppgaver/`,
+            path: `/api/oppgaver`,
             method: 'GET',
             headers: { ident: ident },
             responseSchema: OppgaveSchema,
