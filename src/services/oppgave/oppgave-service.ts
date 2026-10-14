@@ -1,31 +1,32 @@
 import { logger } from '@navikt/next-logger'
 
 import { bundledEnv } from '#lib/env'
-import { ApiFetchErrors, fetchInternalAPI } from '#services/shared/api-fetcher'
+import { raise } from '#lib/ts'
+import { getOboToken } from '#services/apps/common/obo'
+import { createOppgaveMock } from '#services/oppgave/oppgave-mock-data'
+import { Oppgave, OppgaveSchema } from '#services/oppgave/oppgave-schema'
 
-import { createOppgaveMock } from './oppgave-mock-data'
-import { Oppgave, OppgaveSchema } from './oppgave-schema'
+const TSM_OPPGAVE_URL = 'http://tsm-oppgave'
 
 export const oppgaveApiService = {
-    getOppgaverByIdent: async (ident: string): Promise<Oppgave[] | ApiFetchErrors<'OPPGAVE_NOT_FOUND'>> => {
+    getOppgaverByIdent: async (ident: string): Promise<Oppgave[]> => {
         if (bundledEnv.runtimeEnv === 'local') {
             logger.warn('Running in local or demo environment, returning mocked Oppgave data')
             return createOppgaveMock()
         }
 
-        return fetchInternalAPI({
-            api: 'tsm-oppgave',
-            path: `/api/oppgaver`,
-            method: 'GET',
-            headers: { ident: ident },
-            responseSchema: OppgaveSchema,
-            onApiError: (response) => {
-                if (response.status === 404) {
-                    logger.warn(`No oppgaver found for person with ident (${response.status} ${response.statusText}`)
+        const oboToken = await getOboToken('tsm-oppgave')
 
-                    return 'OPPGAVE_NOT_FOUND'
-                }
-            },
+        const result = await fetch(`${TSM_OPPGAVE_URL}/api/oppgaver`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${oboToken}`, ident: ident },
         })
+
+        if (!result.ok) {
+            raise(`Failed to fetch oppgaver from tsm-oppgave: ${result.status} ${result.statusText}`)
+        }
+
+        const data = await result.json()
+        return data.map((item: unknown) => OppgaveSchema.parse(item))
     },
 }
