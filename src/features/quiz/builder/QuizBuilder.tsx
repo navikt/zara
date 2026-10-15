@@ -8,6 +8,7 @@ import React, { ReactElement, useEffect, useEffectEvent, useRef, useState, useTr
 import { toast } from 'sonner'
 
 import QuizPreview from '#features/quiz/builder/QuizPreview'
+import QuizSummary from '#features/quiz/builder/QuizSummary'
 import { uploadQuizImage } from '#features/quiz/image-actions'
 import { MAX_QUIZ_IMAGE_SIZE_BYTES } from '#features/quiz/image-limits'
 import {
@@ -415,6 +416,8 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
                     ))}
                 </Select>
             </div>
+
+            <QuizSummary questions={questions} />
 
             {questions.map((question, index) => {
                 const Editor = QUESTION_TYPES[question.type].Editor
