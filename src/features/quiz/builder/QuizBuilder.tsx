@@ -160,6 +160,15 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
     const updateQuestion = (id: string, patch: Partial<DraftQuestion>): void =>
         setQuestions((prev) => prev.map((q) => (q.id === id ? ({ ...q, ...patch } as DraftQuestion) : q)))
 
+    const insertQuestionBefore = (id: string): void => {
+        const question = blankQuestion()
+        setQuestions((prev) => {
+            const index = prev.findIndex((q) => q.id === id)
+            if (index === -1) return prev
+            return [...prev.slice(0, index), question, ...prev.slice(index)]
+        })
+    }
+
     const moveQuestion = (id: string, direction: -1 | 1): void =>
         setQuestions((prev) => {
             const index = prev.findIndex((q) => q.id === id)
@@ -268,93 +277,114 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
             {questions.map((question, index) => {
                 const Editor = QUESTION_TYPES[question.type].Editor
                 return (
-                    <div key={question.id} className="flex flex-col gap-4 bg-ax-bg-raised p-4 rounded-md">
-                        <div className="flex flex-wrap justify-between items-center gap-2">
-                            <Heading level="3" size="small">
-                                Spørsmål {index + 1}
-                            </Heading>
-                            <div className="flex flex-wrap gap-2">
+                    <React.Fragment key={question.id}>
+                        {index > 0 && (
+                            <div className="group flex items-center gap-3 -my-4 py-2">
+                                <span aria-hidden className="h-px flex-1 bg-ax-border-neutral-subtle" />
                                 <Button
+                                    type="button"
                                     variant="tertiary"
                                     size="small"
-                                    icon={<ChevronUpIcon aria-hidden />}
-                                    aria-label={`Flytt spørsmål ${index + 1} opp`}
-                                    disabled={index === 0 || isPending}
-                                    onClick={() => moveQuestion(question.id, -1)}
+                                    icon={<PlusIcon aria-hidden />}
+                                    className="opacity-40 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
+                                    aria-label={`Legg til spørsmål mellom spørsmål ${index} og ${index + 1}`}
+                                    disabled={isPending}
+                                    onClick={() => insertQuestionBefore(question.id)}
                                 >
-                                    Flytt opp
+                                    Legg til spørsmål her
                                 </Button>
-                                <Button
-                                    variant="tertiary"
-                                    size="small"
-                                    icon={<ChevronDownIcon aria-hidden />}
-                                    aria-label={`Flytt spørsmål ${index + 1} ned`}
-                                    disabled={index === questions.length - 1 || isPending}
-                                    onClick={() => moveQuestion(question.id, 1)}
-                                >
-                                    Flytt ned
-                                </Button>
-                                <Button
-                                    variant="tertiary"
-                                    size="small"
-                                    icon={<TrashIcon aria-hidden />}
-                                    disabled={questions.length <= 1}
-                                    onClick={() => setQuestions((prev) => prev.filter((q) => q.id !== question.id))}
-                                >
-                                    Fjern
-                                </Button>
+                                <span aria-hidden className="h-px flex-1 bg-ax-border-neutral-subtle" />
                             </div>
+                        )}
+                        <div className="flex flex-col gap-4 bg-ax-bg-raised p-4 rounded-md">
+                            <div className="flex flex-wrap justify-between items-center gap-2">
+                                <Heading level="3" size="small">
+                                    Spørsmål {index + 1}
+                                </Heading>
+                                <div className="flex flex-wrap gap-2">
+                                    <Button
+                                        variant="tertiary"
+                                        size="small"
+                                        icon={<ChevronUpIcon aria-hidden />}
+                                        aria-label={`Flytt spørsmål ${index + 1} opp`}
+                                        disabled={index === 0 || isPending}
+                                        onClick={() => moveQuestion(question.id, -1)}
+                                    >
+                                        Flytt opp
+                                    </Button>
+                                    <Button
+                                        variant="tertiary"
+                                        size="small"
+                                        icon={<ChevronDownIcon aria-hidden />}
+                                        aria-label={`Flytt spørsmål ${index + 1} ned`}
+                                        disabled={index === questions.length - 1 || isPending}
+                                        onClick={() => moveQuestion(question.id, 1)}
+                                    >
+                                        Flytt ned
+                                    </Button>
+                                    <Button
+                                        variant="tertiary"
+                                        size="small"
+                                        icon={<TrashIcon aria-hidden />}
+                                        disabled={questions.length <= 1}
+                                        onClick={() => setQuestions((prev) => prev.filter((q) => q.id !== question.id))}
+                                    >
+                                        Fjern
+                                    </Button>
+                                </div>
+                            </div>
+
+                            <TextField
+                                label="Spørsmålstekst"
+                                value={question.text}
+                                onChange={(e) => updateQuestion(question.id, { text: e.target.value })}
+                            />
+
+                            <ImagePicker
+                                imageId={question.imageId}
+                                onChange={(imageId) => updateQuestion(question.id, { imageId })}
+                            />
+
+                            <div className="flex flex-wrap gap-4">
+                                <Select
+                                    label="Type spørsmål"
+                                    className="max-w-xs"
+                                    value={question.type}
+                                    onChange={(e) => changeType(question.id, e.target.value as QuestionType)}
+                                >
+                                    {QUESTION_TYPE_ORDER.map((type) => (
+                                        <option key={type} value={type}>
+                                            {QUESTION_TYPES[type].label}
+                                        </option>
+                                    ))}
+                                </Select>
+
+                                <Select
+                                    label="Tid for dette spørsmålet"
+                                    className="max-w-xs"
+                                    value={question.timeLimitSeconds ?? 'default'}
+                                    onChange={(e) =>
+                                        updateQuestion(question.id, {
+                                            timeLimitSeconds:
+                                                e.target.value === 'default' ? null : Number(e.target.value),
+                                        })
+                                    }
+                                >
+                                    <option value="default">Bruk standard ({defaultTimeLimit}s)</option>
+                                    {TIME_LIMIT_OPTIONS.map((seconds) => (
+                                        <option key={seconds} value={seconds}>
+                                            {seconds} sekunder
+                                        </option>
+                                    ))}
+                                </Select>
+                            </div>
+
+                            <Editor
+                                draft={question}
+                                onChange={(patch) => updateQuestion(question.id, patch as Partial<DraftQuestion>)}
+                            />
                         </div>
-
-                        <TextField
-                            label="Spørsmålstekst"
-                            value={question.text}
-                            onChange={(e) => updateQuestion(question.id, { text: e.target.value })}
-                        />
-
-                        <ImagePicker
-                            imageId={question.imageId}
-                            onChange={(imageId) => updateQuestion(question.id, { imageId })}
-                        />
-
-                        <div className="flex flex-wrap gap-4">
-                            <Select
-                                label="Type spørsmål"
-                                className="max-w-xs"
-                                value={question.type}
-                                onChange={(e) => changeType(question.id, e.target.value as QuestionType)}
-                            >
-                                {QUESTION_TYPE_ORDER.map((type) => (
-                                    <option key={type} value={type}>
-                                        {QUESTION_TYPES[type].label}
-                                    </option>
-                                ))}
-                            </Select>
-
-                            <Select
-                                label="Tid for dette spørsmålet"
-                                className="max-w-xs"
-                                value={question.timeLimitSeconds ?? 'default'}
-                                onChange={(e) =>
-                                    updateQuestion(question.id, {
-                                        timeLimitSeconds: e.target.value === 'default' ? null : Number(e.target.value),
-                                    })
-                                }
-                            >
-                                <option value="default">Bruk standard ({defaultTimeLimit}s)</option>
-                                {TIME_LIMIT_OPTIONS.map((seconds) => (
-                                    <option key={seconds} value={seconds}>
-                                        {seconds} sekunder
-                                    </option>
-                                ))}
-                            </Select>
-                        </div>
-
-                        <Editor
-                            draft={question}
-                            onChange={(patch) => updateQuestion(question.id, patch as Partial<DraftQuestion>)}
-                        />
-                    </div>
+                    </React.Fragment>
                 )
             })}
 
