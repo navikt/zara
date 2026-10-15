@@ -3,7 +3,7 @@
 import { ChevronDownIcon, ChevronUpIcon, ImageIcon, PlusIcon, TrashIcon } from '@navikt/aksel-icons'
 import { Alert, Button, Heading, Select, TextField } from '@navikt/ds-react'
 import { useRouter } from 'next/navigation'
-import React, { ReactElement, useRef, useState, useTransition } from 'react'
+import React, { ReactElement, useEffect, useEffectEvent, useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
 import { uploadQuizImage } from '#features/quiz/image-actions'
@@ -146,6 +146,7 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
     const router = useRouter()
     const [isPending, startTransition] = useTransition()
     const [error, setError] = useState<string | null>(null)
+    const [quizId, setQuizId] = useState(existing?.id)
 
     // Editing wins over duplicating; a duplicate is seeded from the source but saved as a new quiz.
     const seed = existing ?? template ?? null
@@ -204,27 +205,47 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
     }
 
     const save = (closeAfterSave: boolean): void => {
+        if (isPending) return
         setError(null)
         const content = validate()
         if (!content) return
 
         startTransition(async () => {
-            if (existing) {
-                const { ok } = await saveExistingQuiz(existing.id, content, defaultTimeLimit)
+            if (quizId) {
+                const { ok } = await saveExistingQuiz(quizId, content, defaultTimeLimit)
                 if (!ok) {
                     setError('Quizen kunne ikke lagres. Er den allerede spilt, er den delt med teamet og låst.')
                     return
                 }
             } else {
-                await saveNewQuiz(content, defaultTimeLimit)
+                const { id } = await saveNewQuiz(content, defaultTimeLimit)
+                setQuizId(id)
+                if (!closeAfterSave) router.replace(`/quiz/${id}/edit`, { scroll: false })
             }
             if (closeAfterSave) {
                 router.push('/quiz')
             } else {
-                toast.success('Endringene er lagret.')
+                toast.custom(() => (
+                    <Alert variant="success" size="small">
+                        Endringene er lagret.
+                    </Alert>
+                ))
             }
         })
     }
+
+    const saveFromShortcut = useEffectEvent(() => save(false))
+
+    useEffect(() => {
+        const onKeyDown = (event: KeyboardEvent): void => {
+            if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== 's' || event.altKey) return
+            event.preventDefault()
+            if (!event.repeat) saveFromShortcut()
+        }
+
+        window.addEventListener('keydown', onKeyDown)
+        return () => window.removeEventListener('keydown', onKeyDown)
+    }, [])
 
     return (
         <div className="flex flex-col gap-6 max-w-3xl">
@@ -351,9 +372,9 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
 
             <div className="flex flex-wrap gap-2">
                 <Button onClick={() => save(true)} loading={isPending}>
-                    {existing ? 'Lagre og lukk' : 'Lagre quiz'}
+                    {quizId ? 'Lagre og lukk' : 'Lagre quiz'}
                 </Button>
-                {existing && (
+                {quizId && (
                     <Button variant="secondary" onClick={() => save(false)} loading={isPending}>
                         Lagre endringer
                     </Button>
