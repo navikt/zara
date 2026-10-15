@@ -2,6 +2,7 @@
 
 import { ChevronDownIcon, ChevronUpIcon, ImageIcon, PlusIcon, TrashIcon } from '@navikt/aksel-icons'
 import { Alert, Button, Heading, Select, TextField } from '@navikt/ds-react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useRouter } from 'next/navigation'
 import React, { ReactElement, useEffect, useEffectEvent, useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
@@ -210,6 +211,7 @@ function ImagePicker({
 
 function QuizBuilder({ existing, template }: Props): ReactElement {
     const router = useRouter()
+    const reduceMotion = useReducedMotion()
     const [isPending, startTransition] = useTransition()
     const [error, setError] = useState<string | null>(null)
     const [quizId, setQuizId] = useState(existing?.id)
@@ -222,6 +224,9 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
     const [questions, setQuestions] = useState<DraftQuestion[]>(
         seed?.content.questions.map(questionToDraft) ?? [blankQuestion()],
     )
+    const draftSnapshot = JSON.stringify({ title, defaultTimeLimit, questions })
+    const [savedSnapshot, setSavedSnapshot] = useState<string | null>(existing ? draftSnapshot : null)
+    const hasUnsavedChanges = draftSnapshot !== savedSnapshot
 
     const updateQuestion = (id: string, patch: Partial<DraftQuestion>): void =>
         setQuestions((prev) => prev.map((q) => (q.id === id ? ({ ...q, ...patch } as DraftQuestion) : q)))
@@ -297,6 +302,7 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
         toast.dismiss('quiz-save-error')
         const content = validate()
         if (!content) return
+        const savingSnapshot = draftSnapshot
 
         startTransition(async () => {
             try {
@@ -313,6 +319,7 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
                     setQuizId(id)
                     if (!closeAfterSave) router.replace(`/quiz/${id}/edit`, { scroll: false })
                 }
+                setSavedSnapshot(savingSnapshot)
                 if (closeAfterSave) {
                     router.push('/quiz')
                 } else {
@@ -345,6 +352,38 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
 
     return (
         <div className="flex flex-col gap-6 max-w-3xl">
+            <output className="fixed top-4 right-4 z-50 max-w-[calc(100vw-2rem)]">
+                <AnimatePresence>
+                    {(hasUnsavedChanges || isPending) && (
+                        <motion.span
+                            key="unsaved-changes"
+                            initial={{
+                                x: reduceMotion ? 0 : 'calc(100% + 1rem)',
+                                opacity: 0,
+                                scale: reduceMotion ? 1 : 0.95,
+                            }}
+                            animate={{ x: 0, opacity: 1, scale: 1 }}
+                            exit={{
+                                x: reduceMotion ? 0 : 'calc(100% + 1rem)',
+                                opacity: 0,
+                                scale: reduceMotion ? 1 : 0.95,
+                            }}
+                            transition={
+                                reduceMotion ? { duration: 0.15 } : { type: 'spring', stiffness: 350, damping: 22 }
+                            }
+                            className="flex flex-col gap-1 rounded-md border border-ax-border-neutral-subtle bg-ax-bg-raised px-3 py-2 shadow-md text-sm"
+                        >
+                            <span className="flex items-center gap-2 font-semibold">
+                                <span aria-hidden className="h-2 w-2 rounded-full bg-ax-bg-warning-strong" />
+                                {isPending ? 'Lagrer …' : 'Ulagrede endringer'}
+                            </span>
+                            <span className="text-ax-text-neutral-subtle">
+                                <kbd className="font-sans">Ctrl/Cmd+S</kbd> for å lagre
+                            </span>
+                        </motion.span>
+                    )}
+                </AnimatePresence>
+            </output>
             <div className="flex flex-col gap-4 bg-ax-bg-raised p-4 rounded-md">
                 <TextField label="Tittel" value={title} onChange={(e) => setTitle(e.target.value)} />
                 <Select
