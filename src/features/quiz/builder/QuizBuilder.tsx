@@ -251,19 +251,31 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
             }),
         )
 
+    const reportSaveError = (message: string): void => {
+        setError(message)
+        toast.custom(
+            () => (
+                <Alert variant="error" size="small">
+                    {message}
+                </Alert>
+            ),
+            { id: 'quiz-save-error', duration: 8000 },
+        )
+    }
+
     const validate = (): QuizContent | null => {
         if (title.trim().length === 0) {
-            setError('Quizen må ha en tittel.')
+            reportSaveError('Quizen må ha en tittel.')
             return null
         }
         for (const [i, q] of questions.entries()) {
             if (q.text.trim().length === 0) {
-                setError(`Spørsmål ${i + 1} mangler tekst.`)
+                reportSaveError(`Spørsmål ${i + 1} mangler tekst.`)
                 return null
             }
             const typeError = validateTypeFields(q)
             if (typeError) {
-                setError(`Spørsmål ${i + 1} ${typeError}`)
+                reportSaveError(`Spørsmål ${i + 1} ${typeError}`)
                 return null
             }
         }
@@ -277,6 +289,7 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
     const save = (closeAfterSave: boolean): void => {
         if (isPending) return
         setError(null)
+        toast.dismiss('quiz-save-error')
         const content = validate()
         if (!content) return
 
@@ -284,7 +297,7 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
             if (quizId) {
                 const { ok } = await saveExistingQuiz(quizId, content, defaultTimeLimit)
                 if (!ok) {
-                    setError('Quizen kunne ikke lagres. Er den allerede spilt, er den delt med teamet og låst.')
+                    reportSaveError('Quizen kunne ikke lagres. Er den allerede spilt, er den delt med teamet og låst.')
                     return
                 }
             } else {
