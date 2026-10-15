@@ -1,6 +1,6 @@
 'use client'
 
-import { ImageIcon, PlusIcon, TrashIcon } from '@navikt/aksel-icons'
+import { ChevronDownIcon, ChevronUpIcon, ImageIcon, PlusIcon, TrashIcon } from '@navikt/aksel-icons'
 import { Alert, Button, Heading, Select, TextField } from '@navikt/ds-react'
 import { useRouter } from 'next/navigation'
 import React, { ReactElement, useRef, useState, useTransition } from 'react'
@@ -15,6 +15,7 @@ import {
     draftToQuestion,
     questionToDraft,
 } from '#features/quiz/question-types'
+import { move } from '#features/quiz/question-types/ordering/move'
 import { saveExistingQuiz, saveNewQuiz } from '#features/quiz/quiz-actions'
 import { resizeImageForUpload } from '#features/quiz/resize-image'
 import { QuestionType, QuizContent } from '#services/quiz/quiz-schema'
@@ -158,6 +159,12 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
     const updateQuestion = (id: string, patch: Partial<DraftQuestion>): void =>
         setQuestions((prev) => prev.map((q) => (q.id === id ? ({ ...q, ...patch } as DraftQuestion) : q)))
 
+    const moveQuestion = (id: string, direction: -1 | 1): void =>
+        setQuestions((prev) => {
+            const index = prev.findIndex((q) => q.id === id)
+            return index === -1 ? prev : move(prev, index, index + direction)
+        })
+
     /** Switch a question to another type, re-seeding the type-specific defaults but keeping shared fields. */
     const changeType = (id: string, type: QuestionType): void =>
         setQuestions((prev) =>
@@ -241,19 +248,41 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
                 const Editor = QUESTION_TYPES[question.type].Editor
                 return (
                     <div key={question.id} className="flex flex-col gap-4 bg-ax-bg-raised p-4 rounded-md">
-                        <div className="flex justify-between items-center">
+                        <div className="flex flex-wrap justify-between items-center gap-2">
                             <Heading level="3" size="small">
                                 Spørsmål {index + 1}
                             </Heading>
-                            <Button
-                                variant="tertiary"
-                                size="small"
-                                icon={<TrashIcon aria-hidden />}
-                                disabled={questions.length <= 1}
-                                onClick={() => setQuestions((prev) => prev.filter((q) => q.id !== question.id))}
-                            >
-                                Fjern
-                            </Button>
+                            <div className="flex flex-wrap gap-2">
+                                <Button
+                                    variant="tertiary"
+                                    size="small"
+                                    icon={<ChevronUpIcon aria-hidden />}
+                                    aria-label={`Flytt spørsmål ${index + 1} opp`}
+                                    disabled={index === 0 || isPending}
+                                    onClick={() => moveQuestion(question.id, -1)}
+                                >
+                                    Flytt opp
+                                </Button>
+                                <Button
+                                    variant="tertiary"
+                                    size="small"
+                                    icon={<ChevronDownIcon aria-hidden />}
+                                    aria-label={`Flytt spørsmål ${index + 1} ned`}
+                                    disabled={index === questions.length - 1 || isPending}
+                                    onClick={() => moveQuestion(question.id, 1)}
+                                >
+                                    Flytt ned
+                                </Button>
+                                <Button
+                                    variant="tertiary"
+                                    size="small"
+                                    icon={<TrashIcon aria-hidden />}
+                                    disabled={questions.length <= 1}
+                                    onClick={() => setQuestions((prev) => prev.filter((q) => q.id !== question.id))}
+                                >
+                                    Fjern
+                                </Button>
+                            </div>
                         </div>
 
                         <TextField
