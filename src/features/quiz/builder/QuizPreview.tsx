@@ -24,23 +24,36 @@ type Props = {
     onClose: () => void
 }
 
+function shuffle<T>(items: T[]): T[] {
+    const shuffled = [...items]
+    for (let index = shuffled.length - 1; index > 0; index--) {
+        const other = Math.floor(Math.random() * (index + 1))
+        ;[shuffled[index], shuffled[other]] = [shuffled[other], shuffled[index]]
+    }
+    return shuffled
+}
+
 function toPreviewQuestion(draft: DraftQuestion): PublicQuestion {
     const base = { id: draft.id, text: draft.text || 'Spørsmålstekst', imageId: draft.imageId }
     switch (draft.type) {
-        case 'multiple-choice':
+        case 'multiple-choice': {
+            const choices = draft.choices.map((choice, index) => ({
+                id: choice.id,
+                text: choice.text || `Alternativ ${index + 1}`,
+            }))
             return {
                 ...base,
                 type: draft.type,
-                choices: draft.choices.map((choice, index) => ({
-                    id: choice.id,
-                    text: choice.text || `Alternativ ${index + 1}`,
-                })),
+                choices: draft.shuffleChoices ? shuffle(choices) : choices,
             }
+        }
         case 'ordering':
             return {
                 ...base,
                 type: draft.type,
-                items: draft.items.map((item, index) => ({ id: item.id, text: item.text || `Element ${index + 1}` })),
+                items: shuffle(
+                    draft.items.map((item, index) => ({ id: item.id, text: item.text || `Element ${index + 1}` })),
+                ),
             }
         case 'slider':
             return { ...base, type: draft.type, slider: { min: draft.min, max: draft.max, step: draft.step } }
@@ -65,7 +78,7 @@ function previewRevealData(question: Question): RevealData {
 function PreviewQuestion({ draft }: { draft: DraftQuestion }): ReactElement {
     const [answer, setAnswer] = useState<AnswerPayload | null>(null)
     const [attempt, setAttempt] = useState(0)
-    const question = toPreviewQuestion(draft)
+    const [question, setQuestion] = useState(() => toPreviewQuestion(draft))
     const PlayInput = QUESTION_TYPES[question.type].PlayInput
     const Reveal = QUESTION_TYPES[question.type].Reveal
     const parsed = QuestionSchema.safeParse(draftToQuestion(draft))
@@ -118,6 +131,7 @@ function PreviewQuestion({ draft }: { draft: DraftQuestion }): ReactElement {
                         size="small"
                         onClick={() => {
                             setAnswer(null)
+                            setQuestion(toPreviewQuestion(draft))
                             setAttempt((previous) => previous + 1)
                         }}
                     >
