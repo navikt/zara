@@ -1,12 +1,13 @@
 'use client'
 
-import { ChevronDownIcon, ChevronUpIcon, ImageIcon, PlusIcon, TrashIcon } from '@navikt/aksel-icons'
+import { ChevronDownIcon, ChevronUpIcon, EyeIcon, ImageIcon, PlusIcon, TrashIcon } from '@navikt/aksel-icons'
 import { Alert, Button, Heading, Select, TextField } from '@navikt/ds-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useRouter } from 'next/navigation'
 import React, { ReactElement, useEffect, useEffectEvent, useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
+import QuizPreview from '#features/quiz/builder/QuizPreview'
 import { uploadQuizImage } from '#features/quiz/image-actions'
 import { MAX_QUIZ_IMAGE_SIZE_BYTES } from '#features/quiz/image-limits'
 import {
@@ -215,6 +216,7 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
     const [isPending, startTransition] = useTransition()
     const [error, setError] = useState<string | null>(null)
     const [quizId, setQuizId] = useState(existing?.id)
+    const [previewIndex, setPreviewIndex] = useState<number | null>(null)
 
     // Editing wins over duplicating; a duplicate is seeded from the source but saved as a new quiz.
     const seed = existing ?? template ?? null
@@ -352,6 +354,20 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
 
     return (
         <div className="flex flex-col gap-6 max-w-3xl">
+            {previewIndex != null && (
+                <QuizPreview
+                    title={title}
+                    questions={questions}
+                    defaultTimeLimit={defaultTimeLimit}
+                    initialIndex={previewIndex}
+                    onClose={() => setPreviewIndex(null)}
+                />
+            )}
+            <div>
+                <Button variant="secondary" icon={<EyeIcon aria-hidden />} onClick={() => setPreviewIndex(0)}>
+                    Forhåndsvis quiz
+                </Button>
+            </div>
             <output className="fixed top-4 right-4 z-50 max-w-[calc(100vw-2rem)]">
                 <AnimatePresence>
                     {(hasUnsavedChanges || isPending) && (
@@ -428,6 +444,14 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
                                     Spørsmål {index + 1}
                                 </Heading>
                                 <div className="flex flex-wrap gap-2">
+                                    <Button
+                                        variant="tertiary"
+                                        size="small"
+                                        icon={<EyeIcon aria-hidden />}
+                                        onClick={() => setPreviewIndex(index)}
+                                    >
+                                        Forhåndsvis
+                                    </Button>
                                     <Button
                                         variant="tertiary"
                                         size="small"
@@ -523,6 +547,9 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
             {error && <Alert variant="error">{error}</Alert>}
 
             <div className="flex flex-wrap gap-2">
+                <Button variant="secondary" icon={<EyeIcon aria-hidden />} onClick={() => setPreviewIndex(0)}>
+                    Forhåndsvis quiz
+                </Button>
                 <Button onClick={() => save(true)} loading={isPending}>
                     {quizId ? 'Lagre og lukk' : 'Lagre quiz'}
                 </Button>
