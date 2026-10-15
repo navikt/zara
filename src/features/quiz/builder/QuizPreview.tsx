@@ -4,9 +4,17 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@navikt/aksel-icons'
 import { Alert, BodyShort, Button, Modal } from '@navikt/ds-react'
 import React, { ReactElement, useState } from 'react'
 
-import { DraftQuestion, QUESTION_TYPES } from '#features/quiz/question-types'
+import { DraftQuestion, QUESTION_TYPES, draftToQuestion } from '#features/quiz/question-types'
 import QuestionStage from '#features/quiz/shared/QuestionStage'
-import { PublicQuestion } from '#services/quiz/quiz-schema'
+import { gradeAnswer } from '#services/quiz/quiz-grading'
+import {
+    AnswerPayload,
+    PublicQuestion,
+    Question,
+    QuestionSchema,
+    RevealData,
+    RevealResult,
+} from '#services/quiz/quiz-schema'
 
 type Props = {
     title: string
@@ -41,11 +49,28 @@ function toPreviewQuestion(draft: DraftQuestion): PublicQuestion {
     }
 }
 
+function previewRevealData(question: Question): RevealData {
+    switch (question.type) {
+        case 'multiple-choice':
+            return { type: question.type, correctChoiceId: question.choices.find((choice) => choice.correct)?.id ?? '' }
+        case 'ordering':
+            return { type: question.type, correctOrder: question.items.map((item) => item.id) }
+        case 'slider':
+            return { type: question.type, correctValue: question.correct }
+        case 'text':
+            return { type: question.type, acceptedAnswers: question.acceptedAnswers }
+    }
+}
+
 function PreviewQuestion({ draft }: { draft: DraftQuestion }): ReactElement {
-    const [answered, setAnswered] = useState(false)
+    const [answer, setAnswer] = useState<AnswerPayload | null>(null)
     const [attempt, setAttempt] = useState(0)
     const question = toPreviewQuestion(draft)
     const PlayInput = QUESTION_TYPES[question.type].PlayInput
+    const Reveal = QUESTION_TYPES[question.type].Reveal
+    const parsed = QuestionSchema.safeParse(draftToQuestion(draft))
+    const result: RevealResult | null =
+        answer && parsed.success ? { playerId: 'preview', answer, ...gradeAnswer(parsed.data, answer, 0, 0) } : null
     const invalidSlider =
         question.type === 'slider' &&
         (![question.slider.min, question.slider.max, question.slider.step].every(Number.isFinite) ||
@@ -60,16 +85,39 @@ function PreviewQuestion({ draft }: { draft: DraftQuestion }): ReactElement {
                     Fyll inn gyldig minimum, maksimum og steg for å forhåndsvise glidebryteren.
                 </Alert>
             ) : (
-                <PlayInput key={attempt} question={question} onAnswer={() => setAnswered(true)} disabled={answered} />
+                !answer && <PlayInput key={attempt} question={question} onAnswer={setAnswer} disabled={false} />
             )}
-            {answered && (
+            {result && parsed.success && (
+                <>
+                    <Alert variant={result.correct ? 'success' : result.accuracy > 0 ? 'info' : 'error'}>
+                        {result.correct
+                            ? 'Riktig svar!'
+                            : result.accuracy > 0
+                              ? `Delvis riktig (${Math.round(result.accuracy * 100)} %).`
+                              : 'Feil svar.'}
+                    </Alert>
+                    <Reveal
+                        question={question}
+                        data={previewRevealData(parsed.data)}
+                        results={[result]}
+                        myResult={result}
+                    />
+                </>
+            )}
+            {answer && !parsed.success && (
+                <Alert variant="warning">
+                    Spørsmålet er ikke ferdig utfylt. Fyll inn gyldige svar og fasit i redigeringsvinduet for å
+                    kontrollere svaret.
+                </Alert>
+            )}
+            {answer && (
                 <div className="flex flex-wrap items-center gap-3">
-                    <BodyShort>Prøvesvar registrert. Ingen svar blir lagret.</BodyShort>
+                    <BodyShort>Ingen prøvesvar eller poeng blir lagret.</BodyShort>
                     <Button
                         variant="tertiary"
                         size="small"
                         onClick={() => {
-                            setAnswered(false)
+                            setAnswer(null)
                             setAttempt((previous) => previous + 1)
                         }}
                     >
