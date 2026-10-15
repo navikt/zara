@@ -4,6 +4,7 @@ import { ImageIcon, PlusIcon, TrashIcon } from '@navikt/aksel-icons'
 import { Alert, Button, Heading, Select, TextField } from '@navikt/ds-react'
 import { useRouter } from 'next/navigation'
 import React, { ReactElement, useRef, useState, useTransition } from 'react'
+import { toast } from 'sonner'
 
 import { uploadQuizImage } from '#features/quiz/image-actions'
 import {
@@ -195,7 +196,7 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
         }
     }
 
-    const save = (): void => {
+    const save = (closeAfterSave: boolean): void => {
         setError(null)
         const content = validate()
         if (!content) return
@@ -210,7 +211,11 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
             } else {
                 await saveNewQuiz(content, defaultTimeLimit)
             }
-            router.push('/quiz')
+            if (closeAfterSave) {
+                router.push('/quiz')
+            } else {
+                toast.success('Endringene er lagret.')
+            }
         })
     }
 
@@ -315,10 +320,15 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
 
             {error && <Alert variant="error">{error}</Alert>}
 
-            <div className="flex gap-2">
-                <Button onClick={save} loading={isPending}>
-                    {existing ? 'Lagre endringer' : 'Lagre quiz'}
+            <div className="flex flex-wrap gap-2">
+                <Button onClick={() => save(true)} loading={isPending}>
+                    {existing ? 'Lagre og lukk' : 'Lagre quiz'}
                 </Button>
+                {existing && (
+                    <Button variant="secondary" onClick={() => save(false)} loading={isPending}>
+                        Lagre endringer
+                    </Button>
+                )}
                 <Button variant="secondary" onClick={() => router.push('/quiz')} disabled={isPending}>
                     Avbryt
                 </Button>
