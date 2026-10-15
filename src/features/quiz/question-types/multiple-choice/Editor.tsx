@@ -5,7 +5,7 @@ import { Button, Radio, RadioGroup, Switch, TextField } from '@navikt/ds-react'
 import React, { ReactElement } from 'react'
 
 import { EditorProps } from '#features/quiz/question-types'
-import { Choice } from '#services/quiz/quiz-schema'
+import { Choice, MAX_MULTIPLE_CHOICE_OPTIONS } from '#services/quiz/quiz-schema'
 
 function blankChoice(correct = false): Choice {
     return { id: crypto.randomUUID(), text: '', correct }
@@ -52,7 +52,7 @@ function MultipleChoiceEditor({ draft, onChange }: EditorProps<'multiple-choice'
                 </div>
             </RadioGroup>
 
-            {choices.length < 4 && (
+            {choices.length < MAX_MULTIPLE_CHOICE_OPTIONS && (
                 <div>
                     <Button
                         variant="secondary"

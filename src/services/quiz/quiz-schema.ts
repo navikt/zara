@@ -11,6 +11,8 @@ export const ChoiceSchema = z.object({
 })
 export type Choice = z.infer<typeof ChoiceSchema>
 
+export const MAX_MULTIPLE_CHOICE_OPTIONS = 8
+
 export type QuestionType = 'multiple-choice' | 'ordering' | 'slider' | 'text'
 
 /** Fields shared by every question type. `imageId` is reserved for a later picture feature. */
@@ -29,7 +31,7 @@ export const MultipleChoiceQuestionSchema = QuestionBaseSchema.extend({
     choices: z
         .array(ChoiceSchema)
         .min(2)
-        .max(4)
+        .max(MAX_MULTIPLE_CHOICE_OPTIONS)
         .refine((choices) => choices.filter((c) => c.correct).length === 1, {
             message: 'Each question must have exactly one correct choice',
         }),
