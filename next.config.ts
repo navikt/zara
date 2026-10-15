@@ -27,7 +27,8 @@ const nextConfig: NextConfig = {
     experimental: {
         optimizePackageImports: ['@navikt/ds-react', '@navikt/aksel-icons'],
         authInterrupts: true,
-        serverActions: { bodySizeLimit: '2mb' },
+        // Allow multipart overhead around the quiz's 2 MB image limit.
+        serverActions: { bodySizeLimit: '3mb' },
         useTypeScriptCli: true,
     },
     images: { remotePatterns: [new URL('https://cdn.nav.no/**')] },

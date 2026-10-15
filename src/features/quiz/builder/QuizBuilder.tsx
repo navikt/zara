@@ -7,6 +7,7 @@ import React, { ReactElement, useEffect, useEffectEvent, useRef, useState, useTr
 import { toast } from 'sonner'
 
 import { uploadQuizImage } from '#features/quiz/image-actions'
+import { MAX_QUIZ_IMAGE_SIZE_BYTES } from '#features/quiz/image-limits'
 import {
     DraftBase,
     DraftQuestion,
@@ -92,6 +93,10 @@ function ImagePicker({
             try {
                 // Downscale large images in the browser so big phone photos don't hit the upload size limit.
                 const resized = await resizeImageForUpload(file)
+                if (resized.size > MAX_QUIZ_IMAGE_SIZE_BYTES) {
+                    setUploadError('Bildet er for stort. Maks 2 MB etter komprimering. Prøv et mindre bilde.')
+                    return
+                }
                 const formData = new FormData()
                 formData.append('file', resized)
                 const result = await uploadQuizImage(formData)
@@ -294,25 +299,33 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
         if (!content) return
 
         startTransition(async () => {
-            if (quizId) {
-                const { ok } = await saveExistingQuiz(quizId, content, defaultTimeLimit)
-                if (!ok) {
-                    reportSaveError('Quizen kunne ikke lagres. Er den allerede spilt, er den delt med teamet og låst.')
-                    return
+            try {
+                if (quizId) {
+                    const { ok } = await saveExistingQuiz(quizId, content, defaultTimeLimit)
+                    if (!ok) {
+                        reportSaveError(
+                            'Quizen kunne ikke lagres. Er den allerede spilt, er den delt med teamet og låst.',
+                        )
+                        return
+                    }
+                } else {
+                    const { id } = await saveNewQuiz(content, defaultTimeLimit)
+                    setQuizId(id)
+                    if (!closeAfterSave) router.replace(`/quiz/${id}/edit`, { scroll: false })
                 }
-            } else {
-                const { id } = await saveNewQuiz(content, defaultTimeLimit)
-                setQuizId(id)
-                if (!closeAfterSave) router.replace(`/quiz/${id}/edit`, { scroll: false })
-            }
-            if (closeAfterSave) {
-                router.push('/quiz')
-            } else {
-                toast.custom(() => (
-                    <Alert variant="success" size="small">
-                        Endringene er lagret.
-                    </Alert>
-                ))
+                if (closeAfterSave) {
+                    router.push('/quiz')
+                } else {
+                    toast.custom(() => (
+                        <Alert variant="success" size="small">
+                            Endringene er lagret.
+                        </Alert>
+                    ))
+                }
+            } catch {
+                reportSaveError(
+                    'Quizen kunne ikke lagres. Prøv igjen. Endringene dine er fortsatt i redigeringsvinduet.',
+                )
             }
         })
     }
