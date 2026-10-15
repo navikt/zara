@@ -1,7 +1,5 @@
-import { Heading, LocalAlert } from '@navikt/ds-react'
-import { LocalAlertContent, LocalAlertHeader, LocalAlertTitle } from '@navikt/ds-react/LocalAlert'
-import { logger } from '@navikt/next-logger'
-import React, { ReactElement, ReactNode } from 'react'
+import { Heading } from '@navikt/ds-react'
+import React, { ReactElement } from 'react'
 import * as R from 'remeda'
 
 import { logAuditEvent } from '#lib/audit-log'
@@ -24,17 +22,6 @@ async function OppgaveSearchInfo({ ident }: Props): Promise<ReactElement> {
     )
 
     const oppgaver = await oppgaveApiService.getOppgaverByIdent(ident)
-
-    if ('errorType' in oppgaver) {
-        logger.error(`Unable to find oppgave for ident: ${ident}, cause: ${oppgaver.errorType}`)
-
-        return (
-            <OppgaveError
-                title="Henting fra tsm-oppgave feilet"
-                description={`Teknisk feilmelding: ${oppgaver.errorType}`}
-            />
-        )
-    }
 
     return (
         <div>
@@ -62,17 +49,6 @@ async function OppgaveSearchInfo({ ident }: Props): Promise<ReactElement> {
                 </div>
             ))}
         </div>
-    )
-}
-
-function OppgaveError({ title, description }: { title: string; description: string | ReactNode }): ReactElement {
-    return (
-        <LocalAlert status="error" className="max-w-prose mt-4">
-            <LocalAlertHeader>
-                <LocalAlertTitle>{title}</LocalAlertTitle>
-            </LocalAlertHeader>
-            <LocalAlertContent>{description}</LocalAlertContent>
-        </LocalAlert>
     )
 }
 

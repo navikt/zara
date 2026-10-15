@@ -27,7 +27,6 @@ export const oppgaveApiService = {
         }
 
         const data = await result.json()
-        logger.info(`Fetched oppgaver for ident ${ident}: ${JSON.stringify(data)}`)
         return data.map((item: unknown) => OppgaveSchema.parse(item))
     },
 }
