@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import React, { ReactElement, useState, useTransition } from 'react'
 
 import PlayerGrid from '#features/quiz/host/PlayerGrid'
+import TextAnswerResults from '#features/quiz/host/TextAnswerResults'
 import { QUESTION_TYPES } from '#features/quiz/question-types'
 import {
     hostCancelSession,
@@ -158,6 +159,14 @@ function HostSession({ sessionId, meUserId }: Props): ReactElement {
                                 />
                             )
                         })()
+                    )}
+
+                    {isHost && state.status === 'reveal' && state.question.type === 'text' && state.reveal && (
+                        <TextAnswerResults
+                            key={state.question.id}
+                            players={state.players}
+                            results={state.reveal.results}
+                        />
                     )}
 
                     {state.status === 'question' && (
