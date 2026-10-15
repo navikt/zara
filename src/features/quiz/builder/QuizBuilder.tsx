@@ -68,76 +68,137 @@ function validateTypeFields(draft: DraftQuestion): string | null {
 
 /** Per-question image upload + preview. Uploads via the server action and reports the new id. */
 function ImagePicker({
+    questionText,
+    onQuestionTextChange,
     imageId,
     onChange,
 }: {
+    questionText: string
+    onQuestionTextChange: (text: string) => void
     imageId: string | null
     onChange: (imageId: string | null) => void
 }): ReactElement {
     const inputRef = useRef<HTMLInputElement>(null)
+    const questionTextRef = useRef<HTMLInputElement>(null)
+    const imageButtonRef = useRef<HTMLButtonElement>(null)
+    const isReadingClipboard = useRef(false)
     const [isUploading, startUpload] = useTransition()
     const [uploadError, setUploadError] = useState<string | null>(null)
+
+    const upload = (file: File): void => {
+        if (isUploading) return
+        setUploadError(null)
+        startUpload(async () => {
+            try {
+                // Downscale large images in the browser so big phone photos don't hit the upload size limit.
+                const resized = await resizeImageForUpload(file)
+                const formData = new FormData()
+                formData.append('file', resized)
+                const result = await uploadQuizImage(formData)
+                if ('error' in result) {
+                    setUploadError(result.error)
+                } else {
+                    onChange(result.imageId)
+                }
+            } catch {
+                setUploadError('Bildet kunne ikke lastes opp. Prøv igjen.')
+            }
+        })
+    }
 
     const onFileSelected = (e: React.ChangeEvent<HTMLInputElement>): void => {
         const file = e.target.files?.[0]
         // Allow re-selecting the same file later.
         e.target.value = ''
-        if (!file) return
+        if (file) upload(file)
+    }
 
+    const onPaste = (event: React.ClipboardEvent<HTMLDivElement>): void => {
+        if (event.target !== questionTextRef.current && event.target !== imageButtonRef.current) return
+        if (isReadingClipboard.current) {
+            event.preventDefault()
+            return
+        }
+        const image = Array.from(event.clipboardData.items)
+            .find((item) => item.kind === 'file' && item.type.startsWith('image/'))
+            ?.getAsFile()
+        if (!image) return
+        event.preventDefault()
+        upload(image)
+    }
+
+    const onImageButtonKeyDown = async (event: React.KeyboardEvent<HTMLButtonElement>): Promise<void> => {
+        if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== 'v' || event.altKey) return
+        // Buttons don't reliably receive native paste events. Read within this user gesture instead.
+        event.preventDefault()
+        if (event.repeat || isUploading || isReadingClipboard.current) return
+        isReadingClipboard.current = true
         setUploadError(null)
-        startUpload(async () => {
-            // Downscale large images in the browser so big phone photos don't hit the upload size limit.
-            const resized = await resizeImageForUpload(file)
-            const formData = new FormData()
-            formData.append('file', resized)
-            const result = await uploadQuizImage(formData)
-            if ('error' in result) {
-                setUploadError(result.error)
-            } else {
-                onChange(result.imageId)
+        try {
+            const items = await navigator.clipboard.read()
+            for (const item of items) {
+                const type = item.types.find((type) => type.startsWith('image/'))
+                if (!type) continue
+                const blob = await item.getType(type)
+                upload(new File([blob], 'clipboard-image', { type }))
+                return
             }
-        })
+        } catch {
+            setUploadError('Kunne ikke lese bildet fra utklippstavlen. Prøv å lime inn i spørsmålsteksten.')
+        } finally {
+            isReadingClipboard.current = false
+        }
     }
 
     return (
-        <div className="flex flex-col gap-2">
-            <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={onFileSelected} />
-            <div className="flex flex-wrap items-center gap-2">
-                <Button
-                    type="button"
-                    variant="secondary"
-                    size="small"
-                    icon={<ImageIcon aria-hidden />}
-                    loading={isUploading}
-                    onClick={() => inputRef.current?.click()}
-                >
-                    {imageId ? 'Bytt bilde' : 'Legg til bilde'}
-                </Button>
-                {imageId && (
+        <div className="flex flex-col gap-4" onPaste={onPaste}>
+            <TextField
+                ref={questionTextRef}
+                label="Spørsmålstekst"
+                value={questionText}
+                onChange={(event) => onQuestionTextChange(event.target.value)}
+            />
+            <div className="flex flex-col gap-2">
+                <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={onFileSelected} />
+                <div className="flex flex-wrap items-center gap-2">
                     <Button
+                        ref={imageButtonRef}
                         type="button"
-                        variant="tertiary"
+                        variant="secondary"
                         size="small"
-                        icon={<TrashIcon aria-hidden />}
-                        onClick={() => {
-                            setUploadError(null)
-                            onChange(null)
-                        }}
+                        icon={<ImageIcon aria-hidden />}
+                        loading={isUploading}
+                        onClick={() => inputRef.current?.click()}
+                        onKeyDown={onImageButtonKeyDown}
                     >
-                        Fjern bilde
+                        {imageId ? 'Bytt bilde' : 'Legg til bilde'}
                     </Button>
+                    {imageId && (
+                        <Button
+                            type="button"
+                            variant="tertiary"
+                            size="small"
+                            icon={<TrashIcon aria-hidden />}
+                            onClick={() => {
+                                setUploadError(null)
+                                onChange(null)
+                            }}
+                        >
+                            Fjern bilde
+                        </Button>
+                    )}
+                </div>
+                {imageId && (
+                    // next/image does NOT enjoy auth-gated images that might 404, it spams the logs
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                        src={`/quiz/image/${imageId}`}
+                        alt=""
+                        className="max-h-32 w-auto max-w-full self-start object-contain rounded-md"
+                    />
                 )}
+                {uploadError && <Alert variant="error">{uploadError}</Alert>}
             </div>
-            {imageId && (
-                // next/image does NOT enjoy auth-gated images that might 404, it spams the logs
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                    src={`/quiz/image/${imageId}`}
-                    alt=""
-                    className="max-h-32 w-auto max-w-full self-start object-contain rounded-md"
-                />
-            )}
-            {uploadError && <Alert variant="error">{uploadError}</Alert>}
         </div>
     )
 }
@@ -334,13 +395,9 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
                                 </div>
                             </div>
 
-                            <TextField
-                                label="Spørsmålstekst"
-                                value={question.text}
-                                onChange={(e) => updateQuestion(question.id, { text: e.target.value })}
-                            />
-
                             <ImagePicker
+                                questionText={question.text}
+                                onQuestionTextChange={(text) => updateQuestion(question.id, { text })}
                                 imageId={question.imageId}
                                 onChange={(imageId) => updateQuestion(question.id, { imageId })}
                             />
