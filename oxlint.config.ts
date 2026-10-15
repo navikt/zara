@@ -32,6 +32,7 @@ export default defineConfig({
         'react/jsx-curly-brace-presence': 'warn',
         // TODO: Consider turning on
         'typescript/no-misused-spread': 'off',
+        'react/purity': 'off',
     },
     overrides: [
         {
