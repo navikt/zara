@@ -536,11 +536,14 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
                             )}
 
                             {question.type === 'multiple-choice' &&
-                                question.choices.length > 4 &&
-                                (question.timeLimitSeconds ?? defaultTimeLimit) <= 25 && (
+                                ((question.choices.length > 4 &&
+                                    (question.timeLimitSeconds ?? defaultTimeLimit) <= 25) ||
+                                    (question.choices.length > 6 &&
+                                        (question.timeLimitSeconds ?? defaultTimeLimit) <= 30)) && (
                                     <Alert variant="warning" size="small">
                                         {question.timeLimitSeconds ?? defaultTimeLimit} sekunder kan være litt kort tid
-                                        til å lese mer enn fire svaralternativer. Vurder å gi spillerne mer tid.
+                                        til å lese {question.choices.length} svaralternativer. Vurder å gi spillerne mer
+                                        tid.
                                     </Alert>
                                 )}
 
