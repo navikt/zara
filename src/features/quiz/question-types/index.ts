@@ -63,6 +63,8 @@ export type PlayInputProps<T extends QuestionType = QuestionType> = {
     question: PublicQuestionOf<T>
     onAnswer: (answer: AnswerPayload) => void
     disabled: boolean
+    /** Absolute deadline for automatically submitting an unfinished ordering answer. Omitted in previews. */
+    deadline?: number
 }
 
 /** A type's reveal: shows the correct answer and (optionally) this player's result. */

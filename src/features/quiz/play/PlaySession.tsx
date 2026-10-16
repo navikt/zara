@@ -121,7 +121,19 @@ function PlaySession({ sessionId, myPlayerId, myAlias }: Props): ReactElement {
                     ) : (
                         (() => {
                             const PlayInput = QUESTION_TYPES[state.question.type].PlayInput
-                            return <PlayInput question={state.question} onAnswer={answer} disabled={isSubmitting} />
+                            return (
+                                <PlayInput
+                                    key={state.question.id}
+                                    question={state.question}
+                                    onAnswer={answer}
+                                    disabled={isSubmitting}
+                                    deadline={
+                                        state.startedAt != null && state.timeLimitSeconds != null
+                                            ? state.startedAt + state.timeLimitSeconds * 1000
+                                            : undefined
+                                    }
+                                />
+                            )
                         })()
                     )}
 

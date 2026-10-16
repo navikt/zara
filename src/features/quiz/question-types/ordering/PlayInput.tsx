@@ -1,20 +1,38 @@
 'use client'
 
 import { ChevronDownIcon, ChevronUpIcon } from '@navikt/aksel-icons'
-import { Button } from '@navikt/ds-react'
-import React, { ReactElement, useState } from 'react'
+import { BodyShort, Button } from '@navikt/ds-react'
+import React, { ReactElement, useEffect, useEffectEvent, useRef, useState } from 'react'
 
 import { PlayInputProps } from '#features/quiz/question-types'
 import { move } from '#features/quiz/question-types/ordering/move'
 import { PublicOrderingItem } from '#services/quiz/quiz-schema'
 
-function OrderingPlayInput({ question, onAnswer, disabled }: PlayInputProps<'ordering'>): ReactElement {
+function OrderingPlayInput({ question, onAnswer, disabled, deadline }: PlayInputProps<'ordering'>): ReactElement {
     const [items, setItems] = useState<PublicOrderingItem[]>(question.items)
+    const submitted = useRef(false)
 
-    const submit = (): void => onAnswer({ type: 'ordering', order: items.map((it) => it.id) })
+    const submit = (): void => {
+        if (disabled || submitted.current) return
+        submitted.current = true
+        onAnswer({ type: 'ordering', order: items.map((it) => it.id) })
+    }
+
+    const submitAtDeadline = useEffectEvent(submit)
+
+    useEffect(() => {
+        if (deadline == null || disabled) return
+        const timer = window.setTimeout(() => submitAtDeadline(), Math.max(0, deadline - Date.now()))
+        return () => window.clearTimeout(timer)
+    }, [deadline, disabled])
 
     return (
         <div className="flex flex-col gap-3">
+            {deadline != null && (
+                <BodyShort size="small" className="text-ax-text-neutral-subtle">
+                    Rekkefølgen sendes automatisk når tiden er ute. Du kan låse svaret tidligere når du er klar.
+                </BodyShort>
+            )}
             <div className="flex flex-col gap-2">
                 {items.map((item, index) => (
                     <div
