@@ -4,6 +4,7 @@ import { Alert, BodyShort, Button, Heading, Loader } from '@navikt/ds-react'
 import { useRouter } from 'next/navigation'
 import React, { ReactElement, useState, useTransition } from 'react'
 
+import PlayerAnswerGroups from '#features/quiz/host/PlayerAnswerGroups'
 import PlayerGrid from '#features/quiz/host/PlayerGrid'
 import TextAnswerResults from '#features/quiz/host/TextAnswerResults'
 import { QUESTION_TYPES } from '#features/quiz/question-types'
@@ -174,7 +175,11 @@ function HostSession({ sessionId, meUserId }: Props): ReactElement {
                             {answeredCount} av {state.players.length} har svart
                         </BodyShort>
                     )}
-                    <PlayerGrid players={state.players} showAnswered={state.status === 'question'} />
+                    {state.status === 'reveal' && state.reveal ? (
+                        <PlayerAnswerGroups players={state.players} results={state.reveal.results} />
+                    ) : (
+                        <PlayerGrid players={state.players} showAnswered={state.status === 'question'} />
+                    )}
                 </div>
             )}
 
