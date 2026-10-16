@@ -149,7 +149,7 @@ function PlaySession({ sessionId, myPlayerId, myAlias }: Props): ReactElement {
                             />
                         )
                     })()}
-                    <Leaderboard entries={state.leaderboard} myPlayerId={myPlayerId} />
+                    <Leaderboard entries={state.leaderboard} myPlayerId={myPlayerId} progressive />
                 </div>
             )}
 

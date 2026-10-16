@@ -183,7 +183,7 @@ function HostSession({ sessionId, meUserId }: Props): ReactElement {
                 </div>
             )}
 
-            {state.status === 'reveal' && <Leaderboard entries={state.leaderboard} />}
+            {state.status === 'reveal' && <Leaderboard entries={state.leaderboard} progressive />}
 
             {state.status === 'ended' && (
                 <div className="flex flex-col gap-6">
