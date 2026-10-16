@@ -528,6 +528,22 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
                                 </Select>
                             </div>
 
+                            {question.type === 'ordering' && (question.timeLimitSeconds ?? defaultTimeLimit) <= 30 && (
+                                <Alert variant="warning" size="small">
+                                    {question.timeLimitSeconds ?? defaultTimeLimit} sekunder kan være litt kort tid til
+                                    å lese og sortere svarene. Vurder å gi spillerne mer tid.
+                                </Alert>
+                            )}
+
+                            {question.type === 'multiple-choice' &&
+                                question.choices.length > 4 &&
+                                (question.timeLimitSeconds ?? defaultTimeLimit) <= 25 && (
+                                    <Alert variant="warning" size="small">
+                                        {question.timeLimitSeconds ?? defaultTimeLimit} sekunder kan være litt kort tid
+                                        til å lese mer enn fire svaralternativer. Vurder å gi spillerne mer tid.
+                                    </Alert>
+                                )}
+
                             <Editor
                                 draft={question}
                                 onChange={(patch) => updateQuestion(question.id, patch as Partial<DraftQuestion>)}
