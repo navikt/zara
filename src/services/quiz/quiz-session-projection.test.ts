@@ -109,6 +109,29 @@ test('the mid-quiz leaderboard is anonymous', () => {
     expect(state.leaderboard.every((e) => e.name === null && e.oid === null)).toBe(true)
 })
 
+test('mid-quiz percentages use revealed questions rather than the full quiz length', () => {
+    const current = session('reveal')
+    current.content = {
+        ...CONTENT,
+        questions: Array.from({ length: 10 }, (_, index) => ({ ...CONTENT.questions[0], id: `q${index + 1}` })),
+    }
+    current.currentIndex = 2
+    const correct = { 'cecilie@nav.no': '3', 'bjorn@nav.no': '2', 'anna@nav.no': '0' }
+
+    const state = projectState(current, PLAYERS, {}, SCORES, correct, null, 0)
+
+    expect(state.leaderboard.map((entry) => entry.percent)).toEqual([100, 67, 0])
+    expect(state.questionCount).toBe(10)
+
+    current.currentIndex = 9
+    const finalQuestion = projectState(current, PLAYERS, {}, SCORES, correct, null, 0)
+    expect(finalQuestion.leaderboard.map((entry) => entry.percent)).toEqual([30, 20, 0])
+
+    current.status = 'ended'
+    const ended = projectState(current, PLAYERS, {}, SCORES, correct, null, 0)
+    expect(ended.leaderboard.map((entry) => entry.percent)).toEqual([30, 20, 0])
+})
+
 test('an ended quiz stays masked until the host starts revealing', () => {
     const state = project('ended', 0)
 

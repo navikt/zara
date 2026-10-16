@@ -243,7 +243,12 @@ export function projectState(
     const players = parsePlayers(playersRaw)
     const inLobby = session.status === 'lobby'
 
-    const ranked = rankPlayers(players, scoresRaw, correctRaw, session.content.questions.length)
+    const questionCount = session.content.questions.length
+    const scoredQuestionCount =
+        session.status === 'ended'
+            ? questionCount
+            : Math.max(0, Math.min(questionCount, session.currentIndex + (session.status === 'reveal' ? 1 : 0)))
+    const ranked = rankPlayers(players, scoresRaw, correctRaw, scoredQuestionCount)
     const revealMaxStep = maxRevealStep(ranked.length)
     // Nobody is unmasked until the quiz is over and the host starts the ceremony.
     const unmasked = session.status === 'ended' ? unmaskedRanks(revealStep, ranked.length) : new Set<number>()
