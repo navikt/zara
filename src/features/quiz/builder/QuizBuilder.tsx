@@ -223,7 +223,7 @@ function QuizBuilder({ existing, template }: Props): ReactElement {
     const seed = existing ?? template ?? null
 
     const [title, setTitle] = useState(existing?.content.title ?? (template ? `${template.content.title} (kopi)` : ''))
-    const [defaultTimeLimit, setDefaultTimeLimit] = useState(seed?.defaultTimeLimit ?? 20)
+    const [defaultTimeLimit, setDefaultTimeLimit] = useState(seed?.defaultTimeLimit ?? 30)
     const [questions, setQuestions] = useState<DraftQuestion[]>(
         seed?.content.questions.map(questionToDraft) ?? [blankQuestion()],
     )
