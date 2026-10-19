@@ -5,6 +5,7 @@ import {
     AclResourceTypes,
     ConfigResourceTypes,
     type Admin,
+    type GroupDescription,
     Kafka,
     type KafkaConfig,
     logLevel,
@@ -16,7 +17,27 @@ import * as R from 'remeda'
 import { getServerEnv } from '#lib/env'
 import { User } from '#services/auth/user'
 
-import { AclAccess, cleanAclPrincipal, computeTopicLag, mergeOperationTypes } from './kafka-utils'
+import {
+    AclAccess,
+    cleanAclPrincipal,
+    computeTopicLag,
+    mergeOperationTypes,
+    resolveTargetOffsets,
+    retryOnCoordinatorErrors,
+} from './kafka-utils'
+import {
+    assertBrokerSupports,
+    type CommitPartition,
+    createInternalCluster,
+    type InternalBroker,
+    type InternalCluster,
+} from './kafkajs-internals'
+import {
+    OFFSET_DELETE_API_KEY,
+    OFFSET_DELETE_API_VERSION,
+    offsetDeleteRequest,
+    throwIfOffsetDeleteFailed,
+} from './offset-delete-protocol'
 import { ConsumerGroupDetails, ConsumerGroupState, ResetOffsetTarget, TopicDetails, TopicLag } from './types'
 
 const KNOWN_STATES: ReadonlySet<string> = new Set<ConsumerGroupState>([
@@ -71,6 +92,30 @@ async function getAdmin(): Promise<Admin> {
         cachedAdmin.reset()
         return cachedAdmin()
     }
+}
+
+/**
+ * Low level kafkajs cluster, used to talk directly to group coordinators for the operations kafkajs'
+ * Admin API doesn't support properly. See kafkajs-internals.ts.
+ */
+const cachedCluster = lazyNextleton('kafka-internal-cluster', async (): Promise<InternalCluster> => {
+    const cluster = createInternalCluster(buildKafkaClient())
+    logger.info('Connecting internal Kafka cluster client...')
+    await cluster.connect()
+    return cluster
+})
+
+async function getGroupCoordinator(groupId: string): Promise<InternalBroker> {
+    let cluster: InternalCluster
+    try {
+        cluster = await cachedCluster()
+    } catch (error) {
+        logger.warn(new Error(`Kafka cluster connection failed, retrying with a fresh client`, { cause: error }))
+        cachedCluster.reset()
+        cluster = await cachedCluster()
+    }
+
+    return cluster.findGroupCoordinator({ groupId })
 }
 
 export async function getTopics(namespace: string): Promise<string[]> {
@@ -141,8 +186,7 @@ export async function getTopicDetails(topic: string): Promise<TopicDetails> {
 export async function getConsumerGroupDetails(groupId: string): Promise<ConsumerGroupDetails | null> {
     const admin = await getAdmin()
 
-    const [committed, described] = await Promise.all([admin.fetchOffsets({ groupId }), admin.describeGroups([groupId])])
-    const group = described.groups.find((it) => it.groupId === groupId)
+    const { committed, group } = await fetchCommittedAndDescribed(admin, groupId)
     const state = toConsumerGroupState(group?.state)
     const memberCount = group?.members.length ?? 0
 
@@ -169,6 +213,10 @@ export async function getConsumerGroupDetails(groupId: string): Promise<Consumer
     }
 }
 
+/**
+ * Moves the group's committed offsets for a single topic to earliest/latest, without touching any of
+ * the group's other topics. The broker rejects this if the group has active members.
+ */
 export async function resetConsumerGroupOffsets(
     groupId: string,
     topic: string,
@@ -178,11 +226,123 @@ export async function resetConsumerGroupOffsets(
     logger.info(`Resetting offsets for group ${groupId}, topic ${topic} to ${target} (by ${user.userId})`)
 
     const admin = await getAdmin()
-    await admin.resetOffsets({ groupId, topic, earliest: target === 'earliest' })
+    await assertTopicExists(admin, topic)
+
+    const offsets = resolveTargetOffsets(target, await admin.fetchTopicOffsets(topic))
+    await commitGroupOffsets(groupId, topic, offsets)
 }
 
-export async function deleteConsumerGroup(groupId: string, user: User): Promise<void> {
-    logger.info(`Deleting consumer group ${groupId} (by ${user.userId})`)
+/**
+ * Removes the group's committed offsets for a single topic, the equivalent of
+ * `kafka-consumer-groups --delete-offsets --group <group> --topic <topic>`. The broker rejects this if
+ * the group has active members subscribed to the topic, but allows it for topics the group no longer reads.
+ */
+export async function deleteConsumerGroupTopicOffsets(groupId: string, topic: string, user: User): Promise<void> {
+    logger.info(`Deleting offsets for group ${groupId}, topic ${topic} (by ${user.userId})`)
+
     const admin = await getAdmin()
-    await admin.deleteGroups([groupId])
+    const committed = await retryCoordinatorCall(groupId, () => admin.fetchOffsets({ groupId }))
+    const partitions = committed.find((it) => it.topic === topic)?.partitions.map((it) => it.partition) ?? []
+    if (partitions.length === 0) {
+        throw new Error(`Consumer group ${groupId} har ingen committede offsets på ${topic}`)
+    }
+
+    await withGroupCoordinator(groupId, async (coordinator) => {
+        assertBrokerSupports(coordinator, OFFSET_DELETE_API_KEY, OFFSET_DELETE_API_VERSION, 'OffsetDelete')
+
+        const response = await coordinator.connectionPool.send(offsetDeleteRequest(groupId, [{ topic, partitions }]))
+        throwIfOffsetDeleteFailed(response)
+    })
+}
+
+/**
+ * Creates a new consumer group by committing offsets at earliest/latest for the given topic. Refuses to
+ * touch a group that already exists, so a typo can't silently move a real group's offsets.
+ */
+export async function createConsumerGroup(
+    groupId: string,
+    topic: string,
+    target: ResetOffsetTarget,
+    user: User,
+): Promise<void> {
+    logger.info(`Creating consumer group ${groupId} on topic ${topic} at ${target} (by ${user.userId})`)
+
+    const admin = await getAdmin()
+    await assertTopicExists(admin, topic)
+
+    const { committed, group } = await fetchCommittedAndDescribed(admin, groupId)
+    if ((group?.members.length ?? 0) > 0 || committed.length > 0) {
+        throw new Error(`Consumer group ${groupId} finnes allerede`)
+    }
+
+    const offsets = resolveTargetOffsets(target, await admin.fetchTopicOffsets(topic))
+    await commitGroupOffsets(groupId, topic, offsets)
+}
+
+/**
+ * Commits offsets the way Kafka's AdminClient#alterConsumerGroupOffsets does: straight to the group
+ * coordinator, as a non-member (generation -1, empty member id). The coordinator only accepts this when
+ * the group has no active members, and creates the group if it does not exist.
+ */
+async function commitGroupOffsets(groupId: string, topic: string, partitions: CommitPartition[]): Promise<void> {
+    if (partitions.length === 0) {
+        throw new Error(`Fant ingen partisjoner for ${topic}`)
+    }
+
+    await withGroupCoordinator(groupId, (coordinator) =>
+        coordinator.offsetCommit({
+            groupId,
+            groupGenerationId: -1,
+            memberId: '',
+            topics: [{ topic, partitions }],
+        }),
+    )
+}
+
+/**
+ * Runs an operation against the group's coordinator, finding the coordinator again and retrying if it
+ * moved or isn't ready yet (e.g. during broker restarts), like Kafka's own AdminClient does.
+ */
+async function withGroupCoordinator<Result>(
+    groupId: string,
+    operation: (coordinator: InternalBroker) => Promise<Result>,
+): Promise<Result> {
+    return retryCoordinatorCall(groupId, async () => operation(await getGroupCoordinator(groupId)))
+}
+
+/**
+ * kafkajs' admin client looks up the coordinator on every call, but doesn't retry when it has moved
+ * or isn't ready yet.
+ */
+async function retryCoordinatorCall<Result>(groupId: string, operation: () => Promise<Result>): Promise<Result> {
+    return retryOnCoordinatorErrors(operation, {
+        onRetry: (error, attempt) =>
+            logger.warn(new Error(`Group coordinator for ${groupId} not ready (attempt ${attempt})`, { cause: error })),
+    })
+}
+
+async function fetchCommittedAndDescribed(
+    admin: Admin,
+    groupId: string,
+): Promise<{
+    committed: Awaited<ReturnType<Admin['fetchOffsets']>>
+    group: GroupDescription | undefined
+}> {
+    const [committed, described] = await Promise.all([
+        retryCoordinatorCall(groupId, () => admin.fetchOffsets({ groupId })),
+        retryCoordinatorCall(groupId, () => admin.describeGroups([groupId])),
+    ])
+
+    return { committed, group: described.groups.find((it) => it.groupId === groupId) }
+}
+
+/**
+ * kafkajs treats an unknown topic as retriable and keeps retrying for a long time before giving up, so
+ * user-provided topics are checked up front to fail fast with a clear message.
+ */
+async function assertTopicExists(admin: Admin, topic: string): Promise<void> {
+    const topics = await admin.listTopics()
+    if (!topics.includes(topic)) {
+        throw new Error(`Topicet ${topic} finnes ikke`)
+    }
 }
