@@ -1,38 +1,38 @@
 'use client'
 
 import { ArrowUndoIcon, ExclamationmarkTriangleIcon, TrashIcon } from '@navikt/aksel-icons'
-import { BodyShort, Button, Detail, Modal, Select, TextField } from '@navikt/ds-react'
+import { BodyShort, Button, Detail, Modal, Select } from '@navikt/ds-react'
 import React, { ReactElement, useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
 import { ResetOffsetTarget } from '#services/kafka/types'
 
-import { deleteGroup, resetOffsets } from './kafka-actions'
+import { deleteTopicOffsets, resetTopicOffsets } from './kafka-actions'
 
 type Props = {
     groupId: string
+    topic: string
     active: boolean
 }
 
-function ConsumerGroupActions({ groupId, active }: Props): ReactElement {
+function TopicOffsetActions({ groupId, topic, active }: Props): ReactElement {
     return (
-        <div className="flex gap-2 justify-end">
-            <ResetOffsetsAction groupId={groupId} active={active} />
-            <DeleteGroupAction groupId={groupId} active={active} />
+        <div className="flex gap-2 justify-end shrink-0">
+            <ResetTopicOffsetsAction groupId={groupId} topic={topic} active={active} />
+            <DeleteTopicOffsetsAction groupId={groupId} topic={topic} />
         </div>
     )
 }
 
-function ResetOffsetsAction({ groupId, active }: Props): ReactElement {
+function ResetTopicOffsetsAction({ groupId, topic, active }: Props): ReactElement {
     const ref = useRef<HTMLDialogElement>(null)
     const [isPending, startTransition] = useTransition()
-    const [topic, setTopic] = useState('')
     const [target, setTarget] = useState<ResetOffsetTarget>('earliest')
 
     return (
         <>
             <Button
-                size="small"
+                size="xsmall"
                 variant="secondary"
                 icon={<ArrowUndoIcon aria-hidden />}
                 disabled={active}
@@ -46,40 +46,32 @@ function ResetOffsetsAction({ groupId, active }: Props): ReactElement {
                 className="max-w-prose w-full"
                 header={{
                     icon: <ExclamationmarkTriangleIcon aria-hidden />,
-                    heading: `Reset offsets for ${groupId}`,
+                    heading: 'Reset offsets',
                 }}
             >
                 <Modal.Body>
                     <BodyShort spacing>
-                        Dette flytter committed offsets for gruppen. Gruppen må være inaktiv (ingen tilkoblede
-                        medlemmer).
+                        Flytter committed offsets for <span className="font-mono">{groupId}</span> på{' '}
+                        <span className="font-mono">{topic}</span>. Gruppens andre topics påvirkes ikke.
                     </BodyShort>
-                    <div className="flex flex-col gap-4">
-                        <TextField
-                            label="Topic"
-                            description="Navnet på topicet offsets skal resettes for."
-                            value={topic}
-                            onChange={(e) => setTopic(e.target.value)}
-                        />
-                        <Select
-                            label="Reset til"
-                            value={target}
-                            onChange={(e) => setTarget(e.target.value as ResetOffsetTarget)}
-                        >
-                            <option value="earliest">Earliest (start på topic)</option>
-                            <option value="latest">Latest (slutt på topic)</option>
-                        </Select>
-                    </div>
+                    <Select
+                        label="Reset til"
+                        value={target}
+                        onChange={(e) => setTarget(e.target.value as ResetOffsetTarget)}
+                    >
+                        <option value={'earliest' satisfies ResetOffsetTarget}>Earliest (start på topic)</option>
+                        <option value={'latest' satisfies ResetOffsetTarget}>Latest (slutt på topic)</option>
+                    </Select>
+                    <Detail className="mt-4">Gruppen må være inaktiv (ingen tilkoblede medlemmer).</Detail>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
                         type="button"
                         variant="danger"
                         loading={isPending}
-                        disabled={!topic}
                         onClick={() => {
                             startTransition(async () => {
-                                const result = await resetOffsets(groupId, topic, target)
+                                const result = await resetTopicOffsets(groupId, topic, target)
                                 if (result.ok) {
                                     toast.success(`Resatt offsets for ${groupId} på ${topic} til ${target}`)
                                     ref.current?.close()
@@ -100,36 +92,41 @@ function ResetOffsetsAction({ groupId, active }: Props): ReactElement {
     )
 }
 
-function DeleteGroupAction({ groupId, active }: Props): ReactElement {
+function DeleteTopicOffsetsAction({ groupId, topic }: Omit<Props, 'active'>): ReactElement {
     const ref = useRef<HTMLDialogElement>(null)
     const [isPending, startTransition] = useTransition()
 
     return (
         <>
             <Button
-                size="small"
+                size="xsmall"
                 variant="danger"
                 icon={<TrashIcon aria-hidden />}
-                disabled={active}
-                title={active ? 'Gruppen må være inaktiv for å slettes' : undefined}
                 onClick={() => ref.current?.showModal()}
             >
-                Slett
+                Slett offsets
             </Button>
             <Modal
                 ref={ref}
                 className="max-w-prose w-full"
                 header={{
                     icon: <ExclamationmarkTriangleIcon aria-hidden />,
-                    heading: `Slett consumer group ${groupId}?`,
+                    heading: 'Slett offsets?',
                 }}
             >
                 <Modal.Body>
                     <BodyShort spacing>
-                        Er du sikker på at du vil slette consumer group <span className="font-mono">{groupId}</span>?
-                        Denne handlingen kan ikke reverseres.
+                        Fjerner committed offsets for <span className="font-mono">{groupId}</span> på{' '}
+                        <span className="font-mono">{topic}</span>. Gruppens andre topics påvirkes ikke. Denne
+                        handlingen kan ikke reverseres.
                     </BodyShort>
-                    <Detail>Gruppen må være inaktiv (ingen tilkoblede medlemmer) for å kunne slettes.</Detail>
+                    <BodyShort spacing>
+                        Neste gang gruppen leser fra topicet starter den der consumerens{' '}
+                        <span className="font-mono">auto.offset.reset</span> sier.
+                    </BodyShort>
+                    <Detail>
+                        Kafka avviser slettingen hvis gruppen har aktive consumere som abonnerer på topicet.
+                    </Detail>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
@@ -138,17 +135,17 @@ function DeleteGroupAction({ groupId, active }: Props): ReactElement {
                         loading={isPending}
                         onClick={() => {
                             startTransition(async () => {
-                                const result = await deleteGroup(groupId)
+                                const result = await deleteTopicOffsets(groupId, topic)
                                 if (result.ok) {
-                                    toast.success(`Slettet consumer group ${groupId}`)
+                                    toast.success(`Slettet offsets for ${groupId} på ${topic}`)
                                     ref.current?.close()
                                 } else {
-                                    toast.error(`Kunne ikke slette gruppen: ${result.error}`)
+                                    toast.error(`Kunne ikke slette offsets: ${result.error}`)
                                 }
                             })
                         }}
                     >
-                        Slett consumer group
+                        Slett offsets
                     </Button>
                     <Button type="button" variant="secondary" onClick={() => ref.current?.close()} disabled={isPending}>
                         Avbryt
@@ -159,4 +156,4 @@ function DeleteGroupAction({ groupId, active }: Props): ReactElement {
     )
 }
 
-export default ConsumerGroupActions
+export default TopicOffsetActions

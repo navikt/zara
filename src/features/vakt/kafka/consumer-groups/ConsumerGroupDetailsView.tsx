@@ -5,7 +5,7 @@ import React, { ReactElement } from 'react'
 
 import { ConsumerGroupDetails } from '#services/kafka/types'
 
-import ConsumerGroupActions from './ConsumerGroupActions'
+import TopicOffsetActions from './TopicOffsetActions'
 
 type Props = {
     details: ConsumerGroupDetails
@@ -30,8 +30,6 @@ function ConsumerGroupDetailsView({ details }: Props): ReactElement {
                     </div>
                 </div>
 
-                <ConsumerGroupActions groupId={details.groupId} active={details.active} />
-
                 {details.topics.length === 0 ? (
                     <BodyShort size="small" className="italic">
                         Ingen committede offsets for denne gruppen.
@@ -39,9 +37,16 @@ function ConsumerGroupDetailsView({ details }: Props): ReactElement {
                 ) : (
                     details.topics.map((topic) => (
                         <div key={topic.topic}>
-                            <Heading size="xsmall" level="5" className="mb-1 font-mono">
-                                {topic.topic} (lag {topic.totalLag})
-                            </Heading>
+                            <div className="flex items-start justify-between gap-2 mb-1">
+                                <Heading size="xsmall" level="5" className="font-mono break-all">
+                                    {topic.topic} (lag {topic.totalLag})
+                                </Heading>
+                                <TopicOffsetActions
+                                    groupId={details.groupId}
+                                    topic={topic.topic}
+                                    active={details.active}
+                                />
+                            </div>
                             <Table size="small">
                                 <Table.Header>
                                     <Table.Row>

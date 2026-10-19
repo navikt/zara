@@ -4,6 +4,8 @@ import { Button, TextField } from '@navikt/ds-react'
 import { useQueryState } from 'nuqs'
 import React, { ReactElement, useState } from 'react'
 
+import CreateConsumerGroup from './CreateConsumerGroup'
+
 function KafkaConsumerGroupForm(): ReactElement {
     const [initialValue, setQuery] = useQueryState('group', { shallow: false })
     const [value, setValue] = useState(initialValue ?? '')
@@ -27,8 +29,15 @@ function KafkaConsumerGroupForm(): ReactElement {
                     }
                 }}
             />
-            <div className="mt-4">
+            <div className="mt-4 flex gap-2 flex-wrap">
                 <Button onClick={search}>Søk på consumer group</Button>
+                <CreateConsumerGroup
+                    initialGroupId={value}
+                    onCreated={(groupId) => {
+                        setValue(groupId)
+                        void setQuery(groupId)
+                    }}
+                />
             </div>
         </div>
     )
