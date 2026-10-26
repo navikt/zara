@@ -12,8 +12,9 @@ spec:
       allowAllUsers: true
       tenant: trygdeetaten.no
 
-  postgres:
-    clusterName: zara-postgres
+  uses:
+    postgres:
+      - name: zara-nais-postgres
 
   kafka:
     pool: nav-dev
