@@ -89,7 +89,7 @@ jobs:
     needs: [build-dev, test-lint]
     steps:
       - uses: actions/checkout@v7
-      - uses: nais/deploy/actions/deploy@v2
+      - uses: nais/deploy/actions/deploy@v3
         env:
           CLUSTER: dev-gcp
           RESOURCE: .nais/zalando.yaml,.nais/nais-postgres.yaml,.nais/nais-dev.yaml
@@ -106,10 +106,10 @@ jobs:
     needs: [build-prod]
     steps:
       - uses: actions/checkout@v7
-      - uses: nais/deploy/actions/deploy@v2
+      - uses: nais/deploy/actions/deploy@v3
         env:
           CLUSTER: prod-gcp
-          RESOURCE: .nais/zalando.yaml,.nais/nais-prod.yaml
+          RESOURCE: .nais/zalando.yaml,.nais/nais-postgres.yaml,.nais/nais-prod.yaml
           WORKLOAD_IMAGE: ${{ needs.build-prod.outputs.image }}
           NAIS_DEPLOY_SUMMARY: false
 
