@@ -1,8 +1,9 @@
 import { logger } from '@navikt/next-logger'
 import { lazyNextleton } from 'nextleton'
+import * as fs from 'node:fs'
 import { Pool } from 'pg'
 
-import { bundledEnv, getServerEnv } from '#lib/env'
+import { getServerEnv } from '#lib/env'
 
 export const pgClient = lazyNextleton('postgres-client', () => initializePostgres())
 
@@ -11,10 +12,17 @@ async function initializePostgres(): Promise<Pool> {
 
     const pool = new Pool({
         ...postgresConfig,
-        ssl: bundledEnv.runtimeEnv !== 'local' ? { rejectUnauthorized: false } : false,
+        ssl:
+            postgresConfig.runtimeEnv !== 'local'
+                ? {
+                      ca: fs.readFileSync(postgresConfig.caPath),
+                      key: fs.readFileSync(postgresConfig.keyPath),
+                      cert: fs.readFileSync(postgresConfig.certPath),
+                  }
+                : false,
     })
 
-    logger.info('Connecting to Postgres (zalando) database...')
+    logger.info('Connecting to Postgres (nais postgres) database...')
     await pool.connect()
 
     return pool

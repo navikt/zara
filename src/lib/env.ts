@@ -22,13 +22,26 @@ export const bundledEnv = BundledEnvSchema.parse({
 } satisfies Record<keyof BundledEnv, unknown>)
 
 type PostgresConfig = z.infer<typeof PostgresConfigSchema>
-const PostgresConfigSchema = z.object({
-    host: z.string(),
-    port: z.coerce.number(),
-    username: z.string(),
-    password: z.string(),
-    database: z.string(),
-})
+const PostgresConfigSchema = z.union([
+    z.object({
+        runtimeEnv: z.union([z.literal('dev-gcp'), z.literal('prod-gcp')]),
+        host: z.string(),
+        port: z.coerce.number(),
+        username: z.string(),
+        database: z.string(),
+        caPath: z.string(),
+        keyPath: z.string(),
+        certPath: z.string(),
+    }),
+    z.object({
+        runtimeEnv: z.literal('local'),
+        host: z.string(),
+        port: z.coerce.number(),
+        username: z.string(),
+        password: z.string(),
+        database: z.string(),
+    }),
+])
 
 type KafkaConfig = z.infer<typeof KafkaConfigSchema>
 const KafkaConfigSchema = z.union([
@@ -87,11 +100,15 @@ export function getServerEnv(): ServerEnv {
     } satisfies Record<KeysOfUnion<ValkeyConfig>, unknown>
 
     const postgresConfig = {
+        runtimeEnv: process.env.NEXT_PUBLIC_RUNTIME_ENV,
         host: process.env.PGHOST,
         port: process.env.PGPORT,
         username: process.env.PGUSER,
         password: process.env.PGPASSWORD,
         database: process.env.PGDATABASE,
+        caPath: process.env.PGSSLROOTCERT,
+        keyPath: process.env.PGSSLKEY,
+        certPath: process.env.PGSSLCERT,
     } satisfies Record<KeysOfUnion<PostgresConfig>, unknown>
 
     const kafkaConfig = {
