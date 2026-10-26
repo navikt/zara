@@ -5,33 +5,28 @@ metadata:
   namespace: tsm
   labels:
     team: tsm
+
 spec:
   port: 3000
-  replicas:
-    min: 1
-    max: 2
-  ingresses:
-    - 'https://zara.intern.dev.nav.no'
-    - 'https://zara.ansatt.dev.nav.no'
   leaderElection: true
+
   azure:
     application:
-      allowAllUsers: true
       enabled: true
-      tenant: trygdeetaten.no
+      allowAllUsers: false
     sidecar:
       enabled: true
       autoLogin: true
       autoLoginIgnorePaths:
         - /api/*
         - /favicon.ico
+
   valkey:
     - instance: syk-inn
       access: readwrite
   postgres:
     clusterName: zara-postgres
-  kafka:
-    pool: nav-dev
+
   observability:
     autoInstrumentation:
       enabled: true
@@ -53,6 +48,7 @@ spec:
     - emptyDir:
         medium: Memory
       mountPath: /app/.next/cache
+
   accessPolicy:
     outbound:
       external:
@@ -67,10 +63,7 @@ spec:
           namespace: teamsykmelding
         - application: logging
           namespace: nais-system
-  resources:
-    requests:
-      cpu: 50m
-      memory: 200Mi
+
   envFrom:
     - secret: tsm-zara-secrets
     - secret: tsm-ident-hash

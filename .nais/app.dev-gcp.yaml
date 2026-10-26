@@ -1,0 +1,25 @@
+spec:
+  replicas:
+    min: 1
+    max: 2
+
+  ingresses:
+    - 'https://zara.intern.dev.nav.no'
+    - 'https://zara.ansatt.dev.nav.no'
+
+  azure:
+    application:
+      allowAllUsers: true
+      enabled: true
+      tenant: trygdeetaten.no
+
+  postgres:
+    clusterName: zara-postgres
+
+  kafka:
+    pool: nav-dev
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 200Mi
