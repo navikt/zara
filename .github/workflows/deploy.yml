@@ -81,8 +81,7 @@ jobs:
 
   deploy-dev:
     name: Deploy main to dev
-    if: false
-    # if: github.ref_name == 'main' || startsWith(github.ref_name, 'dev/')
+    if: github.ref_name == 'main' || startsWith(github.ref_name, 'dev/')
     environment:
       name: dev
       url: https://zara.ansatt.dev.nav.no
