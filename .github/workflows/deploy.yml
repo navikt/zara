@@ -92,7 +92,7 @@ jobs:
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
-          RESOURCE: .nais/zalando.yaml,.nais/nais-postgres.yaml,.nais/nais-dev.yaml
+          RESOURCE: .nais/nais-postgres.yaml,.nais/nais-dev.yaml
           WORKLOAD_IMAGE: ${{ needs.build-dev.outputs.image }}
           NAIS_DEPLOY_SUMMARY: false
 
@@ -109,7 +109,7 @@ jobs:
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: prod-gcp
-          RESOURCE: .nais/zalando.yaml,.nais/nais-prod.yaml
+          RESOURCE: .nais/nais-postgres.yaml,.nais/nais-prod.yaml
           WORKLOAD_IMAGE: ${{ needs.build-prod.outputs.image }}
           NAIS_DEPLOY_SUMMARY: false
 
