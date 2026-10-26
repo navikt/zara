@@ -10,7 +10,6 @@ spec:
   azure:
     application:
       tenant: nav.no
-      allowAllUsers: false
       claims:
         groups:
           # EntraAD: Team Symfoni
