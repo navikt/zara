@@ -22,7 +22,7 @@ import {
 import { move } from '#features/quiz/question-types/ordering/move'
 import { saveExistingQuiz, saveNewQuiz } from '#features/quiz/quiz-actions'
 import { resizeImageForUpload } from '#features/quiz/resize-image'
-import { QuestionType, QuizContent } from '#services/quiz/quiz-schema'
+import { CorrectTextAnswersSchema, QuestionType, QuizContent } from '#services/quiz/quiz-schema'
 
 const TIME_LIMIT_OPTIONS = [10, 15, 20, 30, 45, 60, 90, 120]
 
@@ -66,6 +66,10 @@ function validateTypeFields(draft: DraftQuestion): string | null {
             const filled = draft.acceptedAnswers.filter((a) => a.trim().length > 0)
             if (filled.length === 0) return 'må ha minst ett godkjent svar.'
             return null
+        }
+        case 'multi-text': {
+            const parsed = CorrectTextAnswersSchema.safeParse(draft.correctAnswers)
+            return parsed.success ? null : parsed.error.issues[0].message
         }
     }
 }

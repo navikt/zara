@@ -205,3 +205,58 @@ test('a corrupt player record is skipped rather than breaking the whole projecti
 
     expect(state.players.map((p) => p.alias)).toEqual(['Aap', 'Ulv', 'Zebra'])
 })
+
+test('multi-text exposes only the expected count until reveal, then includes the answers and partial result', () => {
+    const current = session('question')
+    current.content = {
+        title: 'Countries',
+        questions: [
+            {
+                id: 'multi',
+                type: 'multi-text',
+                text: 'Name the countries',
+                timeLimitSeconds: null,
+                imageId: null,
+                correctAnswers: [{ acceptedAnswers: ['Australia'] }, { acceptedAnswers: ['Frankrike', 'France'] }],
+            },
+        ],
+    }
+    const answers = {
+        'anna@nav.no': JSON.stringify({
+            answer: { type: 'multi-text', texts: ['France', ''] },
+            answeredAt: 20_000,
+            accuracy: 0.5,
+            correct: false,
+            points: 500,
+        }),
+    }
+    const playing = projectState(current, PLAYERS, answers, {}, {}, null, 0)
+    expect(playing.question).toEqual({
+        id: 'multi',
+        type: 'multi-text',
+        text: 'Name the countries',
+        imageId: null,
+        answerCount: 2,
+    })
+    expect(playing.reveal).toBeNull()
+    expect(JSON.stringify(playing)).not.toContain('Australia')
+    expect(JSON.stringify(playing)).not.toContain('France')
+    expect(JSON.stringify(playing)).not.toContain('Frankrike')
+
+    current.status = 'reveal'
+    const revealed = projectState(current, PLAYERS, answers, { 'anna@nav.no': '500' }, {}, null, 0)
+    expect(revealed.reveal?.data).toEqual({
+        type: 'multi-text',
+        correctAnswers: [{ acceptedAnswers: ['Australia'] }, { acceptedAnswers: ['Frankrike', 'France'] }],
+    })
+    expect(revealed.reveal?.results).toEqual([
+        {
+            playerId: 'pid-anna',
+            answer: { type: 'multi-text', texts: ['France', ''] },
+            accuracy: 0.5,
+            correct: false,
+            points: 500,
+        },
+    ])
+    expect(revealed.leaderboard[0]).toMatchObject({ playerId: 'pid-anna', points: 500, rank: 1 })
+})

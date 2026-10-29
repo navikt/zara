@@ -9,8 +9,12 @@ import {
     QuestionType,
     RevealData,
     RevealResult,
+    TextAnswerGroup,
 } from '#services/quiz/quiz-schema'
 
+import MultiTextEditor from './multi-text/Editor'
+import MultiTextPlayInput from './multi-text/PlayInput'
+import MultiTextReveal from './multi-text/Reveal'
 import MultipleChoiceEditor from './multiple-choice/Editor'
 import MultipleChoicePlayInput from './multiple-choice/PlayInput'
 import MultipleChoiceReveal from './multiple-choice/Reveal'
@@ -40,8 +44,9 @@ export type DraftSlider = DraftBase & {
     tolerance: number
 }
 export type DraftText = DraftBase & { type: 'text'; acceptedAnswers: string[]; fuzz: 'off' | 'low' | 'medium' }
+export type DraftMultiText = DraftBase & { type: 'multi-text'; correctAnswers: TextAnswerGroup[] }
 
-export type DraftQuestion = DraftMultipleChoice | DraftOrdering | DraftSlider | DraftText
+export type DraftQuestion = DraftMultipleChoice | DraftOrdering | DraftSlider | DraftText | DraftMultiText
 
 /** Narrowed draft for a particular type. */
 export type DraftOf<T extends QuestionType> = Extract<DraftQuestion, { type: T }>
@@ -147,9 +152,20 @@ export const QUESTION_TYPES: Record<QuestionType, QuestionTypeModule> = {
             fuzz: 'low',
         }),
     },
+    'multi-text': {
+        Editor: MultiTextEditor as ComponentType<EditorProps>,
+        PlayInput: MultiTextPlayInput as ComponentType<PlayInputProps>,
+        Reveal: MultiTextReveal as ComponentType<RevealProps>,
+        label: 'Fritekst – flere svar',
+        blankDraft: (base) => ({
+            ...base,
+            type: 'multi-text',
+            correctAnswers: [{ acceptedAnswers: [''] }, { acceptedAnswers: [''] }],
+        }),
+    },
 }
 
-export const QUESTION_TYPE_ORDER: QuestionType[] = ['multiple-choice', 'ordering', 'slider', 'text']
+export const QUESTION_TYPE_ORDER: QuestionType[] = ['multiple-choice', 'ordering', 'slider', 'text', 'multi-text']
 
 /**
  * Turns a validated draft into the persisted {@link Question}. Assumes the builder already
@@ -193,6 +209,14 @@ export function draftToQuestion(draft: DraftQuestion): Question {
                 acceptedAnswers: draft.acceptedAnswers.map((a) => a.trim()).filter((a) => a.length > 0),
                 fuzz: draft.fuzz,
             }
+        case 'multi-text':
+            return {
+                ...base,
+                type: 'multi-text',
+                correctAnswers: draft.correctAnswers.map((answer) => ({
+                    acceptedAnswers: answer.acceptedAnswers.map((variant) => variant.trim()),
+                })),
+            }
     }
 }
 
@@ -226,5 +250,13 @@ export function questionToDraft(question: Question): DraftQuestion {
             }
         case 'text':
             return { ...base, type: 'text', acceptedAnswers: [...question.acceptedAnswers], fuzz: question.fuzz }
+        case 'multi-text':
+            return {
+                ...base,
+                type: 'multi-text',
+                correctAnswers: question.correctAnswers.map((answer) => ({
+                    acceptedAnswers: [...answer.acceptedAnswers],
+                })),
+            }
     }
 }

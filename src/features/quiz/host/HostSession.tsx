@@ -69,6 +69,13 @@ function QuestionPreview({ question }: { question: PublicQuestion }): ReactEleme
                     Spillerne skriver inn et fritekstsvar.
                 </BodyShort>
             )
+        case 'multi-text':
+            return (
+                <BodyShort size="small" className="text-ax-text-neutral-subtle">
+                    Spillerne skriver {question.answerCount} ulike svar. Poengene fordeles likt mellom riktige svar,
+                    uten tidsbonus.
+                </BodyShort>
+            )
     }
 }
 
@@ -162,13 +169,16 @@ function HostSession({ sessionId, meUserId }: Props): ReactElement {
                         })()
                     )}
 
-                    {isHost && state.status === 'reveal' && state.question.type === 'text' && state.reveal && (
-                        <TextAnswerResults
-                            key={state.question.id}
-                            players={state.players}
-                            results={state.reveal.results}
-                        />
-                    )}
+                    {isHost &&
+                        state.status === 'reveal' &&
+                        (state.question.type === 'text' || state.question.type === 'multi-text') &&
+                        state.reveal && (
+                            <TextAnswerResults
+                                key={state.question.id}
+                                players={state.players}
+                                results={state.reveal.results}
+                            />
+                        )}
 
                     {state.status === 'question' && (
                         <BodyShort size="small" className="text-ax-text-neutral-subtle">

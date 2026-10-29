@@ -1,5 +1,7 @@
 import * as z from 'zod'
 
+import { normalizeText } from '#services/quiz/quiz-text'
+
 /**
  * The persisted quiz content. The whole thing is encrypted as a single blob at rest,
  * so this is the shape that goes in and comes out of `content_encrypted` / `content_plain`.
@@ -12,8 +14,11 @@ export const ChoiceSchema = z.object({
 export type Choice = z.infer<typeof ChoiceSchema>
 
 export const MAX_MULTIPLE_CHOICE_OPTIONS = 8
+export const MAX_MULTI_TEXT_ANSWERS = 10
+export const MAX_MULTI_TEXT_VARIANTS = 10
+export const MAX_TEXT_ANSWER_LENGTH = 500
 
-export type QuestionType = 'multiple-choice' | 'ordering' | 'slider' | 'text'
+export type QuestionType = 'multiple-choice' | 'ordering' | 'slider' | 'text' | 'multi-text'
 
 /** Fields shared by every question type. `imageId` is reserved for a later picture feature. */
 const QuestionBaseSchema = z.object({
@@ -67,11 +72,48 @@ export const TextQuestionSchema = QuestionBaseSchema.extend({
 })
 export type TextQuestion = z.infer<typeof TextQuestionSchema>
 
+const TextAnswerGroupSchema = z.preprocess(
+    // Older quizzes stored one string per answer, without alternative spellings.
+    (value) => (typeof value === 'string' ? { acceptedAnswers: [value] } : value),
+    z.object({
+        acceptedAnswers: z
+            .array(
+                z
+                    .string()
+                    .trim()
+                    .min(1, 'har en tom godkjent skrivemåte.')
+                    .max(MAX_TEXT_ANSWER_LENGTH, `har en skrivemåte med mer enn ${MAX_TEXT_ANSWER_LENGTH} tegn.`),
+            )
+            .min(1, 'må ha minst én godkjent skrivemåte per fasitsvar.')
+            .max(MAX_MULTI_TEXT_VARIANTS, `kan ha maks ${MAX_MULTI_TEXT_VARIANTS} skrivemåter per fasitsvar.`),
+    }),
+)
+export type TextAnswerGroup = z.infer<typeof TextAnswerGroupSchema>
+
+export const CorrectTextAnswersSchema = z
+    .array(TextAnswerGroupSchema)
+    .min(2, 'må ha minst to ulike fasitsvar.')
+    .max(MAX_MULTI_TEXT_ANSWERS, `kan ha maks ${MAX_MULTI_TEXT_ANSWERS} fasitsvar.`)
+    .refine(
+        (answers) => {
+            const variants = answers.flatMap((answer) => answer.acceptedAnswers.map(normalizeText))
+            return new Set(variants).size === variants.length
+        },
+        { message: 'må ha unike skrivemåter. Samme skrivemåte kan bare brukes én gang, også på tvers av fasitsvar.' },
+    )
+
+export const MultiTextQuestionSchema = QuestionBaseSchema.extend({
+    type: z.literal('multi-text'),
+    correctAnswers: CorrectTextAnswersSchema,
+})
+export type MultiTextQuestion = z.infer<typeof MultiTextQuestionSchema>
+
 export const QuestionSchema = z.discriminatedUnion('type', [
     MultipleChoiceQuestionSchema,
     OrderingQuestionSchema,
     SliderQuestionSchema,
     TextQuestionSchema,
+    MultiTextQuestionSchema,
 ])
 export type Question = z.infer<typeof QuestionSchema>
 
@@ -123,6 +165,10 @@ export const AnswerPayloadSchema = z.discriminatedUnion('type', [
     z.object({ type: z.literal('ordering'), order: z.array(z.string()) }),
     z.object({ type: z.literal('slider'), value: z.number() }),
     z.object({ type: z.literal('text'), text: z.string() }),
+    z.object({
+        type: z.literal('multi-text'),
+        texts: z.array(z.string().max(MAX_TEXT_ANSWER_LENGTH)).max(MAX_MULTI_TEXT_ANSWERS),
+    }),
 ])
 export type AnswerPayload = z.infer<typeof AnswerPayloadSchema>
 
@@ -190,6 +236,7 @@ export type PublicQuestion = { id: string; text: string; type: QuestionType; ima
     | { type: 'ordering'; items: PublicOrderingItem[] }
     | { type: 'slider'; slider: { min: number; max: number; step: number } }
     | { type: 'text' }
+    | { type: 'multi-text'; answerCount: number }
 )
 
 /** The correct answer per type, only revealed once the question is over. */
@@ -198,6 +245,7 @@ export type RevealData =
     | { type: 'ordering'; correctOrder: string[] }
     | { type: 'slider'; correctValue: number }
     | { type: 'text'; acceptedAnswers: string[] }
+    | { type: 'multi-text'; correctAnswers: TextAnswerGroup[] }
 
 /**
  * A leaderboard row as sent to clients. Anonymous by default: `name`/`oid` are only populated

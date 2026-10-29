@@ -2,7 +2,13 @@ import { test, expect } from 'vitest'
 
 import { levenshtein } from '#lib/levenshtein'
 import { gradeAnswer } from '#services/quiz/quiz-grading'
-import { MultipleChoiceQuestion, OrderingQuestion, SliderQuestion, TextQuestion } from '#services/quiz/quiz-schema'
+import {
+    MultipleChoiceQuestion,
+    MultiTextQuestion,
+    OrderingQuestion,
+    SliderQuestion,
+    TextQuestion,
+} from '#services/quiz/quiz-schema'
 import { MAX_POINTS } from '#services/quiz/quiz-scoring'
 
 const base = { id: 'q1', text: 'Spørsmål', timeLimitSeconds: null, imageId: null }
@@ -30,6 +36,11 @@ const ordering: OrderingQuestion = {
 const slider: SliderQuestion = { ...base, type: 'slider', min: 0, max: 100, step: 1, correct: 50, tolerance: 10 }
 
 const text: TextQuestion = { ...base, type: 'text', acceptedAnswers: ['Oslo'], fuzz: 'low' }
+const multiText: MultiTextQuestion = {
+    ...base,
+    type: 'multi-text',
+    correctAnswers: [{ acceptedAnswers: ['Australia'] }, { acceptedAnswers: ['France'] }],
+}
 
 /* ───────────────────────────── levenshtein ───────────────────────────── */
 
@@ -97,6 +108,104 @@ test('text: a typo beyond the fuzz threshold does not match', () => {
 })
 
 /* ───────────────────────────── points & speed & mismatch ───────────────────────────── */
+
+test.each([0, 10_000, 20_000])(
+    'multi-text gives equal partial credit regardless of elapsed time (%s ms)',
+    (elapsed) => {
+        expect(gradeAnswer(multiText, { type: 'multi-text', texts: ['France', 'Spain'] }, elapsed, 20_000)).toEqual({
+            accuracy: 0.5,
+            correct: false,
+            points: 500,
+        })
+        expect(
+            gradeAnswer(multiText, { type: 'multi-text', texts: [' FRANCE ', 'australia'] }, elapsed, 20_000),
+        ).toEqual({
+            accuracy: 1,
+            correct: true,
+            points: 1000,
+        })
+    },
+)
+
+test('multi-text counts repeated guesses only once and ignores empty and incorrect guesses', () => {
+    expect(gradeAnswer(multiText, { type: 'multi-text', texts: ['France', ' france '] }, 0, 20_000).points).toBe(500)
+    expect(gradeAnswer(multiText, { type: 'multi-text', texts: ['France', ''] }, 0, 20_000).points).toBe(500)
+    for (const texts of [[], ['', '  '], ['Spain', 'Germany']]) {
+        expect(gradeAnswer(multiText, { type: 'multi-text', texts }, 0, 20_000)).toEqual({
+            accuracy: 0,
+            correct: false,
+            points: 0,
+        })
+    }
+})
+
+test('multi-text normalizes whitespace but does not award credit for misspellings', () => {
+    const question: MultiTextQuestion = {
+        ...multiText,
+        correctAnswers: [{ acceptedAnswers: ['New Zealand'] }, { acceptedAnswers: ['France'] }],
+    }
+    expect(gradeAnswer(question, { type: 'multi-text', texts: [' new   ZEALAND ', 'Frnce'] }, 0, 20_000).points).toBe(
+        500,
+    )
+})
+
+test('multi-text awards 500 points for five of ten answers and rounds only the final total', () => {
+    const correctAnswers = Array.from({ length: 10 }, (_, index) => `Answer ${index + 1}`)
+    expect(
+        gradeAnswer(
+            { ...multiText, correctAnswers: correctAnswers.map((answer) => ({ acceptedAnswers: [answer] })) },
+            { type: 'multi-text', texts: correctAnswers.slice(0, 5) },
+            20_000,
+            20_000,
+        ).points,
+    ).toBe(500)
+
+    const thirds: MultiTextQuestion = {
+        ...multiText,
+        correctAnswers: ['France', 'Australia', 'Norway'].map((answer) => ({ acceptedAnswers: [answer] })),
+    }
+    expect(gradeAnswer(thirds, { type: 'multi-text', texts: ['France', 'Norway'] }, 20_000, 20_000).points).toBe(667)
+    expect(
+        gradeAnswer(thirds, { type: 'multi-text', texts: ['France', 'Australia', 'Norway'] }, 20_000, 20_000).points,
+    ).toBe(1000)
+})
+
+test.each(['Frankrike', 'France', ' france '])(
+    'multi-text accepts the spelling "%s" for the same answer',
+    (variant) => {
+        const question: MultiTextQuestion = {
+            ...multiText,
+            correctAnswers: [{ acceptedAnswers: ['Australia'] }, { acceptedAnswers: ['Frankrike', 'France'] }],
+        }
+        expect(gradeAnswer(question, { type: 'multi-text', texts: [variant, 'Australia'] }, 20_000, 20_000)).toEqual({
+            accuracy: 1,
+            correct: true,
+            points: 1000,
+        })
+    },
+)
+
+test('multi-text awards only one share of points when two spellings of the same answer are submitted', () => {
+    const question: MultiTextQuestion = {
+        ...multiText,
+        correctAnswers: [{ acceptedAnswers: ['Australia'] }, { acceptedAnswers: ['Frankrike', 'France'] }],
+    }
+    expect(gradeAnswer(question, { type: 'multi-text', texts: ['Frankrike', 'France'] }, 20_000, 20_000)).toEqual({
+        accuracy: 0.5,
+        correct: false,
+        points: 500,
+    })
+})
+
+test('ordinary text questions still accept alternatives and retain speed-based scoring', () => {
+    const question: TextQuestion = { ...text, acceptedAnswers: ['Oslo', 'Christiania'] }
+    expect(gradeAnswer(question, { type: 'text', text: 'Christiania' }, 20_000, 20_000)).toEqual({
+        accuracy: 1,
+        correct: true,
+        points: 500,
+    })
+    expect(gradeAnswer(multiText, { type: 'text', text: 'France' }, 0, 20_000).points).toBe(0)
+})
 
 test('points scale a perfect answer by the speed factor', () => {
     // Halfway through the limit -> speedFactor 0.75.

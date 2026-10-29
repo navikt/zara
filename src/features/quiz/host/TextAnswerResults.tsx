@@ -35,7 +35,13 @@ function TextAnswerResults({ players, results }: Props): ReactElement {
                             <Table.Body>
                                 {players.map((player) => {
                                     const result = resultsByPlayer.get(player.playerId)
-                                    const answer = result?.answer?.type === 'text' ? result.answer.text : null
+                                    const answer =
+                                        result?.answer?.type === 'text'
+                                            ? result.answer.text
+                                            : result?.answer?.type === 'multi-text'
+                                              ? result.answer.texts.filter((text) => text.trim()).join(', ') ||
+                                                'Ingen svar'
+                                              : null
                                     return (
                                         <Table.Row key={player.playerId}>
                                             <Table.HeaderCell scope="row">{player.alias}</Table.HeaderCell>
@@ -43,7 +49,13 @@ function TextAnswerResults({ players, results }: Props): ReactElement {
                                                 {answer ?? 'Ikke svart'}
                                             </Table.DataCell>
                                             <Table.DataCell>
-                                                {answer == null ? '–' : result?.correct ? 'Riktig' : 'Feil'}
+                                                {answer == null
+                                                    ? '–'
+                                                    : result?.correct
+                                                      ? 'Riktig'
+                                                      : result && result.accuracy > 0
+                                                        ? `Delvis riktig (${result.points} poeng)`
+                                                        : 'Feil'}
                                             </Table.DataCell>
                                         </Table.Row>
                                     )

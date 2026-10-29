@@ -59,6 +59,8 @@ function toPreviewQuestion(draft: DraftQuestion): PublicQuestion {
             return { ...base, type: draft.type, slider: { min: draft.min, max: draft.max, step: draft.step } }
         case 'text':
             return { ...base, type: draft.type }
+        case 'multi-text':
+            return { ...base, type: draft.type, answerCount: draft.correctAnswers.length }
     }
 }
 
@@ -72,6 +74,8 @@ function previewRevealData(question: Question): RevealData {
             return { type: question.type, correctValue: question.correct }
         case 'text':
             return { type: question.type, acceptedAnswers: question.acceptedAnswers }
+        case 'multi-text':
+            return { type: question.type, correctAnswers: question.correctAnswers }
     }
 }
 

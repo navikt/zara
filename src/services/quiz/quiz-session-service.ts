@@ -12,9 +12,11 @@ import {
     ActiveSession,
     AnswerPayload,
     ClientSessionState,
+    CorrectTextAnswersSchema,
     LeaderboardEntry,
     LiveSession,
     LobbyPlayer,
+    MAX_TEXT_ANSWER_LENGTH,
     PlayerPresence,
     PublicQuestion,
     Question,
@@ -83,7 +85,13 @@ export async function getSession(sessionId: string): Promise<LiveSession | null>
     const raw = await vk.get(sessionKey(sessionId))
     if (!raw) return null
     try {
-        return JSON.parse(String(raw)) as LiveSession
+        const session = JSON.parse(String(raw)) as LiveSession
+        session.content.questions = session.content.questions.map((question) =>
+            question.type === 'multi-text'
+                ? { ...question, correctAnswers: CorrectTextAnswersSchema.parse(question.correctAnswers) }
+                : question,
+        )
+        return session
     } catch (e) {
         logger.error(new Error(`Corrupt quiz session ${sessionId}`, { cause: e }))
         return null
@@ -201,6 +209,8 @@ function toPublicQuestion(question: Question, displayOrder: string[] | null): Pu
             }
         case 'text':
             return { ...base, type: 'text' }
+        case 'multi-text':
+            return { ...base, type: 'multi-text', answerCount: question.correctAnswers.length }
     }
 }
 
@@ -217,6 +227,8 @@ function revealDataFor(question: Question): RevealData {
             return { type: 'slider', correctValue: question.correct }
         case 'text':
             return { type: 'text', acceptedAnswers: question.acceptedAnswers }
+        case 'multi-text':
+            return { type: 'multi-text', correctAnswers: question.correctAnswers }
     }
 }
 
@@ -522,8 +534,6 @@ export async function joinSession(sessionId: string, user: User, alias: string):
 
 export type SubmitAnswerResult = { ok: true } | { ok: false; reason: string }
 
-const MAX_TEXT_ANSWER_LENGTH = 500
-
 /** Server-side sanity check that a payload is a valid answer for the current question. */
 function isValidAnswer(question: Question, answer: AnswerPayload): boolean {
     if (question.type !== answer.type) return false
@@ -547,6 +557,12 @@ function isValidAnswer(question: Question, answer: AnswerPayload): boolean {
             )
         case 'text':
             return answer.type === 'text' && answer.text.length <= MAX_TEXT_ANSWER_LENGTH
+        case 'multi-text':
+            return (
+                answer.type === 'multi-text' &&
+                answer.texts.length <= question.correctAnswers.length &&
+                answer.texts.every((text) => text.length <= MAX_TEXT_ANSWER_LENGTH)
+            )
     }
 }
 
