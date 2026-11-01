@@ -3767,10 +3767,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"remeda@npm:^2.53.0":
-  version: 2.53.0
-  resolution: "remeda@npm:2.53.0"
-  checksum: 10c0/1de1bdad1490da5d51378b66d411ec0be280fc3205d8832a8db8ec8fe4fa6fc3ff9d5766691c5353a152495181baa2b72b2f3b353418d1b3b263e98627cedd8d
+"remeda@npm:^2.56.0":
+  version: 2.56.0
+  resolution: "remeda@npm:2.56.0"
+  checksum: 10c0/16d04b4e7550df3ba1b6c45a6d51a5d01a03ae72cba72dde1698823b5a79bf6ac3026b86807ef75a0a51f2930fa349335ef0dcef77f0f70b6ea49432b525c227
   languageName: node
   linkType: hard
 
@@ -4702,7 +4702,7 @@ __metadata:
     prom-client: "npm:^15.1.3"
     react: "npm:^19.3.1"
     react-dom: "npm:^19.3.1"
-    remeda: "npm:^2.53.0"
+    remeda: "npm:^2.56.0"
     sonner: "npm:^2.0.8"
     tailwind-merge: "npm:^3.7.0"
     tailwindcss: "npm:^4.3.3"
