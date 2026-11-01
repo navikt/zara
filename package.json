@@ -34,7 +34,7 @@
         "@slack/bolt": "^5.1.0",
         "@valkey/valkey-glide": "^2.5.3",
         "clsx": "^2.1.1",
-        "croner": "^10.0.1",
+        "croner": "^11.0.0",
         "date-fns": "^4.4.0",
         "kafkajs": "^2.2.4",
         "motion": "^13.5.1",
