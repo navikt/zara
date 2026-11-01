@@ -30,7 +30,7 @@
         "@navikt/syk-zara": "^2.0.23",
         "@navikt/tsm-oxfmt": "^0.0.11",
         "@opentelemetry/api": "^1.10.0",
-        "@opentelemetry/core": "^2.12.0",
+        "@opentelemetry/core": "^3.0.0",
         "@slack/bolt": "^5.1.0",
         "@valkey/valkey-glide": "^2.5.3",
         "clsx": "^2.1.1",
