@@ -2,7 +2,7 @@ import { Tooltip } from '@navikt/ds-react'
 import React, { ReactElement } from 'react'
 
 import { cn } from '#lib/tw'
-import { JobStatus } from '#services/apps/syk-inn-api/types'
+import { JobStatus } from '#services/jobs/job-types'
 
 function JobStatusIcon({ status }: { status: JobStatus }): ReactElement {
     return (

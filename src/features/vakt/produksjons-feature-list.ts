@@ -5,6 +5,7 @@ import {
     LayersIcon,
     PersonIcon,
     PillRectangleIcon,
+    SandboxIcon,
 } from '@navikt/aksel-icons'
 
 export type VaktFeature = {
@@ -67,6 +68,13 @@ export const produksjonsFeatures = {
             title: 'Hash ident med secrets',
             href: '/vakt/hash-idents',
             description: 'For oppslag i BigQuery når du trenger samme hashing som i produksjon.',
+            auditlog: false,
+        } satisfies VaktFeature,
+        jobs: {
+            Icon: SandboxIcon,
+            title: 'Scheduled jobs',
+            href: '/vakt/jobs',
+            description: 'Se status, stop og start jobber.',
             auditlog: false,
         } satisfies VaktFeature,
     },

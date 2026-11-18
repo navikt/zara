@@ -4,26 +4,28 @@ import { Button, Detail, Heading } from '@navikt/ds-react'
 import { motion, AnimatePresence } from 'motion/react'
 import React, { ReactElement, useState, useTransition } from 'react'
 
-import JobStatusIcon from '#features/syk-inn/admin/JobStatusIcon'
-import { refetchJobs, startJob, stopJob } from '#features/syk-inn/admin/syk-inn-api-admin-actions'
+import { refetchJobs, startJob, stopJob } from '#features/vakt/jobs/job-actions'
+import JobStatusIcon from '#features/vakt/jobs/JobStatusIcon'
 import { toReadableDateTime } from '#lib/date'
 import useInterval from '#lib/hooks/useInterval'
 import { cn } from '#lib/tw'
-import { JobStatus, JobStatusResponse } from '#services/apps/syk-inn-api/types'
+import { JobAppName } from '#services/jobs/job-service'
+import { JobStatus, JobStatusResponse } from '#services/jobs/job-types'
 
 const STATUS_PRECEDENCE: JobStatus[] = ['FAILED', 'STOPPED', 'NOT_STARTED', 'RUNNING']
 
 type Props = {
+    appName: JobAppName
     job: JobStatusResponse
 }
 
-function JobPanel({ job }: Props): ReactElement {
+function JobPanel({ appName, job }: Props): ReactElement {
     const [drawerOpen, setDrawerOpen] = useState(false)
     const worstState = STATUS_PRECEDENCE.find((status) => job.runners.some((pod) => pod.state === status))
     const [pending, startTransition] = useTransition()
 
     useInterval(() => {
-        void refetchJobs()
+        void refetchJobs(appName)
     }, 30_000)
 
     return (
@@ -95,7 +97,7 @@ function JobPanel({ job }: Props): ReactElement {
                                         loading={pending}
                                         onClick={() => {
                                             startTransition(async () => {
-                                                await startJob(job.name)
+                                                await startJob(appName, job.name)
                                             })
                                         }}
                                     >
@@ -108,7 +110,7 @@ function JobPanel({ job }: Props): ReactElement {
                                         loading={pending}
                                         onClick={() => {
                                             startTransition(async () => {
-                                                await stopJob(job.name)
+                                                await stopJob(appName, job.name)
                                             })
                                         }}
                                     >

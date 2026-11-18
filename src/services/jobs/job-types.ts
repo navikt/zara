@@ -7,7 +7,7 @@ export type JobRunners = {
 }
 
 export type JobStatusResponse = {
-    name: 'SYKMELDING_CONSUMER'
+    name: 'CREATE_OPPGAVE'
     runners: JobRunners[]
     desiredState: JobStatus
     updatedAt: string
