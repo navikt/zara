@@ -5,6 +5,7 @@ import React, { ReactElement } from 'react'
 import LiveUsersList from '#components/live-view/LiveUsersList'
 import SykInnApiJobs from '#features/vakt/jobs/SykInnApiJobs'
 import TsmOppgaveJobs from '#features/vakt/jobs/TsmOppgaveJobs'
+import { bundledEnv } from '#lib/env'
 import { validateUserSession } from '#services/auth/auth'
 
 async function Page(): Promise<ReactElement> {
@@ -16,11 +17,11 @@ async function Page(): Promise<ReactElement> {
                 <Heading level="2" size="large" spacing>
                     Scheduled jobber
                 </Heading>
-                <LiveUsersList page="/developer-admin/jobs" me={user} />
+                <LiveUsersList page="/vakt/jobs" me={user} />
             </div>
             <div className="flex flex-col gap-4">
                 <SykInnApiJobs />
-                <TsmOppgaveJobs />
+                {bundledEnv.runtimeEnv !== 'prod-gcp' && <TsmOppgaveJobs />}
             </div>
         </PageBlock>
     )
