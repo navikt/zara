@@ -3,7 +3,8 @@ import { PageBlock } from '@navikt/ds-react/Page'
 import React, { ReactElement } from 'react'
 
 import LiveUsersList from '#components/live-view/LiveUsersList'
-import SykInnApiJobs from '#features/syk-inn/admin/SykInnApiJobs'
+import SykInnApiJobs from '#features/vakt/jobs/SykInnApiJobs'
+import TsmOppgaveJobs from '#features/vakt/jobs/TsmOppgaveJobs'
 import { validateUserSession } from '#services/auth/auth'
 
 async function Page(): Promise<ReactElement> {
@@ -13,12 +14,13 @@ async function Page(): Promise<ReactElement> {
         <PageBlock as="main" width="2xl" gutters>
             <div className="flex justify-between items-start">
                 <Heading level="2" size="large" spacing>
-                    Jobber i syk-inn-api
+                    Scheduled jobber
                 </Heading>
-                <LiveUsersList page="/syk-inn/admin" me={user} />
+                <LiveUsersList page="/developer-admin/jobs" me={user} />
             </div>
-            <div>
+            <div className="flex flex-col gap-4">
                 <SykInnApiJobs />
+                <TsmOppgaveJobs />
             </div>
         </PageBlock>
     )

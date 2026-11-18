@@ -5,8 +5,8 @@ export type UserActivity = {
 }
 
 export type Pages =
-    | '/syk-inn/admin'
     | '/syk-inn/bruksvilkar'
     | '/syk-inn/tilbakemeldinger'
     | '/syk-inn/tilbakemeldinger/personvernsmodus'
     | `/syk-inn/tilbakemeldinger/${string}`
+    | '/developer-admin/jobs'

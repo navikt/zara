@@ -2,12 +2,12 @@ import { Heading } from '@navikt/ds-react'
 import React, { ReactElement } from 'react'
 import * as R from 'remeda'
 
-import JobPanel from '#features/syk-inn/admin/JobPanel'
-import RefreshButton from '#features/syk-inn/admin/RefreshButton'
-import { getSykInnApiJobsStatus } from '#services/apps/syk-inn-api/syk-inn-api-service'
+import JobPanel from '#features/vakt/jobs/JobPanel'
+import RefreshButton from '#features/vakt/jobs/RefreshButton'
+import { getJobsStatus } from '#services/jobs/job-service'
 
 async function SykInnApiJobs(): Promise<ReactElement> {
-    const jobs = await getSykInnApiJobsStatus()
+    const jobs = await getJobsStatus('syk-inn-api')
 
     return (
         <div>
@@ -15,13 +15,13 @@ async function SykInnApiJobs(): Promise<ReactElement> {
                 <Heading level="2" size="medium">
                     Jobber i syk-inn-api
                 </Heading>
-                <RefreshButton />
+                <RefreshButton appName="syk-inn-api" />
             </div>
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 pr-8">
                 {R.pipe(
                     jobs,
                     R.sortBy((it) => it.name),
-                    R.map((job) => <JobPanel key={job.name} job={job} />),
+                    R.map((job) => <JobPanel appName="syk-inn-api" key={job.name} job={job} />),
                 )}
             </div>
         </div>
