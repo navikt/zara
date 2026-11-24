@@ -1,36 +1,27 @@
 import * as z from 'zod'
 
-export const KodeSchema = z.object({
-    aktiv: z.boolean(),
-    oid: z.number().int(),
-    verdi: z.string().nullable(),
+const KodeSchema = z.object({
+    oid: z.int(),
+    verdi: z.string(),
 })
 
-export const PeriodeSchema = z.object({
-    fra: z.string().nullable(),
-    til: z.string().nullable(),
-})
-
-export const TilleggskompetanseSchema = z.object({
-    avsluttetStatus: KodeSchema.nullable(),
-    etag: z.string().nullish(),
-    gyldig: PeriodeSchema.nullable(),
-    id: z.number().int().nullable(),
-    type: KodeSchema.nullable(),
-})
-
-export const GodkjenningSchema = z.object({
-    helsepersonellkategori: KodeSchema.nullable(),
-    autorisasjon: KodeSchema.nullable(),
-    tillegskompetanse: z.array(TilleggskompetanseSchema).nullable(),
+const GodkjenningSchema = z.object({
+    autorisasjon: KodeSchema,
+    helsepersonellkategori: KodeSchema,
+    tilleggskompetanse: z.array(
+        z.object({
+            avsluttetStatus: KodeSchema,
+            gyldig: z.object({ fra: z.iso.date(), til: z.iso.date().optional() }),
+            type: KodeSchema,
+        }),
+    ),
 })
 
 export type Behandler = z.infer<typeof BehandlerSchema>
 export const BehandlerSchema = z.object({
-    godkjenninger: z.array(GodkjenningSchema),
-    fnr: z.string().nullable(),
-    hprNummer: z.number().int().nullable(),
-    fornavn: z.string().nullable(),
-    mellomnavn: z.string().nullable(),
-    etternavn: z.string().nullable(),
+    hpr: z.string(),
+    ident: z.string(),
+    navn: z.object({ fornavn: z.string(), mellomnavn: z.string().optional(), etternavn: z.string() }).optional(),
+    godkjenning: z.array(GodkjenningSchema),
+    suspendert: z.boolean(),
 })

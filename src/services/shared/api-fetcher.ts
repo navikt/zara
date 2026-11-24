@@ -4,7 +4,7 @@ import * as z from 'zod'
 import { bundledEnv } from '#lib/env'
 import { failSpan, spanServerAsync } from '#lib/otel/server'
 
-type ValidAPI = 'syfohelsenettproxy' | 'tsm-pdl-cache'
+type ValidAPI = 'tsm-behandler' | 'tsm-pdl-cache'
 
 type ApiConfig = {
     namespace: string
@@ -12,7 +12,7 @@ type ApiConfig = {
 
 const internalApis: Record<ValidAPI, ApiConfig> = {
     'tsm-pdl-cache': { namespace: 'tsm' },
-    syfohelsenettproxy: { namespace: 'teamsykmelding' },
+    'tsm-behandler': { namespace: 'tsm' },
 }
 
 type ErrorTypes = 'TOKEN_EXCHANGE_FAILED' | 'API_CALL_FAILED' | 'API_BODY_INVALID'

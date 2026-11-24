@@ -59,7 +59,7 @@ async function BehandlerSearchInfo({ hpr }: Props): Promise<ReactElement> {
                     </>
                 }
             >
-                <BehandlerInHprRegister ident={hprPerson.fnr} />
+                <BehandlerInHprRegister ident={hprPerson.ident} />
             </Suspense>
         </div>
     )
@@ -76,16 +76,7 @@ function BehandlerError({ title, description }: { title: string; description: st
     )
 }
 
-async function BehandlerInHprRegister({ ident }: { ident: string | null }): Promise<ReactElement> {
-    if (ident == null) {
-        return (
-            <BehandlerError
-                title="Behandler har ikke ident (fnr/dnr) i HPR-registeret"
-                description="Kunne ikke slå opp personen i PDL fordi behandleren mangler ident"
-            />
-        )
-    }
-
+async function BehandlerInHprRegister({ ident }: { ident: string }): Promise<ReactElement> {
     const pdl = await pdlApiService.getPdlPerson(ident)
     if ('errorType' in pdl) {
         logger.error(`Error fetching from PDL, cause: ${pdl.errorType}`)
