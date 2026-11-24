@@ -164,3 +164,13 @@ test('multi-text editor groups alternative spellings under the same answer', () 
     expect(html).toContain('value="France"')
     expect(html).toContain('Legg til skrivemåte for fasitsvar 2')
 })
+
+test('majority options survive saving, loading, editing and copying', () => {
+    const draft = QUESTION_TYPES.majority.blankDraft(base)
+    if (draft.type !== 'majority') throw new Error('wrong draft type')
+    const filled = { ...draft, options: draft.options.map((o, i) => ({ ...o, text: ` Valg ${i} ` })) }
+    const saved = QuizContentSchema.parse({ title: 'Quiz', questions: [draftToQuestion(filled)] })
+    const loaded = QuizContentSchema.parse(JSON.parse(JSON.stringify(saved)))
+    expect(loaded.questions[0]).toMatchObject({ type: 'majority', options: [{ text: 'Valg 0' }, {}, {}] })
+    expect(questionToDraft(loaded.questions[0])).toEqual(draftToQuestion(filled))
+})

@@ -5,7 +5,7 @@ import { createHash, randomInt, randomUUID } from 'node:crypto'
 import { User } from '#services/auth/user'
 import { realValkey } from '#services/db/valkey/production-valkey'
 import { hashToRecord } from '#services/db/valkey/utils'
-import { gradeAnswer } from '#services/quiz/quiz-grading'
+import { gradeAnswer, gradeMajorityAnswers, majorityWinners } from '#services/quiz/quiz-grading'
 import { publishLobbyChanged, publishQuizEvent } from '#services/quiz/quiz-pubsub-client'
 import { maxRevealStep, unmaskedRanks } from '#services/quiz/quiz-reveal'
 import {
@@ -19,6 +19,7 @@ import {
     MAX_TEXT_ANSWER_LENGTH,
     PlayerPresence,
     PublicQuestion,
+    MajorityQuestion,
     Question,
     QuizContent,
     RevealData,
@@ -211,10 +212,12 @@ function toPublicQuestion(question: Question, displayOrder: string[] | null): Pu
             return { ...base, type: 'text' }
         case 'multi-text':
             return { ...base, type: 'multi-text', answerCount: question.correctAnswers.length }
+        case 'majority':
+            return { ...base, type: 'majority', options: question.options.map((o) => ({ id: o.id, text: o.text })) }
     }
 }
 
-function revealDataFor(question: Question): RevealData {
+function revealDataFor(question: Question, answers: AnswerPayload[]): RevealData {
     switch (question.type) {
         case 'multiple-choice':
             return {
@@ -229,6 +232,8 @@ function revealDataFor(question: Question): RevealData {
             return { type: 'text', acceptedAnswers: question.acceptedAnswers }
         case 'multi-text':
             return { type: 'multi-text', correctAnswers: question.correctAnswers }
+        case 'majority':
+            return { type: 'majority', winningOptionIds: majorityWinners(question, answers) }
     }
 }
 
@@ -312,7 +317,13 @@ export function projectState(
                 },
             ]
         })
-        reveal = { data: revealDataFor(question), results }
+        reveal = {
+            data: revealDataFor(
+                question,
+                results.flatMap((r) => (r.answer ? [r.answer] : [])),
+            ),
+            results,
+        }
     }
 
     const leaderboard =
@@ -563,6 +574,8 @@ function isValidAnswer(question: Question, answer: AnswerPayload): boolean {
                 answer.texts.length <= question.correctAnswers.length &&
                 answer.texts.every((text) => text.length <= MAX_TEXT_ANSWER_LENGTH)
             )
+        case 'majority':
+            return answer.type === 'majority' && question.options.some((o) => o.id === answer.optionId)
     }
 }
 
@@ -620,7 +633,11 @@ export async function revealCurrentQuestion(sessionId: string): Promise<ClientSe
     })
     if (claimed == null) return getClientState(sessionId)
 
-    const answersRaw = hashToRecord(await vk.hgetall(answersKey(sessionId, session.currentIndex)))
+    let answersRaw = hashToRecord(await vk.hgetall(answersKey(sessionId, session.currentIndex)))
+    const question = currentQuestion(session)
+    if (question?.type === 'majority' && session.currentStartedAt != null) {
+        answersRaw = await regradeMajority(sessionId, session, question, session.currentStartedAt, answersRaw)
+    }
     const increments: Promise<unknown>[] = []
     for (const [userId, raw] of Object.entries(answersRaw)) {
         const answer = parse<StoredAnswer>(raw)
@@ -635,6 +652,38 @@ export async function revealCurrentQuestion(sessionId: string): Promise<ClientSe
     await persistSession(session, TTL)
 
     return broadcast(sessionId)
+}
+
+/**
+ * "Gjett flertallet" can only be scored once the votes are in: re-grade every stored answer against
+ * the crowd and write the final grades back, so the reveal and the scores agree. Only ever called
+ * by the reveal-lock holder, so it runs exactly once per question.
+ */
+async function regradeMajority(
+    sessionId: string,
+    session: LiveSession,
+    question: MajorityQuestion,
+    startedAt: number,
+    answersRaw: Record<string, string>,
+): Promise<Record<string, string>> {
+    const entries = Object.entries(answersRaw).flatMap(([userId, raw]) => {
+        const stored = parse<StoredAnswer>(raw)
+        return stored ? [{ userId, stored }] : []
+    })
+    if (entries.length === 0) return answersRaw
+    const limitMs = questionLimitSeconds(session, question) * 1000
+    const grades = gradeMajorityAnswers(
+        question,
+        entries.map(({ stored }) => ({ answer: stored.answer, elapsedMs: stored.answeredAt - startedAt })),
+        limitMs,
+    )
+    const regraded: Record<string, string> = {}
+    entries.forEach(({ userId, stored }, index) => {
+        regraded[userId] = JSON.stringify({ ...stored, ...grades[index] } satisfies StoredAnswer)
+    })
+    const vk = await realValkey()
+    await vk.hset(answersKey(sessionId, session.currentIndex), regraded)
+    return regraded
 }
 
 /** Host-triggered manual reveal (early "Vis fasit"). Verifies the caller is the host. */

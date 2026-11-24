@@ -76,6 +76,21 @@ function QuestionPreview({ question }: { question: PublicQuestion }): ReactEleme
                     uten tidsbonus.
                 </BodyShort>
             )
+        case 'majority':
+            return (
+                <div className="flex flex-col gap-2">
+                    <BodyShort size="small" className="text-ax-text-neutral-subtle">
+                        Gjett flertallet: ingen fasit – poeng for å velge det flest andre velger.
+                    </BodyShort>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {question.options.map((option) => (
+                            <div key={option.id} className="p-3 rounded-md border-2 border-ax-border-neutral-subtle">
+                                {option.text}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )
     }
 }
 

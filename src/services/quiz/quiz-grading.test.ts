@@ -1,8 +1,10 @@
-import { test, expect } from 'vitest'
+import { describe, test, expect } from 'vitest'
 
 import { levenshtein } from '#lib/levenshtein'
-import { gradeAnswer } from '#services/quiz/quiz-grading'
+import { gradeAnswer, gradeMajorityAnswers, majorityWinners } from '#services/quiz/quiz-grading'
 import {
+    AnswerPayload,
+    MajorityQuestion,
     MultipleChoiceQuestion,
     MultiTextQuestion,
     OrderingQuestion,
@@ -223,5 +225,62 @@ test('a payload whose type does not match the question earns nothing', () => {
         accuracy: 0,
         correct: false,
         points: 0,
+    })
+})
+
+describe('majority ("Gjett flertallet")', () => {
+    const majority: MajorityQuestion = {
+        id: 'maj',
+        text: 'Beste pizzatopping?',
+        timeLimitSeconds: null,
+        imageId: null,
+        type: 'majority',
+        options: [
+            { id: 'ananas', text: 'Ananas' },
+            { id: 'pepperoni', text: 'Pepperoni' },
+            { id: 'sopp', text: 'Sopp' },
+        ],
+    }
+    const vote = (optionId: string): AnswerPayload => ({ type: 'majority', optionId })
+
+    test('the single answer gives no credit until the crowd is known', () => {
+        expect(gradeAnswer(majority, vote('ananas'), 0, 20_000)).toEqual({ accuracy: 0, correct: false, points: 0 })
+    })
+
+    test('backing the favourite is correct; others score relative to the winner', () => {
+        const votes = ['pepperoni', 'pepperoni', 'pepperoni', 'pepperoni', 'ananas', 'ananas', 'sopp']
+        const grades = gradeMajorityAnswers(
+            majority,
+            votes.map((id) => ({ answer: vote(id), elapsedMs: 0 })),
+            20_000,
+        )
+        expect(grades[0]).toEqual({ accuracy: 1, correct: true, points: 1000 })
+        expect(grades[4]).toEqual({ accuracy: 0.5, correct: false, points: 500 })
+        expect(grades[6]).toEqual({ accuracy: 0.25, correct: false, points: 250 })
+    })
+
+    test('speed still matters', () => {
+        const [slow] = gradeMajorityAnswers(majority, [{ answer: vote('sopp'), elapsedMs: 20_000 }], 20_000)
+        expect(slow).toEqual({ accuracy: 1, correct: true, points: 500 })
+    })
+
+    test('ties share the crown', () => {
+        const answers = ['ananas', 'sopp'].map(vote)
+        expect(majorityWinners(majority, answers).sort()).toEqual(['ananas', 'sopp'])
+        expect(
+            gradeMajorityAnswers(
+                majority,
+                answers.map((answer) => ({ answer, elapsedMs: 0 })),
+                0,
+            ),
+        ).toEqual([
+            { accuracy: 1, correct: true, points: 1000 },
+            { accuracy: 1, correct: true, points: 1000 },
+        ])
+    })
+
+    test('no votes means no winners; unknown options are ignored', () => {
+        expect(majorityWinners(majority, [])).toEqual([])
+        expect(majorityWinners(majority, [vote('ghost')])).toEqual([])
     })
 })

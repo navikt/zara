@@ -12,6 +12,9 @@ import {
     TextAnswerGroup,
 } from '#services/quiz/quiz-schema'
 
+import MajorityEditor from './majority/Editor'
+import MajorityPlayInput from './majority/PlayInput'
+import MajorityReveal from './majority/Reveal'
 import MultiTextEditor from './multi-text/Editor'
 import MultiTextPlayInput from './multi-text/PlayInput'
 import MultiTextReveal from './multi-text/Reveal'
@@ -46,7 +49,15 @@ export type DraftSlider = DraftBase & {
 export type DraftText = DraftBase & { type: 'text'; acceptedAnswers: string[]; fuzz: 'off' | 'low' | 'medium' }
 export type DraftMultiText = DraftBase & { type: 'multi-text'; correctAnswers: TextAnswerGroup[] }
 
-export type DraftQuestion = DraftMultipleChoice | DraftOrdering | DraftSlider | DraftText | DraftMultiText
+export type DraftMajority = DraftBase & { type: 'majority'; options: OrderingItem[] }
+
+export type DraftQuestion =
+    | DraftMultipleChoice
+    | DraftOrdering
+    | DraftSlider
+    | DraftText
+    | DraftMultiText
+    | DraftMajority
 
 /** Narrowed draft for a particular type. */
 export type DraftOf<T extends QuestionType> = Extract<DraftQuestion, { type: T }>
@@ -163,9 +174,31 @@ export const QUESTION_TYPES: Record<QuestionType, QuestionTypeModule> = {
             correctAnswers: [{ acceptedAnswers: [''] }, { acceptedAnswers: [''] }],
         }),
     },
+    majority: {
+        Editor: MajorityEditor as ComponentType<EditorProps>,
+        PlayInput: MajorityPlayInput as ComponentType<PlayInputProps>,
+        Reveal: MajorityReveal as ComponentType<RevealProps>,
+        label: 'Gjett flertallet',
+        blankDraft: (base) => ({
+            ...base,
+            type: 'majority',
+            options: [
+                { id: uuid(), text: '' },
+                { id: uuid(), text: '' },
+                { id: uuid(), text: '' },
+            ],
+        }),
+    },
 }
 
-export const QUESTION_TYPE_ORDER: QuestionType[] = ['multiple-choice', 'ordering', 'slider', 'text', 'multi-text']
+export const QUESTION_TYPE_ORDER: QuestionType[] = [
+    'multiple-choice',
+    'ordering',
+    'slider',
+    'text',
+    'multi-text',
+    'majority',
+]
 
 /**
  * Turns a validated draft into the persisted {@link Question}. Assumes the builder already
@@ -217,6 +250,8 @@ export function draftToQuestion(draft: DraftQuestion): Question {
                     acceptedAnswers: answer.acceptedAnswers.map((variant) => variant.trim()),
                 })),
             }
+        case 'majority':
+            return { ...base, type: 'majority', options: draft.options.map((o) => ({ id: o.id, text: o.text.trim() })) }
     }
 }
 
@@ -258,5 +293,7 @@ export function questionToDraft(question: Question): DraftQuestion {
                     acceptedAnswers: [...answer.acceptedAnswers],
                 })),
             }
+        case 'majority':
+            return { ...base, type: 'majority', options: question.options.map((o) => ({ ...o })) }
     }
 }

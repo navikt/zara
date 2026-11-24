@@ -71,6 +71,13 @@ function validateTypeFields(draft: DraftQuestion): string | null {
             const parsed = CorrectTextAnswersSchema.safeParse(draft.correctAnswers)
             return parsed.success ? null : parsed.error.issues[0].message
         }
+        case 'majority': {
+            if (draft.options.length < 2) return 'må ha minst to alternativer.'
+            if (draft.options.some((o) => o.text.trim().length === 0)) return 'har et tomt alternativ.'
+            const texts = draft.options.map((o) => o.text.trim().toLowerCase())
+            if (new Set(texts).size !== texts.length) return 'har to like alternativer.'
+            return null
+        }
     }
 }
 

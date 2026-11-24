@@ -18,7 +18,10 @@ export const MAX_MULTI_TEXT_ANSWERS = 10
 export const MAX_MULTI_TEXT_VARIANTS = 10
 export const MAX_TEXT_ANSWER_LENGTH = 500
 
-export type QuestionType = 'multiple-choice' | 'ordering' | 'slider' | 'text' | 'multi-text'
+export const MIN_MAJORITY_OPTIONS = 2
+export const MAX_MAJORITY_OPTIONS = 6
+
+export type QuestionType = 'multiple-choice' | 'ordering' | 'slider' | 'text' | 'multi-text' | 'majority'
 
 /** Fields shared by every question type. `imageId` is reserved for a later picture feature. */
 const QuestionBaseSchema = z.object({
@@ -108,12 +111,23 @@ export const MultiTextQuestionSchema = QuestionBaseSchema.extend({
 })
 export type MultiTextQuestion = z.infer<typeof MultiTextQuestionSchema>
 
+/**
+ * "Gjett flertallet": there is no fixed correct answer. Players try to pick what MOST players pick,
+ * and are graded against the crowd at reveal time (see `gradeMajorityAnswers`).
+ */
+export const MajorityQuestionSchema = QuestionBaseSchema.extend({
+    type: z.literal('majority'),
+    options: z.array(OrderingItemSchema).min(MIN_MAJORITY_OPTIONS).max(MAX_MAJORITY_OPTIONS),
+})
+export type MajorityQuestion = z.infer<typeof MajorityQuestionSchema>
+
 export const QuestionSchema = z.discriminatedUnion('type', [
     MultipleChoiceQuestionSchema,
     OrderingQuestionSchema,
     SliderQuestionSchema,
     TextQuestionSchema,
     MultiTextQuestionSchema,
+    MajorityQuestionSchema,
 ])
 export type Question = z.infer<typeof QuestionSchema>
 
@@ -169,6 +183,7 @@ export const AnswerPayloadSchema = z.discriminatedUnion('type', [
         type: z.literal('multi-text'),
         texts: z.array(z.string().max(MAX_TEXT_ANSWER_LENGTH)).max(MAX_MULTI_TEXT_ANSWERS),
     }),
+    z.object({ type: z.literal('majority'), optionId: z.string() }),
 ])
 export type AnswerPayload = z.infer<typeof AnswerPayloadSchema>
 
@@ -237,6 +252,7 @@ export type PublicQuestion = { id: string; text: string; type: QuestionType; ima
     | { type: 'slider'; slider: { min: number; max: number; step: number } }
     | { type: 'text' }
     | { type: 'multi-text'; answerCount: number }
+    | { type: 'majority'; options: PublicOrderingItem[] }
 )
 
 /** The correct answer per type, only revealed once the question is over. */
@@ -246,6 +262,8 @@ export type RevealData =
     | { type: 'slider'; correctValue: number }
     | { type: 'text'; acceptedAnswers: string[] }
     | { type: 'multi-text'; correctAnswers: TextAnswerGroup[] }
+    /** The crowd's favourite option(s) — ties share the crown. Empty when nobody answered. */
+    | { type: 'majority'; winningOptionIds: string[] }
 
 /**
  * A leaderboard row as sent to clients. Anonymous by default: `name`/`oid` are only populated

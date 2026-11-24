@@ -6,7 +6,7 @@ import React, { ReactElement, useState } from 'react'
 
 import { DraftQuestion, QUESTION_TYPES, draftToQuestion } from '#features/quiz/question-types'
 import QuestionStage from '#features/quiz/shared/QuestionStage'
-import { gradeAnswer } from '#services/quiz/quiz-grading'
+import { gradeAnswer, gradeMajorityAnswers, majorityWinners } from '#services/quiz/quiz-grading'
 import {
     AnswerPayload,
     PublicQuestion,
@@ -61,10 +61,40 @@ function toPreviewQuestion(draft: DraftQuestion): PublicQuestion {
             return { ...base, type: draft.type }
         case 'multi-text':
             return { ...base, type: draft.type, answerCount: draft.correctAnswers.length }
+        case 'majority':
+            return {
+                ...base,
+                type: draft.type,
+                options: draft.options.map((o, index) => ({ id: o.id, text: o.text || `Alternativ ${index + 1}` })),
+            }
     }
 }
 
-function previewRevealData(question: Question): RevealData {
+/**
+ * Previewing alone, you'd always be the majority. Simulate a small crowd voting at random so the
+ * author gets a feel for the reveal; the preview player is graded against it.
+ */
+function simulatedCrowd(question: Question): AnswerPayload[] {
+    if (question.type !== 'majority') return []
+    return Array.from({ length: 7 }, () => ({
+        type: 'majority' as const,
+        optionId: question.options[Math.floor(Math.random() * question.options.length)].id,
+    }))
+}
+
+function previewGrade(question: Question, answer: AnswerPayload, crowd: AnswerPayload[]): RevealResult {
+    const grade =
+        question.type === 'majority'
+            ? gradeMajorityAnswers(
+                  question,
+                  [answer, ...crowd].map((a) => ({ answer: a, elapsedMs: 0 })),
+                  0,
+              )[0]
+            : gradeAnswer(question, answer, 0, 0)
+    return { playerId: 'preview', answer, ...grade }
+}
+
+function previewRevealData(question: Question, answers: AnswerPayload[]): RevealData {
     switch (question.type) {
         case 'multiple-choice':
             return { type: question.type, correctChoiceId: question.choices.find((choice) => choice.correct)?.id ?? '' }
@@ -76,6 +106,8 @@ function previewRevealData(question: Question): RevealData {
             return { type: question.type, acceptedAnswers: question.acceptedAnswers }
         case 'multi-text':
             return { type: question.type, correctAnswers: question.correctAnswers }
+        case 'majority':
+            return { type: question.type, winningOptionIds: majorityWinners(question, answers) }
     }
 }
 
@@ -86,8 +118,19 @@ function PreviewQuestion({ draft }: { draft: DraftQuestion }): ReactElement {
     const PlayInput = QUESTION_TYPES[question.type].PlayInput
     const Reveal = QUESTION_TYPES[question.type].Reveal
     const parsed = QuestionSchema.safeParse(draftToQuestion(draft))
-    const result: RevealResult | null =
-        answer && parsed.success ? { playerId: 'preview', answer, ...gradeAnswer(parsed.data, answer, 0, 0) } : null
+    const [crowd, setCrowd] = useState<AnswerPayload[]>([])
+    const result: RevealResult | null = answer && parsed.success ? previewGrade(parsed.data, answer, crowd) : null
+    const crowdResults: RevealResult[] = crowd.map((a, index) => ({
+        playerId: `crowd-${index}`,
+        answer: a,
+        accuracy: 0,
+        correct: false,
+        points: 0,
+    }))
+    const submit = (a: AnswerPayload): void => {
+        setCrowd(parsed.success ? simulatedCrowd(parsed.data) : [])
+        setAnswer(a)
+    }
     const invalidSlider =
         question.type === 'slider' &&
         (![question.slider.min, question.slider.max, question.slider.step].every(Number.isFinite) ||
@@ -102,7 +145,7 @@ function PreviewQuestion({ draft }: { draft: DraftQuestion }): ReactElement {
                     Fyll inn gyldig minimum, maksimum og steg for å forhåndsvise glidebryteren.
                 </Alert>
             ) : (
-                !answer && <PlayInput key={attempt} question={question} onAnswer={setAnswer} disabled={false} />
+                !answer && <PlayInput key={attempt} question={question} onAnswer={submit} disabled={false} />
             )}
             {result && parsed.success && (
                 <>
@@ -115,8 +158,8 @@ function PreviewQuestion({ draft }: { draft: DraftQuestion }): ReactElement {
                     </Alert>
                     <Reveal
                         question={question}
-                        data={previewRevealData(parsed.data)}
-                        results={[result]}
+                        data={previewRevealData(parsed.data, answer ? [answer, ...crowd] : crowd)}
+                        results={[result, ...crowdResults]}
                         myResult={result}
                     />
                 </>
